@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,9 +11,32 @@
         <input type="file" name="file">
         <input type="submit" value="Yükle">
       </form>
+
       
-    <div class="bg-red-600">
-        background is red
+      <div class="bg-green-500 text-blue mx-auto p-4">
+        This is centered using the mx-auto class.
     </div>
+    <button id="runButton" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        Run Visualization
+      </button>
+      
+      <p id="output" class="mt-4 text-gray-700"></p>
+      
+      <img id="graphImage" src="/uploads/output.png" alt="Grafik" style="display: none;" >
+      <script src="{{ url_for('static', filename='scripts/getElement.js') }}"></script> 
+      
+      <script>
+          document.getElementById("runButton").addEventListener("click", function() {
+              fetch("/run-script", { method: "POST" })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.image_url) {
+                        let img = document.getElementById("graphImage");
+                        img.src = data.image_url + "?t=" + new Date().getTime();
+                        img.style.display = "block"; // Görseli görünür yap
+                      }
+                  });
+          });
+      </script>
 </body>
 </html>
