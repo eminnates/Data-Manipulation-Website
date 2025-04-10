@@ -1,24 +1,18 @@
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
+import plotly.express as px
 import os
-import jinja2
 
-# Ensure output directory exists
 os.makedirs("outputs", exist_ok=True)
 
-# Read the file
+
 data = pd.read_csv(os.path.join("uploads", "read.csv"))
 
-# Select the second column
-column_name = data.columns[2]
 
-# Plot with adjusted binwidth
-plt.figure(figsize=(12, 6))
-sns.histplot(data[column_name], binwidth=0.5, kde=True)  # Adjusted binwidth and added KDE
-plt.title(f"Histogram of {column_name}")
+column_name = data.columns[1]
 
-# Save the plot
-output_path = os.path.join("outputs", "output.png")
-plt.savefig(output_path)
-plt.close()
+
+fig = px.histogram(data, x=column_name, nbins=30,title=f"Histogram of {column_name}")
+
+
+output_path = os.path.join("static/outputs", "chart.html")
+fig.write_html(output_path)

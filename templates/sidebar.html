@@ -1,0 +1,51 @@
+<style>
+      
+    .transition-width {
+        transition: width 0.4s ease-in-out;
+    }
+</style>
+
+<div id = 'sidebar' class="col-span-1 bg-gray-800 text-white p-4">
+
+    <h2 id="menuToggle" class="text-xl mb-4 cursor-pointer">Araçlar</h2>
+    <ul id="menuItems" class="opacity-0 hidden">
+      <li class="px-2 py-2"><a href="/" class="blockbtn">Home</a></li>
+      <li class="px-2 py-2"><a href="/upload" class="blockbtn">Dosya Yükle</a></li>
+      <li class="px-2 py-2"><a href="/works" class="blockbtn">Görselleştir</a></li>
+      <li class="px-2 py-2"><a href="/upload" class="blockbtn">hiiiii :]</a></li>
+    </ul>
+  </div>
+  <script>
+  document.getElementById("menuToggle").addEventListener("click", function() {
+    let sidebar = document.getElementById("sidebar");
+    let mainContent = document.getElementById("mainContent");
+    let menuItems = document.getElementById("menuItems");
+
+    // Toggle sidebar size and visibility
+    if (sidebar.classList.contains("col-span-1")) {
+        // Expand the sidebar
+        sidebar.classList.remove("col-span-1");
+        sidebar.classList.add("col-span-2");
+        mainContent.classList.remove("col-span-11");
+        mainContent.classList.add("col-span-10");
+
+        // Make the menu items visible
+        menuItems.classList.remove("hidden");
+        sidebar.classList.add("opacity-100");
+        menuItems.classList.remove("opacity-0");
+        menuItems.classList.add("opacity-100");
+    } else {
+        // Collapse the sidebar
+        sidebar.classList.remove("col-span-2");
+        sidebar.classList.add("col-span-1");
+        mainContent.classList.remove("col-span-10");
+        mainContent.classList.add("col-span-11");
+
+        // Hide the menu items
+     
+        menuItems.classList.add("opacity-0");
+        menuItems.classList.add("hidden");
+        menuItems.classList.remove("opacity-100");
+    }
+});
+</script>
