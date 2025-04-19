@@ -19,7 +19,7 @@
     <header class="header">
         <nav class="nav container">
             <div class="nav__data">
-                <a href="/index" class="nav__logo">
+                <a href="index.html" class="nav__logo">
                     <i class="ri-planet-line"></i> Data Manipulation
                 </a>
 
@@ -116,57 +116,50 @@
                 </div>
                 <input type="file" id="hiddenFileInput" style="display: none;" />
                 <div class="box-2">
-                    <button id="glowButton"> Eski Projeyi Görüntülemek İçin Tıkla </button>
+                    <button id="glowButton"> Esk Projeyi Görüntülemek İçin Tıkla </button>
                 </div>
             </div>
         </div>
 
         <div class="iframe-container">
-            <iframe class="border rounded-lg shadow-md" id="resultFrame"></iframe>
+            <iframe class="border rounded-lg shadow-md"></iframe>
         </div>
+
+        <div class="dependent-dropdowns">
+            <div class="dropdown-group">
+                <select id="dropdown1" class="custom-dropdown">
+                    <option value="">Birinci Seçim</option>
+                    <option value="Simple">Simple</option>
+                    <option value="Distributions">Distributions</option>
+                    <option value="3D">3D</option>
+                    <option value="Maps">Maps</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Specialized">Specialized</option>
+                </select>
+
+                <select id="dropdown2" class="custom-dropdown" disabled>
+                    <option value="">İkinci Seçim</option>
+                </select>
+
+                <select id="dropdown3" class="custom-dropdown" disabled>
+                    <option value="">Üçüncü Seçim</option>
+                </select>
+
+                <select id="dropdown4" class="custom-dropdown" disabled>
+                    <option value="">Dördüncü Seçim</option>
+                </select>
+
+                <input type="text" id="customValue" class="custom-textbox" placeholder="Değer giriniz...">
+            </div>
+            
+            <div class="run-button-container">
+                <button class="run-button">Çalıştır</button>
+            </div>
+        </div>
+
         
-
-        <div class="dropdown-buttons">
-            <div class="dropdown-button-container">
-                <button class="dropdown-button">Button 1</button>
-                <div class="dropdown-content">
-                    <a href="#">Seçenek 1</a>
-                    <a href="#">Seçenek 2</a>
-                    <a href="#">Seçenek 3</a>
-                    <a href="#">Seçenek 4</a>
-                </div>
-            </div>
-            <div class="dropdown-button-container">
-                <button class="dropdown-button">Button 2</button>
-                <div class="dropdown-content">
-                    <a href="#">Seçenek 1</a>
-                    <a href="#">Seçenek 2</a>
-                    <a href="#">Seçenek 3</a>
-                    <a href="#">Seçenek 4</a>
-                </div>
-            </div>
-            <div class="dropdown-button-container">
-                <button class="dropdown-button">Button 3</button>
-                <div class="dropdown-content">
-                    <a href="#">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                </div>
-            </div>
-            <div class="textbox-container">
-                <input type="text" class="textbox" placeholder="Proje Başlığı...">
-            </div>
-        </div>
-
-        <div class="center-button-container">
-            <button class="center-button">Çalıştır</button>
-        </div>
     </div>
-
-    <!--=============== MAIN JS ===============-->
     <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
-</body>
 </body>
 
 </html>
