@@ -95,14 +95,14 @@ const dropdown4 = document.getElementById('dropdown4');
 const dropdownData = {
   Simple: {
     options: {
-      Scatter: { columns: ['X', 'Y'], rows: ['Point A', 'Point B'] },
-      Bar: { columns: ['Category', 'Value'], rows: ['Row A', 'Row B'] },
-      Line: { columns: ['Time', 'Value'], rows: ['Series 1', 'Series 2'] },
-      Area: { columns: ['Time', 'Value'], rows: ['Area 1', 'Area 2'] },
-      Heatmap: { columns: ['X Axis', 'Y Axis'], rows: ['Heat A', 'Heat B'] },
-      Table: { columns: ['Header 1', 'Header 2'], rows: ['Row 1', 'Row 2'] },
-      Contour: { columns: ['X', 'Y'], rows: ['Contour 1', 'Contour 2'] },
-      Pie: { columns: ['Label', 'Value'], rows: ['Slice A', 'Slice B'] }
+      Scatter: { columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
+      Bar: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
+      Line: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
+      Area: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
+      Heatmap: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
+      Table: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
+      Contour: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
+      Pie: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] }
     }
   },
   Distributions: {
@@ -273,10 +273,10 @@ document.querySelector(".run-button").addEventListener("click", () => {
 
   const formData = new FormData();
   formData.append("file", selectedFile);
-  formData.append("secim1", dropdownButtons[0].textContent);
-  formData.append("secim2", dropdownButtons[1].textContent);
-  formData.append("secim3", dropdownButtons[2].textContent);
-  formData.append("secim4", dropdownButtons[3].textContent);
+  formData.append("secim1", dropdown1.value);
+  formData.append("secim2", dropdown2.value);
+  formData.append("secim3", dropdown3.value);
+  formData.append("secim4", dropdown4.value);
 
   fetch(`/upload/${encodeURIComponent(projectTitle)}`, {
     method: "POST",

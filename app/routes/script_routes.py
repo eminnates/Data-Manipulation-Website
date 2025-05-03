@@ -14,8 +14,6 @@ def run_script():
             json.dump(project_json, tmpfile)
             tmpfile_path = tmpfile.name
 
-        
-        
         with open("logs/visualition_stdout.log", "w") as out, open("logs/visualition_stderr.log", "w") as err:
             process = subprocess.Popen(
             ["python", "python_scripts/visualition2.py", tmpfile_path],
