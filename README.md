@@ -120,5 +120,3 @@ This project is licensed under the [MIT License](LICENSE).
 If you have any feedback, questions, or suggestions, feel free to open an issue or contact the repository owner.
 
 ---
-
-You can copy this content into a `README.md` file and commit it to your repository. Let me know if you need help with any additional edits!
