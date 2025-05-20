@@ -1,14 +1,16 @@
-from flask import Blueprint, send_from_directory, jsonify
+from flask import Blueprint, send_from_directory, jsonify, request
 import os
-from app.utils.file_utils import project_json
+from app.utils.file_utils import Project
 
 graph_blueprint = Blueprint('graph', __name__)
 
 @graph_blueprint.route('/get-graph', methods=['GET'])
 def get_graph():
-    project_name = project_json.get("project_name", "").strip()
+    project_name = Project().project_json.get("project_name", "").strip()
     base_name = os.path.splitext(project_name)[0]
-    filename = base_name + '.html'
+    graph_type = request.args.get("type", "raw")  # "raw" veya "refined"
+    suffix = "_raw" if graph_type == "raw" else "_refined"
+    filename = f"{base_name}{suffix}.html"
     outputs_dir = os.path.abspath(os.path.join('app', 'static', 'outputs'))
     
     full_path = os.path.join(outputs_dir, filename)

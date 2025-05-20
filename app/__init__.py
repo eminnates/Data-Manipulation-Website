@@ -1,9 +1,14 @@
 from flask import Flask, jsonify
-from flasgger import Swagger
+import os
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')  # Adjust the path as needed if config.py is not in the same directory
- 
+
+    # Temp klasörünün varlığını kontrol et
+    if not os.path.exists(app.config['TEMP_FOLDER']):
+        os.makedirs(app.config['TEMP_FOLDER'])
+
     # Error Handling    
     @app.errorhandler(404)
     def page_not_found(e):
@@ -17,15 +22,15 @@ def create_app():
     from app.routes.main_routes import main_blueprint
     from app.routes.upload_routes import upload_blueprint
     from app.routes.graph_routes import graph_blueprint
-    from app.routes.script_routes import script_blueprint
     from app.routes.state_routes import state_blueprint
-
-
+    from app.routes.logs_api import logs_blueprint
+    from app.routes.download_routes import download_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(upload_blueprint, url_prefix='/upload')
     app.register_blueprint(graph_blueprint, url_prefix='/graph')
-    app.register_blueprint(script_blueprint, url_prefix='/run')
     app.register_blueprint(state_blueprint, url_prefix='/state')
+    app.register_blueprint(logs_blueprint, url_prefix='/logs')
+    app.register_blueprint(download_blueprint, url_prefix='/download')
 
     return app

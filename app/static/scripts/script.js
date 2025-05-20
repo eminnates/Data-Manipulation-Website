@@ -13,57 +13,6 @@ const showMenu = (toggleId, navId) => {
 }
 
 showMenu('nav-toggle', 'nav-menu')
-/*=============== BUTTON STAR EFFECT ===============*/
-const glowButtons = document.querySelectorAll('.box button');
-let activeStars = [];
-
-glowButtons.forEach(button => {
-  button.addEventListener("mouseover", () => {
-      // Remove any existing stars
-      removeAllStars();
-
-      // Create new stars
-      for (let i = 0; i < 5; i++) {
-          createStar(button);
-      }
-  });
-
-  button.addEventListener("mouseleave", () => {
-      removeAllStars();
-  });
-});
-
-function createStar(button) {
-  const star = document.createElement("div");
-  star.classList.add("stars");
-  if (Math.random() > 0.5) star.classList.add("large");
-  document.body.appendChild(star);
-
-  const buttonRect = button.getBoundingClientRect();
-  const startX = Math.random() * buttonRect.width + buttonRect.left;
-  const startY = Math.random() * buttonRect.height + buttonRect.top;
-
-  star.style.left = `${startX}px`;
-  star.style.top = `${startY}px`;
-
-  setTimeout(() => {
-      const angle = Math.random() * 2 * Math.PI;
-      const distance = Math.random() * 50 + 20;
-      const moveX = Math.cos(angle) * distance;
-      const moveY = Math.sin(angle) * distance;
-      star.style.transform = `rotate(45deg) translate(${moveX}px, ${moveY}px)`;
-      star.style.opacity = "1";
-  }, 50);
-
-  activeStars.push(star);
-}
-function removeAllStars() {
-  activeStars.forEach(star => {
-      star.style.opacity = "0";
-      setTimeout(() => star.remove(), 500);
-  });
-  activeStars = [];
-}
 
 /*=============== FILE MENU ===============*/
 let selectedFile = null;
@@ -83,76 +32,115 @@ document.getElementById("glowButton").addEventListener("click", () => {
   document.getElementById("hiddenFileInput").click();
 });
 
+// Dosya yükleme işlemini güncelle
+document.getElementById('hiddenFileInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // get-head-api ile head verisini al
+    fetch('/upload/get-head-api', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.head) {
+            // Yardımcı paneli aç ve head verisini yaz
+            const helperPanel = document.getElementById('helper-panel');
+            const helperContent = document.getElementById('helper-head-content');
+            const rows = JSON.parse(data.head);
+            if (rows && rows.length > 0) {
+                const columns = Object.keys(rows[0]);
+                let table = '<table style="width:100%;color:white;border-collapse:collapse;">';
+                table += '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
+                rows.forEach(row => {
+                    table += '<tr>' + columns.map(col => `<td>${row[col]}</td>`).join('') + '</tr>';
+                });
+                table += '</table>';
+                helperContent.innerHTML = `<h4>Dosya Yüklendi - İlk Satırlar</h4><div class="scroll-container">${table}</div>`;
+            } else {
+                helperContent.innerHTML = "Veri bulunamadı.";
+            }
+            
+            // Paneli otomatik aç ve veri tabını aktif et
+            helperPanel.classList.add('expanded');
+            document.querySelectorAll('.tablink').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-tab') === 'data-tab') {
+                    tab.classList.add('active');
+                }
+            });
+            document.querySelectorAll('.tabcontent').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('data-tab').classList.add('active');
+        }
+    });
+    
+    // Logları güncelle
+    fetchAndShowLogs();
+
+    // Önizleme için get-head-api
+    fetch('/upload/get-head-api', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.head) {
+            showDataPreview(JSON.parse(data.head));
+        }
+    });
+
+    // Sütunlar için get-columns-api
+    fetch('/upload/get-columns-api', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.columns) {
+            fillDropdowns(data.columns);
+        }
+    });
+});
+
+function showDataPreview(rows) {
+    const previewDiv = document.getElementById('data-preview');
+    previewDiv.innerHTML = ''; // Tabloyu tamamen kaldır
+}
+
+function fillDropdowns(columns) {
+    const xAxis = document.getElementById('xAxis');
+    const yAxis = document.getElementById('yAxis');
+    xAxis.innerHTML = '';
+    yAxis.innerHTML = '';
+    columns.forEach(col => {
+        xAxis.innerHTML += `<option value="${col}">${col}</option>`;
+        yAxis.innerHTML += `<option value="${col}">${col}</option>`;
+    });
+
+    // Sütun adlarını datalist'e ekle
+    const datalist = document.getElementById('columns-list');
+    if (datalist) {
+        datalist.innerHTML = '';
+        columns.forEach(col => {
+            const option = document.createElement('option');
+            option.value = col;
+            datalist.appendChild(option);
+        });
+    }
+}
 
 // Dropdown işlevselliği
 const dropdown1 = document.getElementById('dropdown1');
 const dropdown2 = document.getElementById('dropdown2');
 const dropdown3 = document.getElementById('dropdown3');
-const dropdown4 = document.getElementById('dropdown4');
+const projectTitle = document.getElementById("projectTitle").value;
 
-// Dropdown seçenekleri için veri yapısı
-
-const dropdownData = {
-  Simple: {
-    options: {
-      Scatter: { columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
-      Bar: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
-      Line: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
-      Area: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
-      Heatmap: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
-      Table: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
-      Contour: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] },
-      Pie: {columns: ['1', '2', '3', '4'], rows: ['1', '2','3','4'] }
-    }
-  },
-  Distributions: {
-    options: {
-      Box: { columns: ['Variable'], rows: ['Group A', 'Group B'] },
-      Violin: { columns: ['Measure'], rows: ['Class 1', 'Class 2'] },
-      Histogram: { columns: ['Bins'], rows: ['Sample 1', 'Sample 2'] },
-      '2D Histogram': { columns: ['X', 'Y'], rows: ['Group X', 'Group Y'] },
-      '2D Contour Histogram': { columns: ['X', 'Y'], rows: ['Density 1', 'Density 2'] }
-    }
-  },
-  "3D": {
-    options: {
-      '3D Scatter': { columns: ['X', 'Y', 'Z'], rows: ['Point A', 'Point B'] },
-      '3D Line': { columns: ['X', 'Y', 'Z'], rows: ['Path 1', 'Path 2'] },
-      '3D Surface': { columns: ['X', 'Y', 'Z'], rows: ['Surface A', 'Surface B'] },
-      '3D Mesh': { columns: ['Vertex', 'Face'], rows: ['Mesh A', 'Mesh B'] },
-      '3D Cone': { columns: ['Vector', 'Position'], rows: ['Cone A', 'Cone B'] },
-      '3D Streamtube': { columns: ['Flow X', 'Flow Y', 'Flow Z'], rows: ['Tube A', 'Tube B'] }
-    }
-  },
-  Maps: {
-    options: {
-      'Tile Map': { columns: ['Longitude', 'Latitude'], rows: ['Region A', 'Region B'] },
-      'Atlas Map': { columns: ['Country', 'Value'], rows: ['Continent A', 'Continent B'] },
-      'Choropleth Tile Map': { columns: ['Region', 'Intensity'], rows: ['Zone A', 'Zone B'] },
-      'Choropleth Atlas Map': { columns: ['Region', 'Value'], rows: ['Area A', 'Area B'] },
-      'Density Tile Map': { columns: ['Longitude', 'Latitude'], rows: ['Density A', 'Density B'] }
-    }
-  },
-  Finance: {
-    options: {
-      Candlestick: { columns: ['Open', 'Close', 'High', 'Low'], rows: ['Stock A', 'Stock B'] },
-      OHLC: { columns: ['Open', 'High', 'Low', 'Close'], rows: ['Stock X', 'Stock Y'] },
-      Waterfall: { columns: ['Stage', 'Value'], rows: ['Step A', 'Step B'] },
-      Funnel: { columns: ['Stage', 'Conversion'], rows: ['Step 1', 'Step 2'] },
-      'Funnel Area': { columns: ['Stage', 'Value'], rows: ['Level A', 'Level B'] }
-    }
-  },
-  Specialized: {
-    options: {
-      'Polar Scatter': { columns: ['Angle', 'Radius'], rows: ['Point A', 'Point B'] },
-      'Polar Bar': { columns: ['Angle', 'Value'], rows: ['Bar A', 'Bar B'] },
-      'Ternary Scatter': { columns: ['A', 'B', 'C'], rows: ['Mix 1', 'Mix 2'] },
-      Sunburst: { columns: ['Label', 'Parent'], rows: ['Node A', 'Node B'] },
-      Treemap: { columns: ['Label', 'Size'], rows: ['Block A', 'Block B'] },
-      Sankey: { columns: ['Source', 'Target', 'Value'], rows: ['Flow A', 'Flow B'] }
-    }
-  }
-};
 
 // Temizleme fonksiyonu
 function clearDropdown(dropdown) {
@@ -173,44 +161,7 @@ function populateDropdown(dropdown, options) {
 }
 
 
-// İlk dropdown (kategori)
-dropdown1.addEventListener('change', function () {
-  clearDropdown(dropdown2);
-  clearDropdown(dropdown3);
-  clearDropdown(dropdown4);
 
-  const selectedCategory = this.value;
-  console.log('Selected Category:', selectedCategory);
-  console.log('Available Categories:', Object.keys(dropdownData));
-  
-  if (selectedCategory && dropdownData[selectedCategory]) {
-    const chartTypes = Object.keys(dropdownData[selectedCategory].options);
-    populateDropdown(dropdown2, chartTypes);
-  } else {
-    console.log('Invalid category selected or category not found in dropdownData');
-  }
-});
-// İkinci dropdown (grafik tipi)
-dropdown2.addEventListener('change', function () {
-  clearDropdown(dropdown3);
-  clearDropdown(dropdown4);
-
-  // Fix: Use value instead of text
-  const category = dropdown1.value;
-  const chart = this.value;
-
-  if (category && chart && dropdownData[category] && dropdownData[category].options[chart]) {
-    const config = dropdownData[category].options[chart];
-
-    if (config.columns) {
-      populateDropdown(dropdown3, config.columns);
-    }
-
-    if (config.rows) {
-      populateDropdown(dropdown4, config.rows);
-    }
-  }
-});
 
 // Mobil menü işlevselliği
 const navMenu = document.getElementById('nav-menu');
@@ -219,47 +170,15 @@ const navClose = document.querySelector('.nav__close');
 
 
 
-// Star efekti fonksiyonu
-function createStar(event, button) {
-  const star = document.createElement('div');
-  star.className = 'stars';
-  if (Math.random() > 0.5) star.classList.add('large');
-  
-  const rect = button.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
-  
-  star.style.left = centerX + 'px';
-  star.style.top = centerY + 'px';
-  
-  document.body.appendChild(star);
-  
-  const angle = Math.random() * Math.PI * 2;
-  const distance = Math.random() * 100 + 50;
-  const duration = Math.random() * 0.5 + 0.5;
-  
-  star.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(45deg)`;
-  star.style.opacity = '0';
-  star.style.transition = `all ${duration}s ease-out`;
-  
-  setTimeout(() => star.remove(), duration * 1000);
-}
-
-// Butonlara star efekti ekleme
-document.querySelectorAll('#glowButton, .run-button').forEach(button => {
-  button.addEventListener('mouseover', (e) => {
-      for (let i = 0; i < 5; i++) {
-          setTimeout(() => createStar(e, button), i * 100);
-      }
-  });
-});
 
 
 /*=============== GÖNDER & POLLING ===============*/
 
-document.querySelector(".run-button").addEventListener("click", () => {
-  const dropdownButtons = document.querySelectorAll(".custom-dropdown");
-  const projectTitle = document.querySelector(".custom-textbox").value;
+document.getElementById("visualizeBtn").addEventListener("click", () => {
+  const plotType = document.getElementById("plotType").value;
+  const xAxis = document.getElementById("xAxis").value;
+  const yAxis = document.getElementById("yAxis").value;
+  const projectTitle = document.getElementById("projectTitle").value;
 
   if (!selectedFile) {
     alert("Lütfen bir dosya seçin.");
@@ -271,12 +190,19 @@ document.querySelector(".run-button").addEventListener("click", () => {
     return;
   }
 
+  console.log([
+    plotType,
+    xAxis,
+    yAxis,
+    projectTitle
+  ]);
+
   const formData = new FormData();
   formData.append("file", selectedFile);
-  formData.append("secim1", dropdown1.value);
-  formData.append("secim2", dropdown2.value);
-  formData.append("secim3", dropdown3.value);
-  formData.append("secim4", dropdown4.value);
+  formData.append("secim1", plotType);
+  formData.append("secim2", xAxis);
+  formData.append("secim3", yAxis);
+  formData.append("secim4", projectTitle);
 
   fetch(`/upload/${encodeURIComponent(projectTitle)}`, {
     method: "POST",
@@ -284,21 +210,25 @@ document.querySelector(".run-button").addEventListener("click", () => {
   })
     .then(response => {
       if (response.ok) {
-        return fetch('/run/run-script', { method: 'POST' });
+        // Logları göster
+        fetchAndShowLogs();
+        return fetch('/state/run-state-machine', {
+          method: 'POST',
+          body: new URLSearchParams({ mode: 'visualize_only', output_type: 'raw' })
+        });
       } else {
-        return response.text().then(text => alert(text));
+        return response.text().then(text => { throw new Error(text); });
       }
     })
     .then(response => {
       if (response.ok) {
         let attempts = 0;
-        const maxAttempts = 30;
+        const maxAttempts = 10; // Daha kısa tut
         const interval = setInterval(() => {
-          fetch("/graph/get-graph", { method: "HEAD" })
+          fetch("/graph/get-graph?type=raw", { method: "HEAD" })
             .then(res => {
               if (res.ok) {
-                // Dosya hazır, sadece 1 kez iframe'e yükle
-                document.getElementById("resultFrame").src = "/graph/get-graph";
+                document.getElementById("beforeFrame").src = "/graph/get-graph?type=raw";
                 clearInterval(interval);
               } else {
                 attempts++;
@@ -309,19 +239,312 @@ document.querySelector(".run-button").addEventListener("click", () => {
               }
             })
             .catch(err => {
-              console.error("Polling hatası:", err);
               clearInterval(interval);
               alert("Bir hata oluştu.");
             });
-        }, 2000);
+        }, 3000); // 3 saniye aralıkla dene
       } else {
-        return response.text().then(text => alert("Script çalıştırma başarısız: " + text));
+        return response.text().then(text => { throw new Error("State machine başlatılamadı: " + text); });
       }
     })
-    
     .catch(err => {
-      console.error("Gönderim hatası:", err);
-      alert("Bir hata oluştu.");
+      alert(err.message || "Bir hata oluştu.");
+    });
+});
+
+document.getElementById("addProcessBtn").addEventListener("click", () => {
+    const selectedProcesses = [];
+    const checkboxes = document.querySelectorAll('.process-controls input[type="checkbox"]:checked');
+
+    checkboxes.forEach(checkbox => {
+        const processName = checkbox.value;
+        const processObj = { name: processName };
+
+        switch(processName) {
+            case "FillMissing":
+                const fm_columnInput = document.querySelector(`input[name="FillMissing_column"]`);
+                const fm_methodSelect = document.querySelector(`select[name="FillMissing_method"]`);
+                if (fm_columnInput && fm_columnInput.value) {
+                    processObj.column = fm_columnInput.value.trim(); // Python 'column' bekliyor
+                }
+                if (fm_methodSelect && fm_methodSelect.value) {
+                    processObj.method = fm_methodSelect.value; // Python 'method' bekliyor
+                }
+                break;
+                
+            case "timeSeriesShift":
+                const ts_colInput = document.querySelector(`input[name="timeSeriesShift_param"]`);
+                const ts_periodInput = document.querySelector(`input[name="timeSeriesShift_period"]`);
+                if (ts_colInput && ts_colInput.value) {
+                    processObj.timeSeriesShift_param = ts_colInput.value.trim(); // Python 'timeSeriesShift_param' bekliyor
+                }
+                if (ts_periodInput && ts_periodInput.value) {
+                    const periodValue = parseInt(ts_periodInput.value);
+                    if (!isNaN(periodValue)) {
+                        processObj.timeSeriesShift_period = periodValue; // Python 'timeSeriesShift_period' bekliyor
+                    } else {
+                        alert(`${processName} için geçerli bir sayısal periyot değeri giriniz.`);
+                        return; 
+                    }
+                }
+                break;
+            
+            case "addNoise":
+                const an_noiseColInput = document.querySelector(`input[name="addNoise_param"]`);
+                const an_noiseLevelInput = document.querySelector(`input[name="addNoise_level"]`);
+                if (an_noiseColInput && an_noiseColInput.value) {
+                    processObj.column = an_noiseColInput.value.trim(); // Python 'column' bekliyor
+                }
+                if (an_noiseLevelInput && an_noiseLevelInput.value) {
+                    processObj.noise_level = parseFloat(an_noiseLevelInput.value); // Python 'noise_level' bekliyor
+                }
+                break;
+                
+            case "RemoveHighNullColumns":
+                const rhnc_thresholdInput = document.querySelector(`input[name="RemoveHighNullColumns_param"]`);
+                if (rhnc_thresholdInput && rhnc_thresholdInput.value) {
+                    processObj.RemoveHighNullColumns_param = parseFloat(rhnc_thresholdInput.value); // Python 'RemoveHighNullColumns_param' bekliyor
+                }
+                break;
+
+            case "combineColumns":
+                const cc_paramInput = document.querySelector(`input[name="combineColumns_param"]`);
+                const cc_newInput = document.querySelector(`input[name="combineColumns_new"]`);
+                if (cc_paramInput && cc_paramInput.value) {
+                    processObj.combineColumns_param = cc_paramInput.value.trim(); // Python 'combineColumns_param' bekliyor
+                }
+                if (cc_newInput && cc_newInput.value) {
+                    processObj.combineColumns_new = cc_newInput.value.trim(); // Python 'combineColumns_new' bekliyor
+                }
+                break;
+                
+            default:
+                // Genel parametre işleme: HTML input adı "ProcessName_param" ise
+                // Python da "ProcessName_param" bekliyorsa bu blok çalışır.
+                // FilterRows ve logTransform Python tarafında düzeltildiği için bu blok onları da kapsar.
+                const paramInput = document.querySelector(`input[name="${processName}_param"]`);
+                if (paramInput && paramInput.value) {
+                    processObj[`${processName}_param`] = paramInput.value.trim();
+                }
+                // Parametresiz işlemler (RemoveWhitespace, CleanEmails vb.) için bu blok bir şey eklemez, bu doğru.
+        }
+        
+        selectedProcesses.push(processObj);
+    });
+    
+    if (selectedProcesses.length === 0) {
+        alert("Lütfen en az bir işlem seçin.");
+        return;
+    }
+    
+    console.log("Gönderilecek işlemler:", selectedProcesses);
+    
+    const projectTitle = document.getElementById("projectTitle").value;
+    if (!projectTitle) {
+        alert("Proje başlığı boş olamaz.");
+        return;
+    }
+
+    fetch('/state/run-state-machine', {
+        method: 'POST',
+        body: new URLSearchParams({
+            mode: 'full_manual',
+            output_type: 'refined',
+            processes: JSON.stringify(selectedProcesses),
+            projectTitle: projectTitle // Bu parametre Python tarafında okunmuyor gibi, gerekliyse eklenmeli.
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        fetchAndShowLogs();
+        alert("İşlemler gönderildi ve analiz başladı!");
+        pollForGraphs();
+        onStateMachineComplete(); // İndirme butonunu kontrol et
+    })
+    .catch(err => {
+        alert("Bir hata oluştu: " + err.message);
+    });
+});
+
+// Grafikleri kontrol etmek için polling fonksiyonu
+function pollForGraphs() {
+    // Önce raw grafiği beforeProcessFrame'e ekle
+    document.getElementById("beforeProcessFrame").src = "/graph/get-graph?type=raw";
+    
+    // Refined grafik için polling yap
+    let attempts = 0;
+    const maxAttempts = 20;
+    const interval = setInterval(() => {
+        fetch("/graph/get-graph?type=refined", { method: "HEAD" })
+        .then(res => {
+            if (res.ok) {
+                document.getElementById("afterProcessFrame").src = "/graph/get-graph?type=refined";
+                document.getElementById("afterProcessDesc").textContent = "İşlenmiş veri görüntüleniyor";
+                clearInterval(interval);
+            } else {
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    document.getElementById("afterProcessDesc").textContent = "İşlenmiş grafik yüklenemedi (404)";
+                }
+            }
+        })
+        .catch(err => {
+            attempts++;
+            if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                document.getElementById("afterProcessDesc").textContent = "Grafik yükleme hatası: " + err.message;
+            }
+        });
+    }, 2000); // 2 saniye aralıkla dene
+}
+
+// Helper Panel işlevselliği
+document.addEventListener("DOMContentLoaded", function () {
+    const helperPanel = document.getElementById("helper-panel");
+    const helperClose = document.getElementById("helper-close");
+    const helperExpand = document.getElementById("helper-expand");
+    const tablinks = document.querySelectorAll(".tablink");
+    
+    // Panel genişletme/daraltma
+    helperPanel.addEventListener("click", function (e) {
+        if (!helperPanel.classList.contains("expanded")) {
+            helperPanel.classList.add("expanded");
+            e.stopPropagation();
+        }
+    });
+    
+    // Paneli kapat
+    helperClose.addEventListener("click", function (e) {
+        helperPanel.classList.remove("expanded");
+        helperPanel.classList.remove("fullscreen");
+        e.stopPropagation();
+    });
+    
+    // Tam ekran yap/küçült
+    helperExpand.addEventListener("click", function (e) {
+        helperPanel.classList.toggle("fullscreen");
+        
+        // İkon değişimi
+        const icon = helperExpand.querySelector("i");
+        if (helperPanel.classList.contains("fullscreen")) {
+            icon.classList.remove("fa-expand");
+            icon.classList.add("fa-compress");
+            helperExpand.title = "Küçült";
+        } else {
+            icon.classList.remove("fa-compress");
+            icon.classList.add("fa-expand");
+            helperExpand.title = "Tam Ekran";
+        }
+        
+        e.stopPropagation();
+    });
+    
+    // Tab değiştirme
+    tablinks.forEach(tab => {
+        tab.addEventListener("click", function(e) {
+            const tabName = this.getAttribute("data-tab");
+            
+            // Tüm tabları gizle
+            document.querySelectorAll(".tabcontent").forEach(content => {
+                content.classList.remove("active");
+            });
+            
+            // Tüm tab butonlarını pasif yap
+            document.querySelectorAll(".tablink").forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Seçilen tabı göster
+            document.getElementById(tabName).classList.add("active");
+            this.classList.add("active");
+            
+            e.stopPropagation();
+        });
+    });
+    
+    // Panelin içinde tıklama yapıldığında kapanmaması için
+    document.querySelector(".helper-content").addEventListener("click", function(e) {
+        e.stopPropagation();
+    });
+});
+
+// Log fetch fonksiyonunu düzelt
+function fetchAndShowLogs() {
+    fetch('/logs/latest')
+        .then(res => res.json())
+        .then(data => {
+            const logContent = document.getElementById('helper-log-content');
+            
+            // Her seferinde log içeriğini temizle
+            logContent.textContent = '';
+            
+            if (data.log) {
+                // Satır sonlarını doğru şekilde işle
+                const formattedLog = data.log.replace(/\\r?\\n/g, '\n');
+                logContent.textContent = formattedLog;
+            } else {
+                logContent.textContent = "Henüz işlem kaydı yok.";
+            }
+            
+            document.getElementById('helper-panel').classList.add('expanded');
+            
+            // Log tab'ını aktif et
+            document.querySelectorAll('.tablink').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-tab') === 'log-tab') {
+                    tab.classList.add('active');
+                }
+            });
+            
+            document.querySelectorAll('.tabcontent').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('log-tab').classList.add('active');
+            
+            // Otomatik scroll
+            logContent.scrollTop = logContent.scrollHeight;
+        });
+}
+
+// İndirme butonunu kontrol eden fonksiyon
+function checkProcessedFileAndToggleButton() {
+    fetch('/download/check-file')
+        .then(res => res.json())
+        .then(data => {
+            const btn = document.getElementById('DownloadBtn');
+            if (data.exists) {
+                btn.disabled = false;
+                btn.title = "İşlenmiş veriyi indir";
+            } else {
+                btn.disabled = true;
+                btn.title = "Önce veri işlenmeli";
+            }
+        });
+}
+
+// Sayfa yüklendiğinde dosya kontrolü yap
+document.addEventListener("DOMContentLoaded", checkProcessedFileAndToggleButton);
+
+// State machine işlemi bittikten sonra tekrar kontrol etmek için bu fonksiyonu çağırabilirsin
+function onStateMachineComplete() {
+    checkProcessedFileAndToggleButton();
+}
+
+// İndirme butonuna tıklanınca dosya var mı tekrar kontrol et ve indir
+document.getElementById("DownloadBtn").addEventListener("click", function() {
+    fetch('/download/check-file')
+    .then(res => res.json())
+    .then(data => {
+        if (data.exists) {
+            window.location.href = '/download/processed-data';
+        } else {
+            alert("İşlenmiş veri dosyası bulunamadı. Lütfen önce veri işleme adımını tamamlayın.");
+        }
+    })
+    .catch(err => {
+        console.error("Hata:", err);
+        alert("Bir hata oluştu. Sayfayı yenileyip tekrar deneyin.");
     });
 });
 

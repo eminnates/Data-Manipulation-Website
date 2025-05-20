@@ -7,7 +7,7 @@
 
     <!--=============== REMIXICONS ===============-->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
     <!--=============== CSS ===============-->
     <link rel="stylesheet" href="static\css\style.css">
 
@@ -104,62 +104,306 @@
         </nav>
     </header>
 
+    <!-- En üstte Nasıl Çalışır ve video bölümü sabit kalıyor -->
     <div class="main-content">
         <div class="x">
-            <h1>Nasıl Çalışır ?</h1><br>
+            <h1 class="xh1">Nasıl Çalışır ?</h1><br>
             <video controls autoplay muted loop>
-                <source src="static\media\dikiş makinesi.mp4">
+                <source src="static/media/pc.mp4">
             </video>
             <div class="box">
                 <div class="box-1">
-                    <button id="glowButton">Dosya Yükle</button>
+                    <button id="glowButton" class="center-button">Dosya Yükle</button>
                 </div>
                 <input type="file" id="hiddenFileInput" style="display: none;" />
                 <div class="box-2">
-                    <button id="glowButton"> Esk Projeyi Görüntülemek İçin Tıkla </button>
+                    <button id="glowButton" class="center-button"> Esk Projeyi Görüntülemek İçin Tıkla </button>
                 </div>
             </div>
         </div>
 
-        <div class="iframe-container">
-            <iframe class="border rounded-lg shadow-md" id ="resultFrame"></iframe>
+        <!-- 1. İşlem olmadan Görselleştir -->
+        <section id="visualize-section">
+            <h2 class="xh1">1. İşlem Olmadan Görselleştir</h2>
+            <div id="data-preview">
+                <!-- JS ile veri önizlemesi buraya gelecek -->
+            </div>
+            <div class="visualize-controls box">
+                <select id="plotType" class="custom-dropdown">
+                    <option value="">Grafik Tipi Seç</option>
+                    <option value="Bar">Bar</option>
+                    <option value="Line">Line</option>
+                    <option value="Scatter">Scatter</option>
+                    <option value="Histogram">Histogram</option>
+                </select>
+                <select id="xAxis" class="custom-dropdown"></select>
+                <select id="yAxis" class="custom-dropdown"></select>
+                <!-- Proje başlığı için textbox -->
+                <input type="text" id="projectTitle" class="custom-textbox" placeholder="Proje Başlığı Yazınız" style="margin:0 8px;">
+                <button id="visualizeBtn" class="center-button">Görselleştir</button>
+            </div>
+            <datalist id="columns-list"></datalist>
+            <iframe id="beforeFrame" class="viz-frame"></iframe>
+        </section>
+
+        <!-- 2. İşlem Bölümü -->
+        <section id="process-section">
+            <h2 class="xh1">2. İşlem Bölümü</h2>
+            <div class="process-controls box">
+                <!-- Temizleme -->
+                <div class="process-group">
+                    <h3 class="process-title"><i class="ri-brush-line"></i> Temizleme</h3>
+                    <div class="checkbox-grid">
+                        <!-- 1. Boşluk ve özel karakter temizliği -->
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="RemoveWhitespace">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Boşlukları Temizle</span>
+                        </label>
+                        
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="StripSpecialChars">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Özel Karakterleri Temizle</span>
+                        </label>
+                    
+                        <!-- 2. Küçük harfe çevirme -->
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="LowercaseColumns">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Küçük Harfe Çevir</span>
+                        </label>
+                    
+                        <!-- 3. Hatalı tip düzeltme -->
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="FixNumericColumn">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Sayısal Sütunu Düzelt</span>
+                            <input type="text" name="FixNumericColumn_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
+                        </label>
+                        
+                        <!-- 4. Eksik değer doldurma veya sütun silme -->
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="FillMissing">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Eksik değerleri doldur</span>
+                            <input type="text" name="FillMissing_column" class="column-input" list="columns-list" placeholder="Sütun Adı">
+                            <select name="FillMissing_method" class="column-input" style="width:120px;">
+                                <option value="mean">Ortalama</option>
+                                <option value="median">Medyan</option>
+                                <option value="mode">Mod</option>
+                                <option value="0">Sıfır</option>
+                            </select>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="RemoveHighNullColumns">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Çok Eksik Sütunları Sil</span>
+                            <input type="number" name="RemoveHighNullColumns_param" min="0" max="1" step="0.05" placeholder="0.8" class="column-input">
+                        </label>
+
+                        <!-- 5. Tekrarlı satır/sütun temizliği -->
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="DeleteDupValues">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Duplicate Satırları Sil</span>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="RemoveConstantColumns">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Sabit Sütunları Sil</span>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="DropColumn">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Sütun Sil</span>
+                            <input type="text" name="DropColumn_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
+                        </label>
+
+
+                        <!-- 7. Alan bazlı özel temizlik -->
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="CleanEmails">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Email Temizle</span>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="NormalizeColumnValues">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Telefon Numaralarını Normalize Et</span>
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="AutoRemoveDigitsFromStringColumns">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">İsim/Adres Sütunlarında Rakamları Sil</span>
+                        </label>
+
+                        <!-- 8. Filtreleme ve son kontroller -->
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="FilterRows">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Satır Filtrele</span>
+                            <input type="text" name="FilterRows_param" class="column-input" placeholder="örn: age > 30">
+                        </label>
+
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="process" value="DynamicFilter">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Dinamik Filtre</span>
+                            <input type="text" name="DynamicFilter_param" class="column-input" placeholder="örn: price > 100">
+                        </label>
+                    </div>
+                    <!-- Manipülasyon -->
+                    <div class="process-group">
+                        <h3 class="process-title"><i class="ri-tools-line"></i> Manipülasyon</h3>
+                        <div class="checkbox-grid">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="process" value="detectAndDeleteOutliers">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-label">Aykırı Değerleri Sil</span>
+                            </label>
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="process" value="logTransform">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-label">Log Transform</span>
+                                <input type="text" name="logTransform_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Augmentasyon -->
+                    <div class="process-group">
+                        <h3 class="process-title"><i class="ri-add-circle-line"></i> Augmentasyon</h3>
+                        <div class="checkbox-grid">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="process" value="generateSyntheticData">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-label">Sentetik Veri Üret</span>
+                                <input type="number" name="generateSyntheticData_param" value="10" class="column-input" placeholder="Miktar">
+                            </label>
+
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="process" value="categoricalToNumeric">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-label">Kategorik Veriyi Sayısala Dönüştür</span>
+                                <input type="text" name="categoricalToNumeric_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
+                            </label>
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="process" value="combineColumns">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-label">Sütunları Birleştir</span>
+                                <input type="text" name="combineColumns_param" class="column-input" list="columns-list" placeholder="Sütun1, Sütun2">
+                                <input type="text" name="combineColumns_new" class="column-input" style="width:120px;" placeholder="Yeni sütun adı">
+                            </label>
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="process" value="addNoise">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-label">Gürültü Ekle</span>
+                                <input type="text" name="addNoise_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
+                                <input type="number" name="addNoise_level" class="column-input" value="0.01" step="0.01" style="width:80px;" placeholder="Seviye">
+                            </label>
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="process" value="timeSeriesShift">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-label">Zaman Serisi Kaydır</span>
+                                <input type="text" name="timeSeriesShift_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
+                                <input type="number" name="timeSeriesShift_period"  class="column-input" style="width:80px;" placeholder="Periyot">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="addProcessBtn" class="center-button" style="margin-top:16px;">İşlemleri Ekle</button>
+        </section>
+
+        <!-- 3. Önceki ve Sonraki Grafik Karşılaştırma -->
+        <section id="compare-section">
+            <h2 class="xh1">3. Önce/Sonra Karşılaştırma</h2>
+            <div class="compare-frames">
+                <div>
+                    <h4 style="color:white;text-align:center;">Önceki Grafik</h4>
+                    <iframe id="beforeProcessFrame" class="viz-frame"></iframe>
+                    <div id="beforeProcessDesc" class="process-desc"></div>
+                </div>
+                <div>
+                    <h4 style="color:white;text-align:center;">Sonraki Grafik</h4>
+                    <iframe id="afterProcessFrame" class="viz-frame"></iframe>
+                    <div id="afterProcessDesc" class="process-desc"></div>
+                </div>
+            </div>
+        </section>
+        <div class="download-btn-wrapper">
+            <button id="DownloadBtn" class="center-button download-btn" disabled>
+                <i class="fa fa-download"></i> İşlenmiş Veriyi İndir
+            </button>
         </div>
 
-        <div class="dependent-dropdowns">
-            <div class="dropdown-group">
-                <select id="dropdown1" class="custom-dropdown">
-                    <option value="">Birinci Seçim</option>
-                    <option value="Simple">Simple</option>
-                    <option value="Distributions">Distributions</option>
-                    <option value="3D">3D</option>
-                    <option value="Maps">Maps</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Specialized">Specialized</option>
-                </select>
-
-                <select id="dropdown2" class="custom-dropdown" disabled>
-                    <option value="">İkinci Seçim</option>
-                </select>
-
-                <select id="dropdown3" class="custom-dropdown" disabled>
-                    <option value="">Üçüncü Seçim</option>
-                </select>
-
-                <select id="dropdown4" class="custom-dropdown" disabled>
-                    <option value="">Dördüncü Seçim</option>
-                </select>
-
-                <input type="text" id="customValue" class="custom-textbox" placeholder="Değer giriniz...">
+        <aside id="helper-panel" class="helper-panel">
+            <span class="helper-icon"><i class="fa-solid fa-bucket"></i></span>
+            <div id="helper-content" class="helper-content">
+                <div class="helper-header">
+                    <h3><i class="fa-solid fa-bucket"></i> Yardımcı Panel</h3>
+                    <div class="helper-controls">
+                        <button id="helper-expand" class="helper-btn" title="Tam Ekran"><i class="fa-solid fa-expand"></i></button>
+                        <button id="helper-close" class="helper-btn" title="Kapat"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+                
+                <div class="helper-tabs">
+                    <button class="tablink active" data-tab="data-tab">Veri</button>
+                    <button class="tablink" data-tab="log-tab">Log</button>
+                    <button class="tablink" data-tab="info-tab">Bilgi</button>
+                </div>
+                
+                <div id="data-tab" class="tabcontent active">
+                    <div id="helper-head-content" class="scroll-container"></div>
+                </div>
+                
+                <div id="log-tab" class="tabcontent">
+                    <div class="scroll-container">
+                        <pre id="helper-log-content"></pre>
+                    </div>
+                </div>
+                
+                <div id="info-tab" class="tabcontent">
+                    <div class="scroll-container">
+                        <h4>Yardım & İpuçları</h4>
+                        <p>İşlem adımları:</p>
+                        <ol>
+                            <li>Dosyayı yükleyin</li>
+                            <li>Grafiğinizi yapılandırın</li>
+                            <li>İşlemleri seçin ve uygulayın</li>
+                        </ol>
+                    </div>
+                </div>
             </div>
-            
-            <div class="run-button-container">
-                <button class="run-button">Çalıştır</button>
-            </div>
-        </div>
-
-        
+        </aside>
     </div>
     <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+    <script>
+        // İşlem tamamlandıktan sonra butonu aktifleştir
+        function enableDownloadButton() {
+            document.getElementById('DownloadBtn').disabled = false;
+            document.getElementById('DownloadBtn').classList.add('active');
+        }
+
+        // script.js dosyasında indirme butonunun olay dinleyicisini basitleştir
+        document.getElementById("DownloadBtn").addEventListener("click", function() {
+            // Doğrudan indirme URL'sine git
+            window.location.href = '/download/processed-data';
+        });
+    </script>
 </body>
 
 </html>
+`
+
+

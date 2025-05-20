@@ -1,11 +1,11 @@
 import os
-
-project_json = {
-    "project_name": None,
-    "file_name": None,
-    "extension": None,
-    "option": []
-}
+class Project:
+    project_json = {
+        "project_name": None,
+        "file_name": None,
+        "extension": None,
+        "option": []
+    }
 prn = ""
 
 def allowed_file(filename):
