@@ -189,6 +189,10 @@ document.getElementById("visualizeBtn").addEventListener("click", () => {
     alert("Proje başlığı boş olamaz.");
     return;
   }
+  if(!plotType){
+    alert("Lütfen bir grafik türü seçin.");
+    return;
+  }
 
   console.log([
     plotType,

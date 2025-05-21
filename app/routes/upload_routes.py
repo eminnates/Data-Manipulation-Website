@@ -9,20 +9,11 @@ upload_blueprint = Blueprint('upload', __name__)
 @upload_blueprint.route('/<projectName>', methods=['POST'])
 def upload_file(projectName):
     # Safely get the file from request.files
-    file = request.files.get('file')
-    if not file:
-        # "file" key not found OR no file uploaded
-        return jsonify({
-            'status': 'error',
-            'message': 'No file provided'
-        }), 400
-
+    if 'file' not in request.files:
+        return jsonify({'status': 'error', 'message': 'No file provided'}), 400
+    file = request.files['file']
     if file.filename == '':
-        # Filename is empty string
-        return jsonify({
-            'status': 'error',
-            'message': 'Filename is empty'
-        }), 400
+        return jsonify({'status': 'error', 'message': 'Filename is empty'}), 400
 
     # Check extension
     if allowed_file(file.filename):
@@ -77,9 +68,11 @@ def upload_file(projectName):
 
 @upload_blueprint.route('/get-head-api', methods=['POST'])
 def get_head_api():
-    file = request.files.get('file')
-    if not file:
+    if 'file' not in request.files:
         return jsonify({'status': 'error', 'message': 'No file provided'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'status': 'error', 'message': 'Filename is empty'}), 400
 
     try:
         # Dosya uzantısını al
@@ -115,9 +108,11 @@ def get_head_api():
 
 @upload_blueprint.route('/get-columns-api', methods=['POST'])
 def get_columns_api():
-    file = request.files.get('file')
-    if not file:
+    if 'file' not in request.files:
         return jsonify({'status': 'error', 'message': 'No file provided'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'status': 'error', 'message': 'Filename is empty'}), 400
 
     try:
         # Dosya uzantısını al

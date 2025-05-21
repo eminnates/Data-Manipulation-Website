@@ -1,10 +1,12 @@
 from flask import Flask, jsonify
 import os
 
-def create_app():
+def create_app(testing=False):
     app = Flask(__name__)
-    app.config.from_object('config.Config')  # Adjust the path as needed if config.py is not in the same directory
-
+    if testing:
+        app.config.from_object('config.DevelopmentConfig')
+    else:
+        app.config.from_object('config.ProductionConfig')
     # Temp klasörünün varlığını kontrol et
     if not os.path.exists(app.config['TEMP_FOLDER']):
         os.makedirs(app.config['TEMP_FOLDER'])

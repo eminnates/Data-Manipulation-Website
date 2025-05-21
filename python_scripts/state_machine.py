@@ -1,8 +1,11 @@
+import os
 from enum import Enum, auto
 import logging
 from datetime import datetime
 from python_scripts.dataCleaning import Cleanse, Manipulation, Augmentation
 from python_scripts.visualization import Project
+
+os.makedirs("logs", exist_ok=True)
 
 logging.basicConfig(
     filename=f"logs/state_machine_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",

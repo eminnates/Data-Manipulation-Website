@@ -117,7 +117,7 @@
                 </div>
                 <input type="file" id="hiddenFileInput" style="display: none;" />
                 <div class="box-2">
-                    <button id="glowButton" class="center-button"> Esk Projeyi Görüntülemek İçin Tıkla </button>
+                    <button id="glowButtonOldProject" class="center-button" disabled> Eski Projeyi Görüntülemek İçin Tıkla </button>
                 </div>
             </div>
         </div>
@@ -286,7 +286,14 @@
                                 <span class="checkbox-label">Sentetik Veri Üret</span>
                                 <input type="number" name="generateSyntheticData_param" value="10" class="column-input" placeholder="Miktar">
                             </label>
-
+                            
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="process" value="sortValues">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-label">Sırala (Sort Values)</span>
+                                <input type="text" name="sortValues_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
+                            </label>
+                            
                             <label class="checkbox-item">
                                 <input type="checkbox" name="process" value="categoricalToNumeric">
                                 <span class="checkbox-custom"></span>
