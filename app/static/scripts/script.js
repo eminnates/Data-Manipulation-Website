@@ -512,23 +512,8 @@ function fetchAndShowLogs() {
 }
 
 // İndirme butonunu kontrol eden fonksiyon
-function checkProcessedFileAndToggleButton() {
-    fetch('/download/check-file')
-        .then(res => res.json())
-        .then(data => {
-            const btn = document.getElementById('DownloadBtn');
-            if (data.exists) {
-                btn.disabled = false;
-                btn.title = "İşlenmiş veriyi indir";
-            } else {
-                btn.disabled = true;
-                btn.title = "Önce veri işlenmeli";
-            }
-        });
-}
 
-// Sayfa yüklendiğinde dosya kontrolü yap
-document.addEventListener("DOMContentLoaded", checkProcessedFileAndToggleButton);
+
 
 // State machine işlemi bittikten sonra tekrar kontrol etmek için bu fonksiyonu çağırabilirsin
 function onStateMachineComplete() {

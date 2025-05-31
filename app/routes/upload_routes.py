@@ -8,30 +8,28 @@ upload_blueprint = Blueprint('upload', __name__)
 
 @upload_blueprint.route('/<projectName>', methods=['POST'])
 def upload_file(projectName):
-    # Safely get the file from request.files
+    # request.files dan gelen dosyayı kontrol et
     if 'file' not in request.files:
         return jsonify({'status': 'error', 'message': 'No file provided'}), 400
     file = request.files['file']
     if file.filename == '':
         return jsonify({'status': 'error', 'message': 'Filename is empty'}), 400
 
-    # Check extension
+    # uzantıyı kontrol et
     if allowed_file(file.filename):
-        # Save file
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filepath)
-
         _, ext = os.path.splitext(file.filename)
         extension = ext[1:].lower() if ext else ""
 
-        # Update project info
+        # proje bilgisini jsona yaz
         pr = Project()
         project_json = pr.project_json
         project_json['project_name'] = projectName
         project_json['file_name'] = file.filename
         project_json['extension'] = extension
 
-        # Validate secim3
+        # dropdownlardaki seçimleri kontrol et
         secim3_value = request.form.get('secim3')
         secim4_value = request.form.get('secim4')
         if secim3_value is None or secim3_value == '':
@@ -45,7 +43,7 @@ def upload_file(projectName):
                 'message': 'secim4 alanı eksik veya geçersiz!'
             }), 400
 
-        # Store dropdown selections
+        # dropdown seçimlerini option başlığı adı altında jsona ekle
         project_json['option'] = [
             request.form.get('secim1'),
             request.form.get('secim2'),
@@ -53,14 +51,12 @@ def upload_file(projectName):
             request.form.get('secim4')
         ]
         pr.project_json = project_json
-        # Optionally save to JSON or perform other processing
 
         return jsonify({
             'status': 'success',
             'message': 'File uploaded successfully'
         }), 200
 
-    # If the file extension is not allowed
     return jsonify({
         'status': 'error',
         'message': 'Invalid file format'

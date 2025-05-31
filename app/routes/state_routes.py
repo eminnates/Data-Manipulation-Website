@@ -2,9 +2,9 @@ from flask import Blueprint, request, jsonify, current_app
 import os
 import pandas as pd
 import threading
-from python_scripts.state_machine import DataState, DataStateMachine
+from python_scripts.state_machine import  DataStateMachine
 from app.utils.file_utils import Project
-import json  # json importu eklendi
+import json  
 
 state_blueprint = Blueprint('state', __name__)
 
@@ -12,7 +12,7 @@ state_blueprint = Blueprint('state', __name__)
 def run_state_machine_background(app, file_path, ext, mode='full_auto', output_type='raw', process_list=None, project_title="default_project"):
     with app.app_context():  # current_app yerine doğrudan app nesnesini kullan
         try:
-            # YENİ YÖNTEM: app ve config kullanarak yolu oluştur
+
             temp_dir = os.path.join(app.root_path, app.config['TEMP_FOLDER'])
             processed_file_path_to_delete = os.path.join(temp_dir, 'processed_data.csv')
 
@@ -27,10 +27,9 @@ def run_state_machine_background(app, file_path, ext, mode='full_auto', output_t
             
             # Uzantıyı düzgün formata getir (nokta ekleyerek)
             if not ext.startswith('.'):
-                ext = '.' + ext
-            
+                ext = '.' + ext            
             # Dosya uzantısına göre farklı okuma yöntemleri kullan
-            data_df = None  # data_df olarak yeniden adlandırıldı
+            data_df = None  
             if ext.lower() == '.csv':
                 data_df = pd.read_csv(file_path)
             elif ext.lower() in ['.xls', '.xlsx', '.xlsm']:
@@ -56,7 +55,6 @@ def run_state_machine_background(app, file_path, ext, mode='full_auto', output_t
                 return
 
             app.logger.info(f"Dosya başarıyla okundu: {file_path} (format: {ext})")
-            
             # State machine çalıştır
             output_processed_file_path = os.path.join(temp_dir, 'processed_data.csv')
 
@@ -83,7 +81,6 @@ def run_state_machine():
     # Bu, dosya seçimi değiştiğinde güncel bilgiyi almasını sağlar.
     project_helper = Project() 
     file_name = project_helper.project_json.get('file_name', '')
-    
     if not file_name:
         # Eğer file_utils.Project ile dosya adı alınamadıysa, doğrudan request'ten almayı dene
         # Bu genellikle ilk dosya yükleme senaryosu için geçerli olabilir.
@@ -103,17 +100,15 @@ def run_state_machine():
              project_helper.update_project_json(project_name=os.path.splitext(file_name)[0], file_name=file_name, extension=os.path.splitext(file_name)[1])
         else:
             return jsonify({'error': 'No file provided or found in project context'}), 400
-        
     project_extension = project_helper.project_json.get('extension', '')
     # Uzantı kontrolü ve düzeltme
     if project_extension and not project_extension.startswith('.'):
         project_extension = '.' + project_extension
-    
     # UPLOAD_FOLDER'ı config'den al, yoksa varsayılan kullan
     upload_folder_path = current_app.config.get('UPLOAD_FOLDER', 'uploads/')
     file_path = os.path.join(upload_folder_path, file_name)
     file_path = os.path.abspath(file_path)  # Tam yolu al
-    
+
     current_app.logger.info(f"Attempting to process file: {file_path} with extension: {project_extension}")
     
     # Dosyanın varlığını kontrol et
@@ -126,7 +121,6 @@ def run_state_machine():
     output_type = request.form.get('output_type', 'raw')
     processes_json_str = request.form.get('processes')  # processes_json_str olarak adlandırdım
     project_title = project_helper.project_json.get('project_name', os.path.splitext(file_name)[0])
-
     process_list = []
     if processes_json_str:
         try:
@@ -135,10 +129,8 @@ def run_state_machine():
         except json.JSONDecodeError as e:
             current_app.logger.error(f"JSON Decode Error for processes: {e}")
             return jsonify({'error': f'Process list is not valid JSON: {e}'}), 400
-    
     # Gerçek app nesnesini al
     app_instance = current_app._get_current_object()
-
     # State machine'i arka planda başlat
     thread = threading.Thread(
         target=run_state_machine_background,
@@ -146,6 +138,5 @@ def run_state_machine():
     )
     thread.daemon = True  # Ana thread sonlandığında bu thread'in de sonlanmasını sağlar
     thread.start()
-    
     # Başarı yanıtı döndür
-    return jsonify({'message': 'State machine başlatıldı', 'filename_processed': file_name}), 202
+    return jsonify({'message': 'State machine baslatildi', 'filename_processed': file_name}), 202
