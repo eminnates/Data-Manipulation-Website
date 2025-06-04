@@ -1,15 +1,19 @@
+import os
+
 class Config:
-    UPLOAD_FOLDER = 'uploads/'
-    OUTPUT_FOLDER = 'app/static/outputs'
-    TEMP_FOLDER = 'static/temp/'  # İşlenmiş verilerin geçici saklanacağı klasör
+        MAX_CONTENT_LENGTH = 100 * 1024 * 1024
+class DevelopmentConfig(Config):
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', os.path.join(BASE_DIR, 'uploads'))
+    OUTPUT_FOLDER = os.environ.get('OUTPUT_FOLDER', os.path.join(BASE_DIR, 'app/static/outputs'))
+    TEMP_FOLDER = os.environ.get('TEMP_FOLDER', os.path.join(BASE_DIR, 'app/static/temp'))
+    LOGS_FOLDER = os.environ.get('LOGS_FOLDER', os.path.join(BASE_DIR, 'logs'))
     DEBUG = True
-    MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB maksimum dosya boyutu
+    MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB
 
 class ProductionConfig(Config):
-    DEBUG = False  # Disable debug mode in production
-    # Üretim ortamı için daha güvenli bir temp klasörü
-
-
-class DevelopmentConfig(Config):
-    DEBUG = True
-    TESTING = True
+    DEBUG = False
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/tmp/app/uploads')
+    OUTPUT_FOLDER = os.environ.get('OUTPUT_FOLDER', '/tmp/app/outputs')
+    TEMP_FOLDER = os.environ.get('TEMP_FOLDER', '/tmp/app/temp')
+    LOGS_FOLDER = os.environ.get('LOGS_FOLDER', '/tmp/app/logs')
