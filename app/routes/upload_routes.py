@@ -64,80 +64,45 @@ def upload_file(projectName):
 
 @upload_blueprint.route('/get-head-api', methods=['POST'])
 def get_head_api():
-    if 'file' not in request.files:
-        return jsonify({'status': 'error', 'message': 'No file provided'}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'status': 'error', 'message': 'Filename is empty'}), 400
-
     try:
-        # Dosya uzantısını al
-        _, ext = os.path.splitext(file.filename)
-        ext = ext.lower()
+        # JSON içindeki sample alanını al
+        data = request.get_json()
+        if not data or 'sample' not in data:
+            return jsonify({'status': 'error', 'message': 'sample verisi eksik'}), 400
         
-        # Dosya tipine göre oku
-        if ext == '.csv':
-            df = pd.read_csv(file)
-        elif ext in ['.xls', '.xlsx', '.xlsm']:
-            df = pd.read_excel(file)
-        elif ext == '.json':
-            try:
-                df = pd.read_json(file)
-            except ValueError:
-                file.seek(0)
-                df = pd.read_json(file, lines=True)
-            # Büyük dosya ise sadece ilk 1000 satırı al
-            if hasattr(df, 'head'):
-                df = df.head(1000)
-        elif ext == '.txt':
-            # Tab veya virgülle ayrılmış olabilir, otomatik tespit et
-            df = pd.read_csv(file, sep=None, engine='python')
-        else:
-            return jsonify({'status': 'error', 'message': f'Desteklenmeyen dosya türü: {ext}'}), 400
+        sample_text = data['sample']
+        
+        # Pandas ile sample CSV'yi oku
+        from io import StringIO
+        sample_io = StringIO(sample_text)
+        df = pd.read_csv(sample_io)
 
-        # İlk 10 satırı JSON olarak döndür
-        head_json = GetHead(df).get_head()
+        # İlk 10 satır (zaten öyle geliyor ama yine de safe)
+        head_json = GetHead(df.head(10)).get_head()
         return jsonify({'status': 'success', 'head': head_json}), 200
-        
+
     except Exception as e:
         return jsonify({'status': 'error', 'message': f'Veri okuma hatası: {str(e)}'}), 400
-
+    
 @upload_blueprint.route('/get-columns-api', methods=['POST'])
 def get_columns_api():
-    if 'file' not in request.files:
-        return jsonify({'status': 'error', 'message': 'No file provided'}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'status': 'error', 'message': 'Filename is empty'}), 400
-
     try:
-        # Dosya uzantısını al
-        _, ext = os.path.splitext(file.filename)
-        ext = ext.lower()
+        # JSON içindeki sample alanını al
+        data = request.get_json()
+        if not data or 'sample' not in data:
+            return jsonify({'status': 'error', 'message': 'sample verisi eksik'}), 400
         
-        # Dosya tipine göre oku
-        if ext == '.csv':
-            df = pd.read_csv(file)
-        elif ext in ['.xls', '.xlsx', '.xlsm']:
-            df = pd.read_excel(file)
-        elif ext == '.json':
-            try:
-                df = pd.read_json(file)
-            except ValueError:
-                file.seek(0)
-                df = pd.read_json(file, lines=True)
-            if hasattr(df, 'head'):
-                df = df.head(1000)
-        elif ext == '.txt':
-            # Tab veya virgülle ayrılmış olabilir, otomatik tespit et
-            df = pd.read_csv(file, sep=None, engine='python')
-        else:
-            return jsonify({'status': 'error', 'message': f'Desteklenmeyen dosya türü: {ext}'}), 400
+        sample_text = data['sample']
+        
+        # CSV içeriğini DataFrame'e çevir
+        from io import StringIO
+        sample_io = StringIO(sample_text)
+        df = pd.read_csv(sample_io)
 
-        # Sütunları liste olarak döndür
+        # Sütunları çıkar
         from python_scripts.getColumns import GetColumns
         columns = GetColumns(df).get_columns()
         return jsonify({'status': 'success', 'columns': columns}), 200
-        
+
     except Exception as e:
         return jsonify({'status': 'error', 'message': f'Veri okuma hatası: {str(e)}'}), 400

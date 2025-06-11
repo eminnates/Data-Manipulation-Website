@@ -32,81 +32,77 @@ document.getElementById("glowButton").addEventListener("click", () => {
   document.getElementById("hiddenFileInput").click();
 });
 
-// Dosya yükleme işlemini güncelle
 document.getElementById('hiddenFileInput').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+  const file = event.target.files[0];
+  if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
+  const chunkSize = 5 * 1024; // 5 KB
+  const blob = file.slice(0, chunkSize);
 
-    // get-head-api ile head verisini al
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    // İlk 10 satırı ayır
+    const lines = text.split(/\r?\n/).slice(0, 10).join("\n");
+
+    const payload = JSON.stringify({ sample: lines });
+
+    // get-head-api çağrısı
     fetch('/upload/get-head-api', {
-        method: 'POST',
-        body: formData
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
     })
     .then(response => response.json())
     .then(data => {
-        if (data.head) {
-            // Yardımcı paneli aç ve head verisini yaz
-            const helperPanel = document.getElementById('helper-panel');
-            const helperContent = document.getElementById('helper-head-content');
-            const rows = JSON.parse(data.head);
-            if (rows && rows.length > 0) {
-                const columns = Object.keys(rows[0]);
-                let table = '<table style="width:100%;color:white;border-collapse:collapse;">';
-                table += '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
-                rows.forEach(row => {
-                    table += '<tr>' + columns.map(col => `<td>${row[col]}</td>`).join('') + '</tr>';
-                });
-                table += '</table>';
-                helperContent.innerHTML = `<h4>Dosya Yüklendi - İlk Satırlar</h4><div class="scroll-container">${table}</div>`;
-            } else {
-                helperContent.innerHTML = "Veri bulunamadı.";
-            }
-            
-            // Paneli otomatik aç ve veri tabını aktif et
-            helperPanel.classList.add('expanded');
-            document.querySelectorAll('.tablink').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.getAttribute('data-tab') === 'data-tab') {
-                    tab.classList.add('active');
-                }
-            });
-            document.querySelectorAll('.tabcontent').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById('data-tab').classList.add('active');
+      if (data.head) {
+        const helperPanel = document.getElementById('helper-panel');
+        const helperContent = document.getElementById('helper-head-content');
+        const rows = JSON.parse(data.head);
+        if (rows && rows.length > 0) {
+          const columns = Object.keys(rows[0]);
+          let table = '<table style="width:100%;color:white;border-collapse:collapse;">';
+          table += '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
+          rows.forEach(row => {
+            table += '<tr>' + columns.map(col => `<td>${row[col]}</td>`).join('') + '</tr>';
+          });
+          table += '</table>';
+          helperContent.innerHTML = `<h4>Dosya Yüklendi - İlk Satırlar</h4><div class="scroll-container">${table}</div>`;
+        } else {
+          helperContent.innerHTML = "Veri bulunamadı.";
         }
-    });
-    
+        helperPanel.classList.add('expanded');
+        document.querySelectorAll('.tablink').forEach(tab => {
+          tab.classList.remove('active');
+          if (tab.getAttribute('data-tab') === 'data-tab') tab.classList.add('active');
+        });
+        document.querySelectorAll('.tabcontent').forEach(content => content.classList.remove('active'));
+        document.getElementById('data-tab').classList.add('active');
+      }
+    })
+    .catch(err => console.error("get-head-api hatası:", err));
+
+    // get-columns-api çağrısı
+    fetch('/upload/get-columns-api', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.columns) {
+        fillDropdowns(data.columns);
+      }
+    })
+    .catch(err => console.error("get-columns-api hatası:", err));
+
     // Logları güncelle
     fetchAndShowLogs();
+  };
 
-    // Önizleme için get-head-api
-    fetch('/upload/get-head-api', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.head) {
-            showDataPreview(JSON.parse(data.head));
-        }
-    });
-
-    // Sütunlar için get-columns-api
-    fetch('/upload/get-columns-api', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.columns) {
-            fillDropdowns(data.columns);
-        }
-    });
+  reader.readAsText(blob);
 });
+
 
 function showDataPreview(rows) {
     const previewDiv = document.getElementById('data-preview');
