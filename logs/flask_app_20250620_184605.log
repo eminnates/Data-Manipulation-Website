@@ -1,2 +1,22 @@
 Log testi: 2025-06-20T18:46:05.104215
 2025-06-20 18:46:05,107 - INFO - Flask logging başlatıldı
+2025-06-20 18:46:28,045 - INFO - Attempting to process file: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv with extension: .csv
+2025-06-20 18:46:28,057 - INFO - Silinecek eski işlenmiş dosya bulunamadı: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-20 18:46:28,108 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv (format: .csv)
+2025-06-20 18:46:30,192 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedilmeli: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-20 18:51:34,384 - INFO - Attempting to process file: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv with extension: .csv
+2025-06-20 18:51:34,401 - INFO - Eski işlenmiş dosya başarıyla silindi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-20 18:51:34,458 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv (format: .csv)
+2025-06-20 18:51:34,909 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedilmeli: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-20 18:56:50,780 - INFO - Attempting to process file: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv with extension: .csv
+2025-06-20 18:56:50,786 - INFO - Eski işlenmiş dosya başarıyla silindi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-20 18:56:50,828 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv (format: .csv)
+2025-06-20 18:56:51,216 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedilmeli: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-20 19:07:40,324 - INFO - Attempting to process file: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv with extension: .csv
+2025-06-20 19:07:40,358 - INFO - Eski işlenmiş dosya başarıyla silindi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-20 19:07:40,408 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv (format: .csv)
+2025-06-20 19:07:40,773 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedilmeli: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-20 19:07:51,173 - INFO - Attempting to process file: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv with extension: .csv
+2025-06-20 19:07:51,177 - INFO - Eski işlenmiş dosya başarıyla silindi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-20 19:07:51,206 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv (format: .csv)
+2025-06-20 19:07:51,539 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedilmeli: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv

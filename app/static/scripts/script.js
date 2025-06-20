@@ -209,7 +209,7 @@ document.getElementById("visualizeBtn").addEventListener("click", () => {
     .then(response => {
       if (response.ok) {
         // Logları göster
-        fetchAndShowLogs()
+        showLogPanel()
         return fetch('/state/run-state-machine', {
           method: 'POST',
           body: new URLSearchParams({ mode: 'visualize_only', output_type: 'raw' })
@@ -354,7 +354,7 @@ document.getElementById("addProcessBtn").addEventListener("click", () => {
     })
     .then(response => response.json())
     .then(data => {
-        fetchAndShowLogs()
+        showLogPanel()
         alert("İşlemler gönderildi ve analiz başladı!");
         pollForGraphs();
         onStateMachineComplete(); // İndirme butonunu kontrol et
@@ -467,43 +467,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function fetchAndShowLogs() {
-    fetch('/logs/latest')
-        .then(res => res.json())
-        .then(data => {
-            const logContent = document.getElementById('helper-log-content');
-            
-            // Her seferinde log içeriğini temizle
-            logContent.textContent = '';
-            
-            if (data.log) {
-                // Satır sonlarını doğru şekilde işle
-                const formattedLog = data.log.replace(/\\r?\\n/g, '\n');
-                logContent.textContent = formattedLog;
-            } else {
-                logContent.textContent = "Henüz işlem kaydı yok.";
-            }
-            
-            document.getElementById('helper-panel').classList.add('expanded');
-            
-            // Log tab'ını aktif et
-            document.querySelectorAll('.tablink').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.getAttribute('data-tab') === 'log-tab') {
-                    tab.classList.add('active');
-                }
-            });
-            
-            document.querySelectorAll('.tabcontent').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById('log-tab').classList.add('active');
-            
-            // Otomatik scroll
-            logContent.scrollTop = logContent.scrollHeight;
-        });
-}
 
+function showLogPanel() {
+    // Log panelini hemen göster ve log tab'ını aktif et
+    document.getElementById('helper-panel').classList.add('expanded');
+    document.querySelectorAll('.tablink').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-tab') === 'log-tab') {
+            tab.classList.add('active');
+        }
+    });
+    document.querySelectorAll('.tabcontent').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById('log-tab').classList.add('active');
+}
 
 // İndirme butonunu kontrol eden fonksiyon
 
@@ -531,3 +509,30 @@ document.getElementById("DownloadBtn").addEventListener("click", function() {
     });
 });
 
+/* =============== WEBSOCKET DİNLEYİCİSİ ===============*/
+document.addEventListener("DOMContentLoaded", function () {
+
+    const socket = io();
+
+    socket.on('connect', () => {
+        console.log('WebSocket sunucusuna başarıyla bağlandı! ID:', socket.id);
+    });
+
+    // Backend'den 'log_message' olayı geldiğinde çalışacak fonksiyon
+    socket.on('log_message', (data) => {
+        console.log('Yeni log mesajı alındı:', data);
+        const logContent = document.getElementById('helper-log-content');
+
+        if (logContent && data.log) {
+            const newLogLine = document.createTextNode(data.log + '\n');
+            logContent.appendChild(newLogLine);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+    });
+
+    // Bağlantı kesildiğinde bilgilendir
+    socket.on('disconnect', () => {
+        console.log('WebSocket bağlantısı kesildi.');
+    });
+    // --- WEBSOCKET DİNLEYİCİSİ SONU ---
+});

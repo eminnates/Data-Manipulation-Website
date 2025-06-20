@@ -1,10 +1,9 @@
 from flask import Flask
 import os
-import redis
-
-
-
-redis_client = redis.Redis()
+from app.features.websocket.websocket_listener import *
+from app.features.websocket.events import *
+from app.features.websocket.extensions import socketio
+from app.features.redis.redis_client import get_redis_client
 
 def create_app(testing=False):
     app = Flask(__name__)
@@ -27,8 +26,12 @@ def create_app(testing=False):
     # Logger konfigürasyonu
     configure_logging(app)
 
-
-
+    # Redis client'ı başlat
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        start_redis_listener(app)
+    
+    # WebSocket olaylarını başlat
+    socketio.init_app(app)
     
     # Hata işleyicilerini kaydet
     from app.errors.handlers import register_error_handlers
