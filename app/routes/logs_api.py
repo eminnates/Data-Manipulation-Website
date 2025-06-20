@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 import os
-import time
+from app.features.redis.redis_client import get_redis_client
 
 logs_blueprint = Blueprint('logs', __name__)
 
@@ -35,43 +35,20 @@ def get_latest_log():
     
     log_path = os.path.join(logs_dir, log_files[0])
 
-    # Tamamlanma durumunu kontrol etmek için bekleme
-    timeout = 5  # saniye - süreyi artırdım
-    interval = 0.3  # tekrar aralığı
-    waited = 0
-    filtered = []
-    is_complete = False
-    
-    while waited < timeout:
-        try:
-            with open(log_path, encoding='utf-8') as f:
-                lines = f.readlines()
-            
-            # İşlem tamamlanmış mı kontrol et
-            is_complete = is_process_complete(lines)
-            
-            # HTTP isteklerini filtrele
-            filtered = [line for line in lines if is_meaningful_log(line)]
-            
-            # Zaten tamamlanmışsa çık
-            if is_complete and filtered:
-                break
-                
-        except Exception as e:
-            print(f"Log okuma hatası: {e}")
-            
-        time.sleep(interval)
-        waited += interval
+    # Redis'ten kontrol
+    redis_client = get_redis_client()
+    redis_complete = redis_client.get("state_machine:complete")
+    is_complete = redis_complete == b"1"
 
-    # Satır sonlarını düzgün ekleyerek verileri formatlayın
-    formatted_logs = []
-    for line in filtered:
-        if line and not line.endswith('\n'):
-            formatted_logs.append(line + '\n')
-        else:
-            formatted_logs.append(line)
-            
+    filtered = []
+    try:
+        with open(log_path, encoding='utf-8') as f:
+            lines = f.readlines()
+            filtered = [line if line.endswith('\n') else line + '\n' for line in lines if is_meaningful_log(line)]
+    except Exception as e:
+        print(f"Log okuma hatası: {e}")
+
     return jsonify({
-        'log': ''.join(formatted_logs), 
+        'log': ''.join(filtered), 
         'complete': is_complete
     })

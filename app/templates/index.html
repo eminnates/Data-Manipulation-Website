@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="static\css\style.css">
 
     <title>Data Manipulation</title>
+
 </head>
 
 <body>
@@ -395,6 +396,7 @@
         </aside>
     </div>
     <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script>
         // İşlem tamamlandıktan sonra butonu aktifleştir
         function enableDownloadButton() {
@@ -408,6 +410,8 @@
             window.location.href = '/download/processed-data';
         });
     </script>
+
+
 </body>
 
 </html>

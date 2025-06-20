@@ -1,0 +1,20 @@
+2025-06-21 00:49:44,663 - INFO - State Machine initialized. Mode: visualize_only, Save Path: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-21 00:49:44,747 - INFO - Loading data...
+2025-06-21 00:49:44,748 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-21 00:49:44,750 - INFO - Entering VISUALIZATION state...
+2025-06-21 00:49:46,928 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-21 00:49:46,928 - INFO - Finalizing data processing...
+2025-06-21 00:49:46,991 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-21 00:49:46,992 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-21 00:49:46,992 - INFO - State machine finished. No further processing.
+2025-06-21 00:49:46,992 - INFO - Redis flag set: state_machine:complete = 1
+2025-06-21 00:52:56,253 - INFO - State Machine initialized. Mode: visualize_only, Save Path: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-21 00:52:56,258 - INFO - Loading data...
+2025-06-21 00:52:56,260 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-21 00:52:56,261 - INFO - Entering VISUALIZATION state...
+2025-06-21 00:52:56,576 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-21 00:52:56,577 - INFO - Finalizing data processing...
+2025-06-21 00:52:56,646 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-21 00:52:56,647 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-21 00:52:56,647 - INFO - State machine finished. No further processing.
+2025-06-21 00:52:56,649 - INFO - Redis flag set: state_machine:complete = 1

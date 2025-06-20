@@ -32,81 +32,75 @@ document.getElementById("glowButton").addEventListener("click", () => {
   document.getElementById("hiddenFileInput").click();
 });
 
-// Dosya yükleme işlemini güncelle
 document.getElementById('hiddenFileInput').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+  const file = event.target.files[0];
+  if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
+  const chunkSize = 5 * 1024; // 5 KB
+  const blob = file.slice(0, chunkSize);
 
-    // get-head-api ile head verisini al
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    // İlk 10 satırı ayır
+    const lines = text.split(/\r?\n/).slice(0, 10).join("\n");
+
+    const payload = JSON.stringify({ sample: lines });
+
+    // get-head-api çağrısı
     fetch('/upload/get-head-api', {
-        method: 'POST',
-        body: formData
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
     })
     .then(response => response.json())
     .then(data => {
-        if (data.head) {
-            // Yardımcı paneli aç ve head verisini yaz
-            const helperPanel = document.getElementById('helper-panel');
-            const helperContent = document.getElementById('helper-head-content');
-            const rows = JSON.parse(data.head);
-            if (rows && rows.length > 0) {
-                const columns = Object.keys(rows[0]);
-                let table = '<table style="width:100%;color:white;border-collapse:collapse;">';
-                table += '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
-                rows.forEach(row => {
-                    table += '<tr>' + columns.map(col => `<td>${row[col]}</td>`).join('') + '</tr>';
-                });
-                table += '</table>';
-                helperContent.innerHTML = `<h4>Dosya Yüklendi - İlk Satırlar</h4><div class="scroll-container">${table}</div>`;
-            } else {
-                helperContent.innerHTML = "Veri bulunamadı.";
-            }
-            
-            // Paneli otomatik aç ve veri tabını aktif et
-            helperPanel.classList.add('expanded');
-            document.querySelectorAll('.tablink').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.getAttribute('data-tab') === 'data-tab') {
-                    tab.classList.add('active');
-                }
-            });
-            document.querySelectorAll('.tabcontent').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById('data-tab').classList.add('active');
+      if (data.head) {
+        const helperPanel = document.getElementById('helper-panel');
+        const helperContent = document.getElementById('helper-head-content');
+        const rows = JSON.parse(data.head);
+        if (rows && rows.length > 0) {
+          const columns = Object.keys(rows[0]);
+          let table = '<table style="width:100%;color:white;border-collapse:collapse;">';
+          table += '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
+          rows.forEach(row => {
+            table += '<tr>' + columns.map(col => `<td>${row[col]}</td>`).join('') + '</tr>';
+          });
+          table += '</table>';
+          helperContent.innerHTML = `<h4>Dosya Yüklendi - İlk Satırlar</h4><div class="scroll-container">${table}</div>`;
+        } else {
+          helperContent.innerHTML = "Veri bulunamadı.";
         }
-    });
-    
-    // Logları güncelle
-    fetchAndShowLogs();
-
-    // Önizleme için get-head-api
-    fetch('/upload/get-head-api', {
-        method: 'POST',
-        body: formData
+        helperPanel.classList.add('expanded');
+        document.querySelectorAll('.tablink').forEach(tab => {
+          tab.classList.remove('active');
+          if (tab.getAttribute('data-tab') === 'data-tab') tab.classList.add('active');
+        });
+        document.querySelectorAll('.tabcontent').forEach(content => content.classList.remove('active'));
+        document.getElementById('data-tab').classList.add('active');
+      }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.head) {
-            showDataPreview(JSON.parse(data.head));
-        }
-    });
+    .catch(err => console.error("get-head-api hatası:", err));
 
-    // Sütunlar için get-columns-api
+    // get-columns-api çağrısı
     fetch('/upload/get-columns-api', {
-        method: 'POST',
-        body: formData
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
     })
     .then(response => response.json())
     .then(data => {
-        if (data.columns) {
-            fillDropdowns(data.columns);
-        }
-    });
+      if (data.columns) {
+        fillDropdowns(data.columns);
+      }
+    })
+    .catch(err => console.error("get-columns-api hatası:", err));
+
+  };
+
+  reader.readAsText(blob);
 });
+
 
 function showDataPreview(rows) {
     const previewDiv = document.getElementById('data-preview');
@@ -215,7 +209,7 @@ document.getElementById("visualizeBtn").addEventListener("click", () => {
     .then(response => {
       if (response.ok) {
         // Logları göster
-        fetchAndShowLogs();
+        showLogPanel()
         return fetch('/state/run-state-machine', {
           method: 'POST',
           body: new URLSearchParams({ mode: 'visualize_only', output_type: 'raw' })
@@ -360,7 +354,7 @@ document.getElementById("addProcessBtn").addEventListener("click", () => {
     })
     .then(response => response.json())
     .then(data => {
-        fetchAndShowLogs();
+        showLogPanel()
         alert("İşlemler gönderildi ve analiz başladı!");
         pollForGraphs();
         onStateMachineComplete(); // İndirme butonunu kontrol et
@@ -473,42 +467,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Log fetch fonksiyonunu düzelt
-function fetchAndShowLogs() {
-    fetch('/logs/latest')
-        .then(res => res.json())
-        .then(data => {
-            const logContent = document.getElementById('helper-log-content');
-            
-            // Her seferinde log içeriğini temizle
-            logContent.textContent = '';
-            
-            if (data.log) {
-                // Satır sonlarını doğru şekilde işle
-                const formattedLog = data.log.replace(/\\r?\\n/g, '\n');
-                logContent.textContent = formattedLog;
-            } else {
-                logContent.textContent = "Henüz işlem kaydı yok.";
-            }
-            
-            document.getElementById('helper-panel').classList.add('expanded');
-            
-            // Log tab'ını aktif et
-            document.querySelectorAll('.tablink').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.getAttribute('data-tab') === 'log-tab') {
-                    tab.classList.add('active');
-                }
-            });
-            
-            document.querySelectorAll('.tabcontent').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById('log-tab').classList.add('active');
-            
-            // Otomatik scroll
-            logContent.scrollTop = logContent.scrollHeight;
-        });
+
+function showLogPanel() {
+    // Log panelini hemen göster ve log tab'ını aktif et
+    document.getElementById('helper-panel').classList.add('expanded');
+    document.querySelectorAll('.tablink').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-tab') === 'log-tab') {
+            tab.classList.add('active');
+        }
+    });
+    document.querySelectorAll('.tabcontent').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById('log-tab').classList.add('active');
 }
 
 // İndirme butonunu kontrol eden fonksiyon
@@ -537,3 +509,30 @@ document.getElementById("DownloadBtn").addEventListener("click", function() {
     });
 });
 
+/* =============== WEBSOCKET DİNLEYİCİSİ ===============*/
+document.addEventListener("DOMContentLoaded", function () {
+
+    const socket = io();
+
+    socket.on('connect', () => {
+        console.log('WebSocket sunucusuna başarıyla bağlandı! ID:', socket.id);
+    });
+
+    // Backend'den 'log_message' olayı geldiğinde çalışacak fonksiyon
+    socket.on('log_message', (data) => {
+        console.log('Yeni log mesajı alındı:', data);
+        const logContent = document.getElementById('helper-log-content');
+
+        if (logContent && data.log) {
+            const newLogLine = document.createTextNode(data.log + '\n');
+            logContent.appendChild(newLogLine);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+    });
+
+    // Bağlantı kesildiğinde bilgilendir
+    socket.on('disconnect', () => {
+        console.log('WebSocket bağlantısı kesildi.');
+    });
+    // --- WEBSOCKET DİNLEYİCİSİ SONU ---
+});
