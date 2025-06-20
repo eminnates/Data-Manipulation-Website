@@ -1,6 +1,10 @@
 from flask import Flask
 import os
-from datetime import datetime
+import redis
+
+
+
+redis_client = redis.Redis()
 
 def create_app(testing=False):
     app = Flask(__name__)
@@ -22,6 +26,9 @@ def create_app(testing=False):
 
     # Logger konfigürasyonu
     configure_logging(app)
+
+
+
     
     # Hata işleyicilerini kaydet
     from app.errors.handlers import register_error_handlers

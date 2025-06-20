@@ -96,8 +96,6 @@ document.getElementById('hiddenFileInput').addEventListener('change', function(e
     })
     .catch(err => console.error("get-columns-api hatası:", err));
 
-    // Logları güncelle
-    fetchAndShowLogs();
   };
 
   reader.readAsText(blob);
@@ -211,7 +209,7 @@ document.getElementById("visualizeBtn").addEventListener("click", () => {
     .then(response => {
       if (response.ok) {
         // Logları göster
-        fetchAndShowLogs();
+        fetchAndShowLogs()
         return fetch('/state/run-state-machine', {
           method: 'POST',
           body: new URLSearchParams({ mode: 'visualize_only', output_type: 'raw' })
@@ -356,7 +354,7 @@ document.getElementById("addProcessBtn").addEventListener("click", () => {
     })
     .then(response => response.json())
     .then(data => {
-        fetchAndShowLogs();
+        fetchAndShowLogs()
         alert("İşlemler gönderildi ve analiz başladı!");
         pollForGraphs();
         onStateMachineComplete(); // İndirme butonunu kontrol et
@@ -469,7 +467,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Log fetch fonksiyonunu düzelt
 function fetchAndShowLogs() {
     fetch('/logs/latest')
         .then(res => res.json())
@@ -506,6 +503,7 @@ function fetchAndShowLogs() {
             logContent.scrollTop = logContent.scrollHeight;
         });
 }
+
 
 // İndirme butonunu kontrol eden fonksiyon
 

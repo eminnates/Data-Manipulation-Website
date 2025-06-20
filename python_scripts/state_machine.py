@@ -2,6 +2,7 @@ import os
 from enum import Enum, auto
 import logging
 from datetime import datetime
+from app.features.redis.redis_client import get_redis_client
 from python_scripts.dataCleaning import Cleanse, Manipulation, Augmentation
 from python_scripts.visualization import Project
 from flask import current_app
@@ -57,24 +58,32 @@ class DataStateMachine:
         self.processed_data_save_path = processed_data_save_path
         
         # Logger'ı başlat
-        self.logger = configure_state_logger()
-        self.logger.info(f"State Machine initialized. Mode: {self.mode}, Save Path: {self.processed_data_save_path}")
+        self.log = configure_state_logger()
+        self.log_info(f"State Machine initialized. Mode: {self.mode}, Save Path: {self.processed_data_save_path}")
+    
+    def log_info(self, message):
+        self.log.info(message)
+        try:
+            redis_client = get_redis_client()
+            redis_client.publish('log_channel', message)
+        except Exception as e:
+            self.log.error(f"Failed to publish log to Redis: {e}")
 
     def transition_to(self, new_state):
-        self.logger.info(f"Transitioning from {self.state.name} to {new_state.name}")
+        self.log_info(f"Transitioning from {self.state.name} to {new_state.name}")
         self.state = new_state
 
     def process(self):
         while True:
             if self.state == DataState.INITIAL:
-                self.logger.info("Loading data...")
+                self.log_info("Loading data...")
                 if self.mode == 'visualize_only':
                     self.transition_to(DataState.VISUALIZATION)
                 else:
                     self.transition_to(DataState.CLEANING)
 
             elif self.state == DataState.CLEANING:
-                self.logger.info("Performing data cleaning...")
+                self.log_info("Performing data cleaning...")
                 cl = Cleanse(self.data)
                 if self.mode == 'full_manual' and self.processes:
                     for proc in self.processes:
@@ -144,7 +153,7 @@ class DataStateMachine:
                 self.transition_to(DataState.MANIPULATION)
 
             elif self.state == DataState.MANIPULATION:
-                self.logger.info("Performing data manipulation...")
+                self.log_info("Performing data manipulation...")
                 cl = Manipulation(self.data)
                 if self.mode == 'full_manual' and self.processes:
                     for proc in self.processes:
@@ -172,7 +181,7 @@ class DataStateMachine:
                 self.transition_to(DataState.AUGMENTATION)
 
             elif self.state == DataState.AUGMENTATION:
-                self.logger.info("Performing data augmentation...")
+                self.log_info("Performing data augmentation...")
                 cl = Augmentation(self.data)
                 if self.mode == 'full_manual' and self.processes:
                     for proc in self.processes:
@@ -213,18 +222,18 @@ class DataStateMachine:
                 self.transition_to(DataState.VISUALIZATION)
 
             elif self.state == DataState.VISUALIZATION:
-                self.logger.info("Entering VISUALIZATION state...")
+                self.log_info("Entering VISUALIZATION state...")
                 try:
                     cl = Project(output_type=self.output_type, data=self.data)
                     cl.visualize()
                 except Exception as e:
-                    self.logger.error(f"Visualization error details: {str(e)}")
+                    self.log.error(f"Visualization error details: {str(e)}")
                     import traceback
-                    self.logger.error(f"Traceback: {traceback.format_exc()}")
+                    self.log.error(f"Traceback: {traceback.format_exc()}")
                 self.transition_to(DataState.FINAL)
 
             elif self.state == DataState.FINAL:
-                self.logger.info("Finalizing data processing...")
+                self.log_info("Finalizing data processing...")
                 try:
                     import os
                     save_path = self.processed_data_save_path
@@ -237,17 +246,24 @@ class DataStateMachine:
                     if not os.path.exists(save_dir):
                         os.makedirs(save_dir)
                     self.data.to_csv(save_path, index=False)
-                    self.logger.info(f"Processed data saved to {save_path}")
+                    self.log_info(f"Processed data saved to {save_path}")
                 except Exception as e:
-                    self.logger.error(f"Error saving processed data: {e}")
+                    self.log.error(f"Error saving processed data: {e}")
                 self.transition_to(DataState.COMPLETE)
 
             elif self.state == DataState.COMPLETE:
-                self.logger.info("State machine finished. No further processing.")
+                self.log_info("State machine finished. No further processing.")
+                # Redis flag koy
+                try:
+                    redis_client = get_redis_client()
+                    redis_client.set("state_machine:complete", "1", ex=60)
+                    self.log_info("Redis flag set: state_machine:complete = 1")
+                except Exception as e:
+                    self.log.error(f"Redis flag error: {e}")
                 break
 
             else:
-                self.logger.error("Unknown state encountered!")
+                self.log.error("Unknown state encountered!")
                 break
 
 
