@@ -1,0 +1,6 @@
+Log testi: 2025-06-21T02:09:52.267605
+2025-06-21 02:09:52,270 - INFO - Flask logging başlatıldı
+2025-06-21 02:10:20,618 - INFO - Attempting to process file: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv with extension: .csv
+2025-06-21 02:10:20,632 - INFO - Eski işlenmiş dosya başarıyla silindi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
+2025-06-21 02:10:20,663 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv (format: .csv)
+2025-06-21 02:10:23,389 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedilmeli: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_data.csv
