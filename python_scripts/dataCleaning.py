@@ -117,8 +117,8 @@ class Cleanse:
             print(f"Removed constant columns: {constant_cols}")
 
     # 6. Aykırı değer işlemleri
-    def detectAndDeleteOutliers(self):
-        """Detect outliers in all numeric columns using IQR method."""
+    """ def detectAndDeleteOutliers(self):
+        Detect outliers in all numeric columns using IQR method.
         for column_name in self.data.select_dtypes(include=[np.number]).columns:
             Q1 = self.data[column_name].quantile(0.25)
             Q3 = self.data[column_name].quantile(0.75)
@@ -129,7 +129,7 @@ class Cleanse:
             if not outliers.empty:
                 self.data = self.data[(self.data[column_name] >= lower_bound) & (self.data[column_name] <= upper_bound)]
             else:
-                print(f"Column '{column_name}' has no outliers.")
+                print(f"Column '{column_name}' has no outliers.") """
 
     # 7. Alan bazlı özel temizlik
     def CleanEmails(self, column_name='email'):
@@ -217,6 +217,103 @@ class Cleanse:
             self.data[column_name] = self.data[column_name].replace(to_replace, value)
         else:
             print(f"Column '{column_name}' not found.")
+
+    def DetectChanges(self, operation_type, parameters=None):
+        if parameters is None:
+            parameters = {}
+
+        current_rows = len(self.data)
+        # DÜZELTME: İşlemden önce verinin bir kopyasını alarak içerik karşılaştırması yapmaya hazırlan.
+        before_data = self.data.copy()
+        
+        operation_handlers = {
+            'RemoveWhitespace': self.RemoveWhitespace,
+            'StripSpecialChars': self.StripSpecialChars,
+            'LowercaseColumns': self.LowercaseColumns,
+            'FixNumericColumn': self.FixNumericColumn,
+            'AutoFixNumericColumns': self.AutoFixNumericColumns,
+            'FillMissing': self.FillMissing,
+            'RemoveHighNullColumns': self.RemoveHighNullColumns,
+            'DeleteDupValues': self.DeleteDupValues,
+            'RemoveConstantColumns': self.RemoveConstantColumns,
+            'CleanEmails': self.CleanEmails,
+            'NormalizeColumnValues': self.NormalizeColumnValues,
+            'AutoRemoveDigitsFromStringColumns': self.AutoRemoveDigitsFromStringColumns,
+            'FilterRows': self.FilterRows,
+            'DynamicFilter': self.DynamicFilter,
+            'DropColumn': self.DropColumn,
+            'RemoveDuplicatesByColumns': self.RemoveDuplicatesByColumns,
+            'ReplaceValues': self.ReplaceValues,
+            'SampleData': self.SampleData,
+        }
+
+        if operation_type in operation_handlers:
+            try:
+                operation_handlers[operation_type](**parameters)
+            except TypeError as e:
+                print(f"Hata: '{operation_type}' operasyonu yanlış parametrelerle çağrıldı. Detay: {e}")
+                return None
+            except Exception as e:
+                print(f"'{operation_type}' işlemi sırasında beklenmedik bir hata oluştu: {e}")
+                return None
+        else:
+            print(f"Desteklenmeyen operasyon tipi: {operation_type}")
+            return None
+
+        # DÜZELTME: Etkilenen satır sayısını, hem satır silme hem de içerik değişikliğini dikkate alarak hesapla.
+        if current_rows != len(self.data):
+            # Eğer satır sayısı değiştiyse (örn: DeleteDupValues, FilterRows), etki satır farkıdır.
+            affected_rows = current_rows - len(self.data)
+        else:
+            # Eğer satır sayısı aynıysa, içerik değişikliğini kontrol et.
+            # (before_data != self.data) -> Hücre bazında karşılaştırma yapar (Boolean DataFrame).
+            # .any(axis=1) -> Her satırda en az bir değişiklik var mı? (Boolean Series döner).
+            # .sum() -> Değişen satırların (True olanların) toplam sayısı.
+            affected_rows = (before_data != self.data).any(axis=1).sum()
+
+        remaining_rows = len(self.data)
+        affected_percentage = (affected_rows / current_rows * 100) if current_rows > 0 else 0
+        
+        return {
+            'current_rows': current_rows,
+            'affected_rows': int(affected_rows), # Sonucun integer olduğundan emin ol
+            'remaining_rows': remaining_rows,
+            'affected_percentage': round(affected_percentage, 2)
+        }
+
+    # DÜZELTME: Fonksiyonu doğru bir sınıf metodu olarak yeniden yaz
+    def SampleData(self, sample_size=0.1, random_state=None, stratify_column=None):
+        """
+        Veri setinden bir örneklem alır. Metod imzası, DetectChanges ile uyumlu olacak şekilde güncellenmiştir.
+        Bu metod, self.data'yı doğrudan günceller ve bir değer döndürmez.
+        """
+        # DÜZELTME: Parametre olarak gelen 'data' yerine sınıfın kendi 'self.data'sını kullan
+        data_to_use = self.data.copy()
+        total_rows = len(data_to_use)
+        
+        # Örneklem boyutunu belirle
+        if isinstance(sample_size, float) and 0 < sample_size < 1:
+            n_samples = int(total_rows * sample_size)
+        elif isinstance(sample_size, int) and sample_size > 0:
+            n_samples = min(sample_size, total_rows)
+        else:
+            n_samples = int(total_rows * 0.1)  # Geçersizse varsayılan olarak %10 al
+
+        # Eğer stratify_column belirtilmişse ve geçerliyse katmanlı örnekleme yap
+        if stratify_column and stratify_column in data_to_use.columns:
+            try:
+                # Her gruptan en az 1 örnek alınmasını sağla (eğer mümkünse)
+                self.data = data_to_use.groupby(stratify_column, group_keys=False).apply(
+                    lambda x: x.sample(n=min(len(x), max(1, int(n_samples * len(x) / total_rows))), 
+                                       random_state=random_state)
+                ).reset_index(drop=True)
+            except Exception as e:
+                print(f"Katmanlı örnekleme başarısız oldu: {e}. Normal rastgele örneklemeye geçiliyor.")
+                self.data = data_to_use.sample(n=n_samples, random_state=random_state)
+        else:
+            # Normal rastgele örnekleme
+            self.data = data_to_use.sample(n=n_samples, random_state=random_state)
+        
 
 class Manipulation:
     def __init__(self, data):

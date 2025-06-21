@@ -1,0 +1,22 @@
+2025-06-21 18:56:04,806 - INFO - State Machine initialized. Project: adsdasdasdasd, Mode: visualize_only
+2025-06-21 18:56:05,293 - INFO - Loading data...
+2025-06-21 18:56:05,294 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-21 18:56:05,296 - INFO - Entering VISUALIZATION state...
+2025-06-21 18:56:05,298 - ERROR - Visualization error details: project_name, plot_type ve x_col boş olamaz.
+2025-06-21 18:56:05,303 - ERROR - Traceback: Traceback (most recent call last):
+  File "C:\Users\mhmtm\Desktop\project\Project\master\python_scripts\state_machine.py", line 240, in process
+    generator = GraphGenerator(
+        data_df=self.data,
+    ...<4 lines>...
+        output_type=self.output_type
+    )
+  File "C:\Users\mhmtm\Desktop\project\Project\master\python_scripts\visualization.py", line 29, in __init__
+    raise ValueError("project_name, plot_type ve x_col boş olamaz.")
+ValueError: project_name, plot_type ve x_col boş olamaz.
+
+2025-06-21 18:56:05,305 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-21 18:56:05,308 - INFO - Finalizing data processing...
+2025-06-21 18:56:05,378 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_f8a6369748c740d8ab270c5b0703b6b6.csv
+2025-06-21 18:56:05,380 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-21 18:56:05,382 - INFO - State machine finished. No further processing.
+2025-06-21 18:56:05,384 - INFO - Redis flag set: state_machine:complete = 1

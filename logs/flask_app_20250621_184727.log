@@ -1,0 +1,4 @@
+Log testi: 2025-06-21T18:47:27.526552
+2025-06-21 18:47:27,529 - INFO - Flask logging başlatıldı
+2025-06-21 18:47:48,854 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-21 18:47:49,046 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_21b19e55c0524a6b8c682f04da5f4902.csv

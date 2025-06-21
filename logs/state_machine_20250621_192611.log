@@ -1,0 +1,11 @@
+2025-06-21 19:26:11,312 - INFO - State Machine initialized. Project: emrela, Mode: visualize_only
+2025-06-21 19:26:11,334 - INFO - Loading data...
+2025-06-21 19:26:11,336 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-21 19:26:11,337 - INFO - Entering VISUALIZATION state...
+2025-06-21 19:26:12,314 - INFO - Visualization successful. Graph saved to app/static/outputs\emrela_raw.html
+2025-06-21 19:26:12,331 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-21 19:26:12,333 - INFO - Finalizing data processing...
+2025-06-21 19:26:12,388 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_31102b6855544f0db5a84fd551a4ec06.csv
+2025-06-21 19:26:12,390 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-21 19:26:12,391 - INFO - State machine finished. No further processing.
+2025-06-21 19:26:12,392 - INFO - Redis flag set: state_machine:complete = 1

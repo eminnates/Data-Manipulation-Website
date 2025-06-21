@@ -1,0 +1,64 @@
+Log testi: 2025-06-21T19:28:16.256537
+2025-06-21 19:28:16,259 - INFO - Flask logging başlatıldı
+2025-06-21 19:28:42,854 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:28:42,855 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-21 19:28:42,856 - INFO - Önbellekten veri getiriliyor: Amazon stock data 2000-2025.csv
+2025-06-21 19:28:44,057 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_8fbaa2d993eb49259b536200a68c3f1a.csv
+2025-06-21 19:28:44,874 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emrelad_raw.html
+2025-06-21 19:28:44,886 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emrelad_raw.html
+2025-06-21 19:28:48,862 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'RemoveWhitespace'}]
+2025-06-21 19:28:48,878 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:28:54,614 - INFO - Suitability check for project 'emrelad' with processes: None
+2025-06-21 19:28:54,633 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:28:54,634 - ERROR - Suitability calculation failed: 'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "C:\Users\mhmtm\Desktop\project\Project\master\app\features\websocket\events.py", line 46, in handle_suitability_check
+    for process in processes:
+                   ^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+2025-06-21 19:28:55,797 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'StripSpecialChars'}]
+2025-06-21 19:28:55,810 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:28:59,209 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'LowercaseColumns'}]
+2025-06-21 19:28:59,225 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:01,701 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'FixNumericColumn'}]
+2025-06-21 19:29:01,715 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:03,801 - INFO - Suitability check for project 'emrelad' with processes: None
+2025-06-21 19:29:03,818 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:03,819 - ERROR - Suitability calculation failed: 'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "C:\Users\mhmtm\Desktop\project\Project\master\app\features\websocket\events.py", line 46, in handle_suitability_check
+    for process in processes:
+                   ^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+2025-06-21 19:29:05,037 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'FillMissing'}]
+2025-06-21 19:29:05,051 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:08,080 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'RemoveHighNullColumns'}]
+2025-06-21 19:29:08,099 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:10,164 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'RemoveHighNullColumns'}, {'name': 'DeleteDupValues'}]
+2025-06-21 19:29:10,177 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:11,640 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'DeleteDupValues'}]
+2025-06-21 19:29:11,657 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:12,562 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'DeleteDupValues'}, {'name': 'RemoveConstantColumns'}]
+2025-06-21 19:29:12,576 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:14,338 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'RemoveConstantColumns'}]
+2025-06-21 19:29:14,353 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:15,446 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'RemoveConstantColumns'}, {'name': 'CleanEmails'}]
+2025-06-21 19:29:15,460 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:19,462 - INFO - Suitability check for project 'emrelad' with processes: None
+2025-06-21 19:29:19,480 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 19:29:19,481 - ERROR - Suitability calculation failed: 'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "C:\Users\mhmtm\Desktop\project\Project\master\app\features\websocket\events.py", line 46, in handle_suitability_check
+    for process in processes:
+                   ^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+2025-06-21 19:29:36,067 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:29:36,068 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\less_dirty_payments.csv
+2025-06-21 19:29:36,068 - INFO - Önbellekten veri getiriliyor: less_dirty_payments.csv
+2025-06-21 19:29:36,358 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_8a22586871e44acfba35b36a34eb8741.csv
+2025-06-21 19:29:38,089 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emrelad_raw.html
+2025-06-21 19:29:38,098 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emrelad_raw.html
+2025-06-21 19:29:45,047 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'RemoveWhitespace'}]
+2025-06-21 19:29:45,050 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:29:47,379 - INFO - Suitability check for project 'emrelad' with processes: [{'name': 'StripSpecialChars'}]
+2025-06-21 19:29:47,382 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv

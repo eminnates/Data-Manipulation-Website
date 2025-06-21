@@ -1,0 +1,22 @@
+2025-06-21 19:34:29,472 - INFO - State Machine initialized. Project: dasdasda, Mode: visualize_only
+2025-06-21 19:34:29,526 - INFO - Loading data...
+2025-06-21 19:34:29,531 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-21 19:34:29,541 - INFO - Entering VISUALIZATION state...
+2025-06-21 19:34:31,164 - INFO - Visualization successful. Graph saved to app/static/outputs\dasdasda_raw.html
+2025-06-21 19:34:31,215 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-21 19:34:31,221 - INFO - Finalizing data processing...
+2025-06-21 19:34:31,330 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_e43f72ac8bdd4f64aeb9c6647186b63e.csv
+2025-06-21 19:34:31,333 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-21 19:34:31,336 - INFO - State machine finished. No further processing.
+2025-06-21 19:34:31,339 - INFO - Redis flag set: state_machine:complete = 1
+2025-06-21 19:35:55,230 - INFO - State Machine initialized. Project: dasdasda, Mode: visualize_only
+2025-06-21 19:35:55,239 - INFO - Loading data...
+2025-06-21 19:35:55,242 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-21 19:35:55,245 - INFO - Entering VISUALIZATION state...
+2025-06-21 19:35:55,665 - INFO - Visualization successful. Graph saved to app/static/outputs\dasdasda_raw.html
+2025-06-21 19:35:55,671 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-21 19:35:55,675 - INFO - Finalizing data processing...
+2025-06-21 19:35:55,713 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_0795fe7769884a788ba1d0825602d48b.csv
+2025-06-21 19:35:55,775 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-21 19:35:55,777 - INFO - State machine finished. No further processing.
+2025-06-21 19:35:55,779 - INFO - Redis flag set: state_machine:complete = 1

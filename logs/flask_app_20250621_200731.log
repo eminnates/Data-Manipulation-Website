@@ -1,0 +1,142 @@
+Log testi: 2025-06-21T20:07:31.557631
+2025-06-21 20:07:31,562 - INFO - Flask logging başlatıldı
+2025-06-21 20:07:51,494 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:07:51,497 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-21 20:07:51,498 - INFO - Önbellekten veri getiriliyor: Amazon stock data 2000-2025.csv
+2025-06-21 20:07:53,757 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_raw.html
+2025-06-21 20:07:53,882 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_raw.html
+2025-06-21 20:07:53,934 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_e0aa0b4d09c644a7bf574ef95ad0dd35.csv
+2025-06-21 20:08:01,195 - INFO - Suitability check for project 'dfsdfs' with processes: [{'name': 'RemoveWhitespace'}]
+2025-06-21 20:08:01,224 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:08:03,772 - INFO - Suitability check for project 'dfsdfs' with processes: [{'name': 'RemoveWhitespace'}, {'name': 'StripSpecialChars'}]
+2025-06-21 20:08:03,804 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:08:06,527 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:08:06,529 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-21 20:08:06,530 - INFO - Önbellekten veri getiriliyor: Amazon stock data 2000-2025.csv
+2025-06-21 20:08:06,806 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_57360025e20a48c9a1d925a7d6edc6dd.csv
+2025-06-21 20:08:09,557 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:11,571 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:13,575 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:15,560 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:17,558 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:19,556 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:21,559 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:23,558 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:25,554 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:27,564 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:30,141 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:31,981 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:33,555 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:35,568 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:37,600 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:39,568 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:41,572 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:43,566 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:45,567 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:08:47,562 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dfsdfs_refined.html
+2025-06-21 20:09:32,156 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:09:32,157 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-21 20:09:32,162 - INFO - Önbellekten veri getiriliyor: Amazon stock data 2000-2025.csv
+2025-06-21 20:09:32,823 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_af1ad8b35c534d0cae94ba9fc515bea2.csv
+2025-06-21 20:09:34,200 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_raw.html
+2025-06-21 20:09:34,209 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_raw.html
+2025-06-21 20:09:38,942 - INFO - Suitability check for project 'fdsfdsfsdf' with processes: [{'name': 'RemoveWhitespace'}]
+2025-06-21 20:09:38,965 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:09:39,650 - INFO - Suitability check for project 'fdsfdsfsdf' with processes: [{'name': 'RemoveWhitespace'}, {'name': 'StripSpecialChars'}]
+2025-06-21 20:09:39,681 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:09:42,115 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:09:42,116 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-21 20:09:42,118 - INFO - Önbellekten veri getiriliyor: Amazon stock data 2000-2025.csv
+2025-06-21 20:09:42,361 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_c345026bd33c493da4d2f6c42f563b52.csv
+2025-06-21 20:09:45,287 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:09:47,296 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:09:49,299 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:09:51,295 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:09:53,298 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:09:55,286 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:09:57,299 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:09:59,293 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:01,300 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:03,291 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:05,312 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:07,288 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:09,287 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:11,286 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:13,295 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:15,290 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:17,288 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:19,287 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:21,288 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:10:23,299 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\fdsfdsfsdf_refined.html
+2025-06-21 20:17:22,139 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:17:22,140 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-21 20:17:22,143 - INFO - Önbellekten veri getiriliyor: Amazon stock data 2000-2025.csv
+2025-06-21 20:17:23,064 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_d03106e29c37464cbdd2e9ef2058d6e3.csv
+2025-06-21 20:17:24,173 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:24,190 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:27,958 - INFO - Suitability check for project 'dsadasd' with processes: [{'name': 'RemoveWhitespace'}, {'name': 'StripSpecialChars'}]
+2025-06-21 20:17:27,993 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:17:31,195 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-21 20:17:31,199 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-21 20:17:31,201 - INFO - Önbellekten veri getiriliyor: Amazon stock data 2000-2025.csv
+2025-06-21 20:17:31,579 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_9e0b90af582140c1affee1f8c1348f67.csv
+2025-06-21 20:17:34,741 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:34,746 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:34,759 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:36,734 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:36,739 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:36,752 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:38,735 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:38,749 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:38,758 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:40,734 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:40,740 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:40,761 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:42,734 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:42,741 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:42,760 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:44,779 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:44,784 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:44,804 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:46,730 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:46,797 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:46,971 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:48,726 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:48,734 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:48,775 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:50,912 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:50,917 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:50,932 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:52,732 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:52,737 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:52,751 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:54,779 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:54,784 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:54,794 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:56,729 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:56,736 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:17:56,769 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:58,732 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:58,771 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:17:58,926 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:18:00,735 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:00,749 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:18:00,793 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:02,731 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:18:02,735 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:02,759 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:04,730 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:04,740 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:18:04,772 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:07,145 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:07,154 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:18:07,173 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:09,143 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:09,151 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:18:09,178 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:11,141 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:11,146 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:18:11,160 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:13,144 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html
+2025-06-21 20:18:13,155 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_refined.html
+2025-06-21 20:18:13,178 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\dsadasd_raw.html

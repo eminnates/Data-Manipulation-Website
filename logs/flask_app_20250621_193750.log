@@ -1,0 +1,38 @@
+Log testi: 2025-06-21T19:37:50.753811
+2025-06-21 19:37:50,757 - INFO - Flask logging başlatıldı
+2025-06-21 19:38:15,132 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:15,137 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\less_dirty_payments.csv
+2025-06-21 19:38:15,139 - INFO - Önbellekten veri getiriliyor: less_dirty_payments.csv
+2025-06-21 19:38:17,080 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_9b1a727c849846948b8cba027543fe11.csv
+2025-06-21 19:38:17,182 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminemr_raw.html
+2025-06-21 19:38:17,194 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminemr_raw.html
+2025-06-21 19:38:22,744 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'RemoveWhitespace'}]
+2025-06-21 19:38:22,749 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:24,629 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'RemoveWhitespace'}, {'name': 'StripSpecialChars'}]
+2025-06-21 19:38:24,636 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:25,820 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}]
+2025-06-21 19:38:25,827 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:26,865 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}]
+2025-06-21 19:38:26,885 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:28,351 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}, {'name': 'FixNumericColumn'}]
+2025-06-21 19:38:28,356 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:29,424 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}]
+2025-06-21 19:38:29,428 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:30,456 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}]
+2025-06-21 19:38:30,462 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:31,342 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}]
+2025-06-21 19:38:31,348 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:33,649 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}, {'name': 'DeleteDupValues'}]
+2025-06-21 19:38:33,661 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:35,005 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}, {'name': 'RemoveConstantColumns'}]
+2025-06-21 19:38:35,012 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:36,440 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}]
+2025-06-21 19:38:36,446 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:36,954 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}, {'name': 'CleanEmails'}]
+2025-06-21 19:38:36,961 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:38,134 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}, {'name': 'NormalizeColumnValues'}]
+2025-06-21 19:38:38,142 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:39,823 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}]
+2025-06-21 19:38:39,829 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:38:41,787 - INFO - Suitability check for project 'eminemr' with processes: [{'name': 'StripSpecialChars'}, {'name': 'LowercaseColumns'}, {'name': 'NormalizeColumnValues'}, {'name': 'AutoRemoveDigitsFromStringColumns'}]
+2025-06-21 19:38:41,801 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv

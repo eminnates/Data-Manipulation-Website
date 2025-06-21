@@ -1,0 +1,11 @@
+2025-06-21 19:08:12,051 - INFO - State Machine initialized. Project: emin12, Mode: visualize_only
+2025-06-21 19:08:12,077 - INFO - Loading data...
+2025-06-21 19:08:12,086 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-21 19:08:12,089 - INFO - Entering VISUALIZATION state...
+2025-06-21 19:08:14,343 - INFO - Visualization successful. Graph saved to app/static/outputs\emin12_raw.html
+2025-06-21 19:08:14,368 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-21 19:08:14,370 - INFO - Finalizing data processing...
+2025-06-21 19:08:14,437 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_64a9a8dac029440b82ad743d6baefaad.csv
+2025-06-21 19:08:14,466 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-21 19:08:14,468 - INFO - State machine finished. No further processing.
+2025-06-21 19:08:14,472 - INFO - Redis flag set: state_machine:complete = 1

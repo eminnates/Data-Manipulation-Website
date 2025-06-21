@@ -1,0 +1,36 @@
+Log testi: 2025-06-21T19:55:42.963837
+2025-06-21 19:55:42,967 - INFO - Flask logging başlatıldı
+2025-06-21 19:56:10,575 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:56:10,576 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\less_dirty_payments.csv
+2025-06-21 19:56:10,578 - INFO - Önbellekten veri getiriliyor: less_dirty_payments.csv
+2025-06-21 19:56:12,774 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_raw.html
+2025-06-21 19:56:12,803 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_raw.html
+2025-06-21 19:56:12,857 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_36ce44cc51ae44edbd72e310d4c315d8.csv
+2025-06-21 19:56:17,313 - INFO - Suitability check for project 'eminem' with processes: [{'name': 'RemoveWhitespace'}]
+2025-06-21 19:56:17,320 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:56:20,552 - INFO - Suitability check for project 'eminem' with processes: [{'name': 'RemoveWhitespace'}, {'name': 'StripSpecialChars'}]
+2025-06-21 19:56:20,557 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:56:22,495 - INFO - Disk'ten veri okunup önbelleğe alındı: less_dirty_payments.csv
+2025-06-21 19:56:22,496 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\less_dirty_payments.csv
+2025-06-21 19:56:22,498 - INFO - Önbellekten veri getiriliyor: less_dirty_payments.csv
+2025-06-21 19:56:22,664 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_3f6ba7cca6094f378aceb29fc9be694d.csv
+2025-06-21 19:56:25,881 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:27,877 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:29,883 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:31,886 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:33,882 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:35,881 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:37,885 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:40,143 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:42,146 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:44,142 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:46,159 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:48,143 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:50,141 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:52,135 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:54,136 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:56,146 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:56:58,145 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:57:00,140 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:57:02,137 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html
+2025-06-21 19:57:04,135 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\eminem_refined.html

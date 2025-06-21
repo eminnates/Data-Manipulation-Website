@@ -142,6 +142,9 @@ const navMenu = document.getElementById('nav-menu');
 const navToggle = document.getElementById('nav-toggle');
 const navClose = document.querySelector('.nav__close');
 
+// DÜZELTME: Yüklenen dosyanın adını saklamak için global bir değişken.
+let uploadedFileName = null;
+
 /*=============== GÖNDER & POLLING ===============*/
 document.getElementById("visualizeBtn").addEventListener("click", () => {
   const plotType = document.getElementById("plotType").value;
@@ -151,72 +154,124 @@ document.getElementById("visualizeBtn").addEventListener("click", () => {
 
   if (!selectedFile) { alert("Lütfen bir dosya seçin."); return; }
   if (!projectTitle) { alert("Proje başlığı boş olamaz."); return; }
-  if(!plotType){ alert("Lütfen bir grafik türü seçin."); return; }
+  if (!plotType) { alert("Lütfen bir grafik türü seçin."); return; }
+  if (!xAxis) { alert("Lütfen bir X ekseni seçin."); return; }
+  // Not: Histogram gibi bazı grafikler için Y ekseni zorunlu olmayabilir.
+  // if (!yAxis) { alert("Lütfen bir Y ekseni seçin."); return; }
 
   const formData = new FormData();
   formData.append("file", selectedFile);
-  formData.append("secim1", plotType);
-  formData.append("secim2", xAxis);
-  formData.append("secim3", yAxis);
-  formData.append("secim4", projectTitle);
-
+  
+  // 1. Adım: Dosyayı yükle
   fetch(`/upload/${encodeURIComponent(projectTitle)}`, { method: "POST", body: formData })
     .then(response => {
-      if (response.ok) {
-        showLogPanel();
-        return fetch('/state/run-state-machine', {
-          method: 'POST',
-          body: new URLSearchParams({ mode: 'visualize_only', output_type: 'raw' })
-        });
-      } else { throw new Error('Dosya yüklenemedi.'); }
+      if (!response.ok) {
+        throw new Error('Dosya yüklenemedi. Sunucu hatası: ' + response.status);
+      }
+      return response.json();
+    })
+    .then(uploadData => {
+      if (!uploadData || !uploadData.file_name) {
+        throw new Error("Dosya yüklendi ancak sunucudan dosya adı alınamadı.");
+      }
+      
+      uploadedFileName = uploadData.file_name;
+      showLogPanel();
+
+      const stateMachineParams = new URLSearchParams();
+      stateMachineParams.append('mode', 'visualize_only');
+      stateMachineParams.append('output_type', 'raw');
+      stateMachineParams.append('file_name', uploadedFileName);
+      stateMachineParams.append('project_name', projectTitle);
+      
+      // EN ÖNEMLİ DÜZELTME: Grafik parametrelerini bu isteğe ekliyoruz.
+      stateMachineParams.append('secim1', plotType); // plot_type
+      stateMachineParams.append('secim2', xAxis);    // x_col
+      stateMachineParams.append('secim3', yAxis);    // y_col
+
+      return fetch('/state/run-state-machine', {
+        method: 'POST',
+        body: stateMachineParams
+      });
     })
     .then(response => {
-      if (response.ok) { pollForGraphs('raw', 'beforeFrame'); } 
-      else { throw new Error("State machine başlatılamadı."); }
+      if (response.ok) {
+        // DÜZELTME: pollForGraphs fonksiyonuna 'projectTitle' gönderiliyor.
+        pollForGraphs('raw', 'beforeFrame', null, projectTitle); 
+      } else {
+        return response.json().then(err => { throw new Error(err.message || "State machine başlatılamadı."); });
+      }
     })
-    .catch(err => { alert(err.message || "Bir hata oluştu."); });
+    .catch(err => {
+      console.error("Hata:", err);
+      alert(err.message || "Beklenmedik bir hata oluştu.");
+    });
 });
 
 document.getElementById("addProcessBtn").addEventListener("click", () => {
     const selectedProcesses = getSelectedProcesses();
     if (!selectedProcesses) return;
     
-    console.log("Gönderilecek işlemler:", selectedProcesses);
+    // DÜZELTME: İşlem yapmadan önce bir dosyanın yüklenmiş olduğundan emin ol.
+    if (!uploadedFileName) {
+        alert("Lütfen önce bir dosya yükleyip 'Görselleştir' butonuna basın.");
+        return;
+    }
     
     const projectTitle = document.getElementById("projectTitle").value;
     if (!projectTitle) { alert("Proje başlığı boş olamaz."); return; }
 
+    const params = new URLSearchParams({
+        mode: 'full_manual',
+        output_type: 'refined',
+        processes: JSON.stringify(selectedProcesses),
+        project_name: projectTitle, 
+        file_name: uploadedFileName 
+    });
+
     fetch('/state/run-state-machine', {
         method: 'POST',
-        body: new URLSearchParams({
-            mode: 'full_manual',
-            output_type: 'refined',
-            processes: JSON.stringify(selectedProcesses),
-            projectTitle: projectTitle
-        })
+        body: params
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.message || "İşlemler gönderilirken hata oluştu."); });
+        }
+        return response.json();
+    })
     .then(data => {
         showLogPanel();
         alert("İşlemler gönderildi ve analiz başladı!");
-        pollForGraphs('refined', 'afterProcessFrame', 'afterProcessDesc');
+        // DÜZELTME: pollForGraphs fonksiyonuna 'projectTitle' gönderiliyor.
+        pollForGraphs('raw', 'beforeProcessFrame', 'beforeDesc', projectTitle);
+        pollForGraphs('refined', 'afterProcessFrame', 'afterProcessDesc', projectTitle);
         onStateMachineComplete();
     })
     .catch(err => { alert("Bir hata oluştu: " + err.message); });
 });
 
-function pollForGraphs(type, frameId, descId) {
-    if (type === 'raw') {
-        document.getElementById(frameId).src = `/graph/get-graph?type=${type}`;
+// DÜZELTME: Fonksiyon artık 'projectName' parametresi alıyor ve tüm türler için polling yapıyor.
+function pollForGraphs(type, frameId, descId, projectName) {
+    const frame = document.getElementById(frameId);
+    const desc = document.getElementById(descId);
+
+    if (!projectName) {
+        console.error("pollForGraphs çağrılırken proje adı eksik!");
+        if(desc) desc.textContent = "Hata: Proje adı belirtilmedi.";
         return;
     }
+
+    if (desc) desc.textContent = "Grafik oluşturuluyor, lütfen bekleyin...";
+
     let attempts = 0;
-    const maxAttempts = 20;
+    const maxAttempts = 20; // 40 saniye (20 * 2000ms)
     const interval = setInterval(() => {
-        fetch(`/graph/get-graph?type=${type}`, { method: "HEAD" })
+        // DÜZELTME: fetch URL'ine 'project_name' parametresi eklendi.
+        fetch(`/graph/get-graph?type=${type}&project_name=${encodeURIComponent(projectName)}`, { method: "HEAD", cache: "no-cache" })
         .then(res => {
             if (res.ok) {
-                document.getElementById(frameId).src = `/graph/get-graph?type=${type}`;
+                // DÜZELTME: src'ye de 'project_name' ve cache-buster ekleniyor.
+                frame.src = `/graph/get-graph?type=${type}&project_name=${encodeURIComponent(projectName)}&t=${new Date().getTime()}`;
                 if(descId) document.getElementById(descId).textContent = "İşlenmiş veri görüntüleniyor";
                 clearInterval(interval);
             } else {
@@ -228,6 +283,7 @@ function pollForGraphs(type, frameId, descId) {
             }
         })
         .catch(err => {
+            console.error("Polling fetch error:", err);
             attempts++;
             if (attempts >= maxAttempts) {
                 clearInterval(interval);
@@ -347,12 +403,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // YENİ: Anlık uygunluk kontrolü için fonksiyon
     function checkSuitability() {
-        console.log('Değişiklik algılandı, uygunluk kontrolü tetikleniyor...');
-        const processes = getSelectedProcesses();
-        if (processes) {
-            // WebSocket üzerinden sunucuya 'calculate_suitability' olayını gönder
-            socket.emit('calculate_suitability', { processes: processes });
+        const processes = getSelectedProcesses(); // Seçili işlemleri alan fonksiyonunuz
+        const projectTitle = document.getElementById("projectTitle").value;
+        
+        // uploadedFileName'ın daha önce doldurulduğundan emin olun
+        if (!uploadedFileName || !projectTitle) {
+            console.warn("Uygunluk kontrolü için önce dosya yüklenmeli ve proje adı girilmelidir.");
+            return;
         }
+
+        // DÜZELTME: Olayla birlikte context bilgilerini de gönder
+        socket.emit('calculate_suitability', { 
+            processes: processes,
+            project_name: projectTitle,
+            file_name: uploadedFileName 
+        });
     }
 
     // YENİ: Debounce edilmiş versiyonu oluştur (500ms gecikmeyle)
