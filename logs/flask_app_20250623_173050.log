@@ -1,0 +1,74 @@
+Log testi: 2025-06-23T17:30:50.592306
+2025-06-23 17:30:50,595 - INFO - Flask logging başlatıldı
+2025-06-23 17:31:19,434 - INFO - Disk'ten veri okunup önbelleğe alındı: gym_members_exercise_tracking.csv
+2025-06-23 17:31:19,435 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\gym_members_exercise_tracking.csv
+2025-06-23 17:31:19,436 - INFO - Önbellekten veri getiriliyor: gym_members_exercise_tracking.csv
+2025-06-23 17:31:20,785 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_2c3d713e95294d35bc5b1d24734e1b5e.csv
+2025-06-23 17:31:21,461 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:23,456 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:25,468 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:27,456 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:30,109 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:32,109 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:34,112 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:36,122 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:38,121 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:40,107 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:42,116 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:44,121 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:45,469 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:47,458 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:49,466 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:52,114 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:54,123 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:56,118 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:31:58,123 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:32:00,115 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:17,077 - INFO - Disk'ten veri okunup önbelleğe alındı: gym_members_exercise_tracking.csv
+2025-06-23 17:41:17,077 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\gym_members_exercise_tracking.csv
+2025-06-23 17:41:17,078 - INFO - Önbellekten veri getiriliyor: gym_members_exercise_tracking.csv
+2025-06-23 17:41:17,164 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_9eea4b61ee0441459d4d148db6ac6c63.csv
+2025-06-23 17:41:19,093 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:21,090 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:23,098 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:25,098 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:27,088 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:29,092 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:31,099 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:33,087 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:33,339 - INFO - Disk'ten veri okunup önbelleğe alındı: gym_members_exercise_tracking.csv
+2025-06-23 17:41:33,340 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\gym_members_exercise_tracking.csv
+2025-06-23 17:41:33,340 - INFO - Önbellekten veri getiriliyor: gym_members_exercise_tracking.csv
+2025-06-23 17:41:33,449 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_c547a16d9fa54efdb7d53f4ea0e6b574.csv
+2025-06-23 17:41:35,089 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:35,352 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:37,091 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:37,359 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:39,090 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:39,354 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:41,090 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:41,353 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:43,099 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:43,362 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:45,099 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:45,348 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:47,086 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:47,358 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:49,099 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:49,361 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:51,110 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:52,111 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:53,110 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:54,122 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:55,122 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:56,113 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:41:57,115 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasd_raw.html
+2025-06-23 17:41:58,114 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:42:00,118 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:42:02,107 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:42:04,119 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:42:06,112 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:42:08,111 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:42:10,123 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:42:12,121 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html
+2025-06-23 17:42:14,118 - INFO - Aranan grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\ddfafasdda_raw.html

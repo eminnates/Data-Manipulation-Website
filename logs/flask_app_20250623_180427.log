@@ -1,0 +1,51 @@
+Log testi: 2025-06-23T18:04:27.933731
+2025-06-23 18:04:27,937 - INFO - Flask logging başlatıldı
+2025-06-23 18:04:28,485 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin3_raw.json
+2025-06-23 18:04:41,592 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-23 18:04:41,593 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-23 18:04:41,594 - INFO - Önbellekten veri getiriliyor: Amazon stock data 2000-2025.csv
+2025-06-23 18:04:42,763 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_499614eafc224e398cc3b6ddbb896150.csv
+2025-06-23 18:04:43,623 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:04:45,612 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:04:48,113 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:04:50,108 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:04:52,121 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:04:54,113 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:04:56,122 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:04:58,123 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:00,116 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:02,120 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:04,122 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:06,122 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:08,112 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:10,118 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:12,120 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:14,116 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:16,111 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:18,124 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:20,113 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:05:22,121 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin4_raw.json
+2025-06-23 18:06:38,754 - INFO - Disk'ten veri okunup önbelleğe alındı: Amazon stock data 2000-2025.csv
+2025-06-23 18:06:38,755 - INFO - Dosya başarıyla okundu: C:\Users\mhmtm\Desktop\project\Project\master\uploads\Amazon stock data 2000-2025.csv
+2025-06-23 18:06:38,756 - INFO - Önbellekten veri getiriliyor: Amazon stock data 2000-2025.csv
+2025-06-23 18:06:39,030 - INFO - State machine işlemi tamamlandı. İşlenmiş veri şuraya kaydedildi: C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_468d203f7276405f9991edacddcffdc4.csv
+2025-06-23 18:06:40,781 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:06:42,787 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:06:44,772 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:06:46,773 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:06:49,113 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:06:51,110 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:06:53,123 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:06:55,118 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:06:57,114 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:06:59,121 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:01,122 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:03,121 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:05,122 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:07,109 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:09,123 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:11,109 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:13,112 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:15,121 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:17,121 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json
+2025-06-23 18:07:19,122 - INFO - Aranan JSON grafik dosyası: C:\Users\mhmtm\Desktop\project\Project\master\app\static\outputs\emin5_raw.json

@@ -144,7 +144,8 @@
                 <button id="visualizeBtn" class="center-button">Görselleştir</button>
             </div>
             <datalist id="columns-list"></datalist>
-            <iframe id="beforeFrame" class="viz-frame"></iframe>
+            <!-- DÜZELTME: Burası grafiğin çizileceği bir DIV olmalı, IFRAME değil. -->
+            <div id="beforeFrame" class="viz-frame"></div>
         </section>
 
         <!-- 2. İşlem Bölümü -->
@@ -342,12 +343,14 @@
             <div class="compare-frames">
                 <div>
                     <h4 style="color:white;text-align:center;">Önceki Grafik</h4>
-                    <iframe id="beforeProcessFrame" class="viz-frame"></iframe>
+                    <!-- DÜZELTME: Burası da bir DIV olmalı. -->
+                    <div id="beforeProcessFrame" class="viz-frame"></div>
                     <div id="beforeProcessDesc" class="process-desc"></div>
                 </div>
                 <div>
-                    <h4 style="color:white;text-align:center;">Sonraki Grafik</h4>
-                    <iframe id="afterProcessFrame" class="viz-frame"></iframe>
+                    <h4 style="color:white;text-align:center;">Sonraki Grafik (JSON ile)</h4>
+                    <!-- DEĞİŞİKLİK: iframe, grafiğin çizileceği bir div ile değiştirildi -->
+                    <div id="afterProcessFrame" class="viz-frame"></div>
                     <div id="afterProcessDesc" class="process-desc"></div>
                 </div>
             </div>
@@ -401,6 +404,7 @@
     </div>
     <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         // İşlem tamamlandıktan sonra butonu aktifleştir
         function enableDownloadButton() {
@@ -419,6 +423,5 @@
 </body>
 
 </html>
-`
 
 

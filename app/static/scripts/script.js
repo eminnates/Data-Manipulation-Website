@@ -196,8 +196,10 @@ document.getElementById("visualizeBtn").addEventListener("click", () => {
     })
     .then(response => {
       if (response.ok) {
-        // DÜZELTME: pollForGraphs fonksiyonuna 'projectTitle' gönderiliyor.
-        pollForGraphs('raw', 'beforeFrame', null, projectTitle); 
+        // DÜZELTME: Yanlış olan pollForGraphs fonksiyonu yerine,
+        // JSON verisini alıp DIV içine çizen pollAndRenderJsonGraph fonksiyonu çağrılıyor.
+        // 'beforeFrame', grafiğin çizileceği DIV elementinin ID'sidir.
+        pollAndRenderJsonGraph('raw', 'beforeFrame', 'beforeDesc', projectTitle); 
       } else {
         return response.json().then(err => { throw new Error(err.message || "State machine başlatılamadı."); });
       }
@@ -226,7 +228,10 @@ document.getElementById("addProcessBtn").addEventListener("click", () => {
         output_type: 'refined',
         processes: JSON.stringify(selectedProcesses),
         project_name: projectTitle, 
-        file_name: uploadedFileName 
+        file_name: uploadedFileName,
+        secim1: document.getElementById("plotType").value,  // plot_type
+        secim2: document.getElementById("xAxis").value,     // x_col
+        secim3: document.getElementById("yAxis").value    // y_col
     });
 
     fetch('/state/run-state-machine', {
@@ -242,13 +247,93 @@ document.getElementById("addProcessBtn").addEventListener("click", () => {
     .then(data => {
         showLogPanel();
         alert("İşlemler gönderildi ve analiz başladı!");
-        // DÜZELTME: pollForGraphs fonksiyonuna 'projectTitle' gönderiliyor.
-        pollForGraphs('raw', 'beforeProcessFrame', 'beforeDesc', projectTitle);
-        pollForGraphs('refined', 'afterProcessFrame', 'afterProcessDesc', projectTitle);
+        
+        // DÜZELTME: Her iki grafik için de eski iframe poller yerine yeni JSON renderer kullanılıyor.
+        // 'beforeProcessFrame' ve 'afterProcessFrame' ilgili DIV elementlerinin ID'leri olmalıdır.
+        pollAndRenderJsonGraph('raw', 'beforeProcessFrame', 'beforeDesc', projectTitle);
+        pollAndRenderJsonGraph('refined', 'afterProcessFrame', 'afterProcessDesc', projectTitle);
+
         onStateMachineComplete();
     })
     .catch(err => { alert("Bir hata oluştu: " + err.message); });
 });
+
+function renderGraphFromJSON(targetDivId, url) {
+    const targetDiv = document.getElementById(targetDivId);
+    if (!targetDiv) {
+        console.error(`Hedef div bulunamadı: ${targetDivId}`);
+        return;
+    }
+    targetDiv.innerHTML = 'Grafik yükleniyor...'; // Kullanıcıya geri bildirim
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Grafik verisi alınamadı. Sunucu durumu: ${response.status}`);
+            }
+            // Bu satır, JSON metnini kullanılabilir bir JavaScript nesnesine çevirir.
+            return response.json(); 
+        })
+        .then(fig => {
+            // Gelen JSON (artık 'fig' adında bir nesne) doğrudan Plotly'ye verilir.
+            if (fig && fig.data && fig.layout) {
+                Plotly.newPlot(targetDivId, fig.data, fig.layout, { responsive: true });
+            } else {
+                targetDiv.innerHTML = 'Geçersiz grafik verisi formatı.';
+            }
+        })
+        .catch(error => {
+            console.error('Grafik çizim hatası:', error);
+            targetDiv.innerHTML = `<p style="color: red;">Grafik yüklenirken bir hata oluştu: ${error.message}</p>`;
+        });
+}
+
+// YENİ: JSON grafiği için polling yapan ve sonra çizen fonksiyon
+function pollAndRenderJsonGraph(type, targetDivId, descId, projectName) {
+    const desc = document.getElementById(descId);
+    const targetDiv = document.getElementById(targetDivId);
+
+    if (!projectName || !targetDiv) {
+        console.error("pollAndRenderJsonGraph için proje adı veya hedef div eksik.");
+        if (desc) desc.textContent = "Hata: Proje adı veya hedef div eksik.";
+        return;
+    }
+
+    if (desc) desc.textContent = "Grafik oluşturuluyor, lütfen bekleyin...";
+    targetDiv.innerHTML = '<p style="color:white;text-align:center;padding-top:20px;">Grafik verisi bekleniyor...</p>';
+
+    let attempts = 0;
+    const maxAttempts = 20;
+    const url = `/graph/get-graph-json?type=${type}&project_name=${encodeURIComponent(projectName)}`;
+
+    const interval = setInterval(() => {
+        fetch(url, { method: "HEAD", cache: "no-cache" })
+        .then(res => {
+            if (res.ok) {
+                clearInterval(interval);
+                if (desc) desc.textContent = "İşlenmiş veri görüntüleniyor";
+                // Dosyanın var olduğunu biliyoruz, şimdi çizim için çağırabiliriz.
+                renderGraphFromJSON(targetDivId, url);
+            } else {
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    if (desc) desc.textContent = `İşlenmiş grafik yüklenemedi (${res.status})`;
+                    targetDiv.innerHTML = `<p style="color:red;text-align:center;padding-top:20px;">Grafik yüklenirken zaman aşımı oluştu.</p>`;
+                }
+            }
+        })
+        .catch(err => {
+            console.error("JSON Polling fetch error:", err);
+            attempts++;
+            if (attempts >= maxAttempts) {
+                clearInterval(interval);
+                if (desc) desc.textContent = "Grafik yükleme hatası.";
+                targetDiv.innerHTML = `<p style="color:red;text-align:center;padding-top:20px;">Grafik sunucusuna ulaşılamadı.</p>`;
+            }
+        });
+    }, 2000);
+}
 
 // DÜZELTME: Fonksiyon artık 'projectName' parametresi alıyor ve tüm türler için polling yapıyor.
 function pollForGraphs(type, frameId, descId, projectName) {
@@ -257,28 +342,32 @@ function pollForGraphs(type, frameId, descId, projectName) {
 
     if (!projectName) {
         console.error("pollForGraphs çağrılırken proje adı eksik!");
-        if(desc) desc.textContent = "Hata: Proje adı belirtilmedi.";
+        if (desc) desc.textContent = "Hata: Proje adı belirtilmedi.";
         return;
     }
 
     if (desc) desc.textContent = "Grafik oluşturuluyor, lütfen bekleyin...";
 
     let attempts = 0;
-    const maxAttempts = 20; // 40 saniye (20 * 2000ms)
+    const maxAttempts = 20;
+
     const interval = setInterval(() => {
-        // DÜZELTME: fetch URL'ine 'project_name' parametresi eklendi.
-        fetch(`/graph/get-graph?type=${type}&project_name=${encodeURIComponent(projectName)}`, { method: "HEAD", cache: "no-cache" })
+        fetch(`/graph/get-graph-json?type=${type}&project_name=${encodeURIComponent(projectName)}`, {
+            method: "HEAD",
+            cache: "no-cache"
+        })
         .then(res => {
-            if (res.ok) {
-                // DÜZELTME: src'ye de 'project_name' ve cache-buster ekleniyor.
-                frame.src = `/graph/get-graph?type=${type}&project_name=${encodeURIComponent(projectName)}&t=${new Date().getTime()}`;
-                if(descId) document.getElementById(descId).textContent = "İşlenmiş veri görüntüleniyor";
+            const contentLength = parseInt(res.headers.get("Content-Length") || "0");
+
+            if (res.ok && contentLength > 500) {
+                frame.src = `/graph/get-graph-json?type=${type}&project_name=${encodeURIComponent(projectName)}&t=${Date.now()}`;
+                if (desc) desc.textContent = "İşlenmiş veri görüntüleniyor";
                 clearInterval(interval);
             } else {
                 attempts++;
                 if (attempts >= maxAttempts) {
                     clearInterval(interval);
-                    if(descId) document.getElementById(descId).textContent = `İşlenmiş grafik yüklenemedi (${res.status})`;
+                    if (desc) desc.textContent = `İşlenmiş grafik yüklenemedi (${res.status})`;
                 }
             }
         })
@@ -287,11 +376,12 @@ function pollForGraphs(type, frameId, descId, projectName) {
             attempts++;
             if (attempts >= maxAttempts) {
                 clearInterval(interval);
-                if(descId) document.getElementById(descId).textContent = "Grafik yükleme hatası.";
+                if (desc) desc.textContent = "Grafik yükleme hatası.";
             }
         });
     }, 2000);
 }
+
 
 // YENİ: Seçili işlemleri ve parametrelerini toplayan yardımcı fonksiyon
 function getSelectedProcesses() {

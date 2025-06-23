@@ -1,0 +1,33 @@
+2025-06-23 17:31:19,439 - INFO - State Machine initialized. Project: ddfafasd, Mode: visualize_only
+2025-06-23 17:31:19,508 - INFO - Loading data...
+2025-06-23 17:31:19,511 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-23 17:31:19,516 - INFO - Entering VISUALIZATION state...
+2025-06-23 17:31:20,704 - INFO - Visualization successful. Graph saved to app/static/outputs\ddfafasd_raw.json
+2025-06-23 17:31:20,720 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-23 17:31:20,722 - INFO - Finalizing data processing...
+2025-06-23 17:31:20,774 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_2c3d713e95294d35bc5b1d24734e1b5e.csv
+2025-06-23 17:31:20,775 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-23 17:31:20,778 - INFO - State machine finished. No further processing.
+2025-06-23 17:31:20,783 - INFO - Redis flag set: state_machine:complete = 1
+2025-06-23 17:41:17,078 - INFO - State Machine initialized. Project: ddfafasd, Mode: visualize_only
+2025-06-23 17:41:17,080 - INFO - Loading data...
+2025-06-23 17:41:17,083 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-23 17:41:17,085 - INFO - Entering VISUALIZATION state...
+2025-06-23 17:41:17,122 - INFO - Visualization successful. Graph saved to app/static/outputs\ddfafasd_raw.json
+2025-06-23 17:41:17,125 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-23 17:41:17,126 - INFO - Finalizing data processing...
+2025-06-23 17:41:17,159 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_9eea4b61ee0441459d4d148db6ac6c63.csv
+2025-06-23 17:41:17,160 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-23 17:41:17,161 - INFO - State machine finished. No further processing.
+2025-06-23 17:41:17,163 - INFO - Redis flag set: state_machine:complete = 1
+2025-06-23 17:41:33,341 - INFO - State Machine initialized. Project: ddfafasdda, Mode: visualize_only
+2025-06-23 17:41:33,344 - INFO - Loading data...
+2025-06-23 17:41:33,346 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-23 17:41:33,347 - INFO - Entering VISUALIZATION state...
+2025-06-23 17:41:33,390 - INFO - Visualization successful. Graph saved to app/static/outputs\ddfafasdda_raw.json
+2025-06-23 17:41:33,396 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-23 17:41:33,397 - INFO - Finalizing data processing...
+2025-06-23 17:41:33,441 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_c547a16d9fa54efdb7d53f4ea0e6b574.csv
+2025-06-23 17:41:33,443 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-23 17:41:33,445 - INFO - State machine finished. No further processing.
+2025-06-23 17:41:33,447 - INFO - Redis flag set: state_machine:complete = 1

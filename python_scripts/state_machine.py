@@ -229,27 +229,28 @@ class DataStateMachine:
             elif self.state == DataState.VISUALIZATION:
                 self.log_info("Entering VISUALIZATION state...")
                 
-                # DÜZELTME: Parametrelerin varlığını ve içeriğini daha detaylı kontrol et.
                 plot_type = self.visualization_params.get('plot_type')
                 x_col = self.visualization_params.get('x_col')
+                y_col = self.visualization_params.get('y_col')
 
-                # Eğer plot_type veya x_col eksikse, bu adımı atla.
                 if not all([plot_type, x_col]):
                     self.log.warning(f"Visualization parameters missing or incomplete (plot_type: {plot_type}, x_col: {x_col}). Skipping visualization.")
                     self.transition_to(DataState.FINAL)
                     continue
 
                 try:
-                    # DÜZELTME: project_name'i artık self.project_name'den alıyoruz
+                    # YENİ: Hata ayıklama için gönderilen parametreleri logla
+                    self.log_info(f"Attempting to generate graph with params: project='{self.project_name}', type='{plot_type}', x='{x_col}', y='{y_col}', output='{self.output_type}'")
+                    
                     generator = GraphGenerator(
                         data_df=self.data,
-                        project_name=self.project_name, # Context'ten gelen proje adı
-                        plot_type=plot_type, # Önceden kontrol edilen değişkeni kullan
-                        x_col=x_col,         # Önceden kontrol edilen değişkeni kullan
-                        y_col=self.visualization_params.get('y_col'), # y_col opsiyonel olabilir
+                        project_name=self.project_name,
+                        plot_type=plot_type,
+                        x_col=x_col,
+                        y_col=y_col,
                         output_type=self.output_type
                     )
-                    saved_path = generator.generate_and_save()
+                    saved_path = generator.generate_and_save_json()
                     
                     if saved_path:
                         self.log_info(f"Visualization successful. Graph saved to {saved_path}")
@@ -261,7 +262,11 @@ class DataStateMachine:
                     import traceback
                     self.log.error(f"Traceback: {traceback.format_exc()}")
                 
-                self.transition_to(DataState.FINAL)
+                # DÜZELTME: Sadece görselleştirme modunda ise işlemi tamamla, değilse devam et.
+                if self.mode == 'visualize_only':
+                    self.transition_to(DataState.COMPLETE)
+                else:
+                    self.transition_to(DataState.FINAL)
 
             elif self.state == DataState.FINAL:
                 self.log_info("Finalizing data processing...")

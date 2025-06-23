@@ -1,0 +1,24 @@
+2025-06-23 17:43:22,499 - INFO - State Machine initialized. Project: proj123, Mode: visualize_only
+2025-06-23 17:43:22,670 - INFO - Loading data...
+2025-06-23 17:43:22,671 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-23 17:43:22,673 - INFO - Entering VISUALIZATION state...
+2025-06-23 17:43:22,676 - INFO - Attempting to generate graph with params: project='proj123', type='Histogram', x='high', y='close', output='raw'
+2025-06-23 17:43:23,822 - INFO - Visualization successful. Graph saved to app/static/outputs\proj123_raw.json
+2025-06-23 17:43:23,842 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-23 17:43:23,844 - INFO - Finalizing data processing...
+2025-06-23 17:43:23,947 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_e6cceb457a6c4c839209fafdc4fdd53e.csv
+2025-06-23 17:43:23,948 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-23 17:43:23,949 - INFO - State machine finished. No further processing.
+2025-06-23 17:43:23,951 - INFO - Redis flag set: state_machine:complete = 1
+2025-06-23 17:45:10,165 - INFO - State Machine initialized. Project: asdasdas, Mode: visualize_only
+2025-06-23 17:45:10,168 - INFO - Loading data...
+2025-06-23 17:45:10,172 - INFO - Transitioning from INITIAL to VISUALIZATION
+2025-06-23 17:45:10,174 - INFO - Entering VISUALIZATION state...
+2025-06-23 17:45:10,177 - INFO - Attempting to generate graph with params: project='asdasdas', type='Histogram', x='high', y='adj_close', output='raw'
+2025-06-23 17:45:10,212 - INFO - Visualization successful. Graph saved to app/static/outputs\asdasdas_raw.json
+2025-06-23 17:45:10,214 - INFO - Transitioning from VISUALIZATION to FINAL
+2025-06-23 17:45:10,215 - INFO - Finalizing data processing...
+2025-06-23 17:45:10,278 - INFO - Processed data saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/temp\processed_e1c66f39bfe043ef8aad0db0e613f2df.csv
+2025-06-23 17:45:10,279 - INFO - Transitioning from FINAL to COMPLETE
+2025-06-23 17:45:10,280 - INFO - State machine finished. No further processing.
+2025-06-23 17:45:10,283 - INFO - Redis flag set: state_machine:complete = 1
