@@ -60,3 +60,31 @@ def handle_suitability_check(data):
     except Exception as e:
         current_app.logger.error(f"Suitability calculation failed: {e}", exc_info=True)
         emit('suitability_result', {'error': 'Hesaplama sırasında bir hata oluştu.'})
+
+@socketio.on('request_data_analysis')
+def handle_data_analysis_request(data):
+    """
+    Frontend'den gelen veri analizi talebi
+    """
+    project_name = data.get('project_name')
+    file_name = data.get('file_name')
+    
+    if not all([project_name, file_name]):
+        emit('data_analysis_error', {'error': 'Proje veya dosya adı eksik.'})
+        return
+    
+    emit('data_analysis_status', {
+        'status': 'acknowledged',
+        'message': f'Veri analizi talebi alındı: {project_name}/{file_name}'
+    })
+
+@socketio.on('get_analysis_status')
+def handle_get_analysis_status(data):
+    """
+    Analiz durumunu sorgula
+    """
+    project_name = data.get('project_name')
+    emit('analysis_status_response', {
+        'project_name': project_name,
+        'status': 'ready_for_query'
+    })
