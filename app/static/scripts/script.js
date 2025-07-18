@@ -534,5 +534,342 @@ document.addEventListener("DOMContentLoaded", function () {
     socket.on('disconnect', () => {
         console.log('WebSocket bağlantısı kesildi.');
     });
+/*=============== TAB INTERFACE FUNCTIONS ===============*/
+
+// Tab switching functionality
+function showTab(evt, tabName) {
+    // Hide all tab contents
+    const tabcontents = document.getElementsByClassName("tab-content");
+    for (let i = 0; i < tabcontents.length; i++) {
+        tabcontents[i].classList.remove("active");
+    }
+    
+    // Remove active class from all tab navigation items
+    const tabnavitems = document.getElementsByClassName("tab-nav-item");
+    for (let i = 0; i < tabnavitems.length; i++) {
+        tabnavitems[i].classList.remove("active");
+    }
+    
+    // Show the selected tab and mark navigation item as active
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+}
+
+// Upload area functionality
+function handleDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const uploadArea = event.currentTarget;
+    uploadArea.classList.remove('drag-over');
+    
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+        const file = files[0];
+        handleFileSelection(file);
+    }
+}
+
+function handleFileSelection(file) {
+    selectedFile = file;
+    const validExtensions = ['csv', 'xlsx', 'xml', 'json'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!validExtensions.includes(fileExtension)) {
+        alert("Geçersiz dosya formatı. Lütfen csv, xlsx, xml veya json dosyası seçin.");
+        return;
+    }
+
+    // Show file info
+    const fileInfo = document.getElementById('file-info');
+    const fileDetails = document.getElementById('file-details');
+    
+    fileDetails.innerHTML = `
+        <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                <i class="ri-file-line" style="font-size: 2rem; color: rgb(0, 195, 255);"></i>
+                <div>
+                    <div style="font-weight: 600; color: white;">${file.name}</div>
+                    <div style="color: rgba(255, 255, 255, 0.6);">${(file.size / 1024).toFixed(2)} KB</div>
+                </div>
+            </div>
+            <div style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">
+                📄 Format: ${fileExtension.toUpperCase()}
+            </div>
+        </div>
+    `;
+    
+    fileInfo.style.display = 'block';
+}
+
+// Upload button functionality
+function uploadFile() {
+    if (!selectedFile) {
+        alert("Lütfen önce bir dosya seçin.");
+        return;
+    }
+    
+    const projectName = document.getElementById('projectNameInput').value.trim();
+    if (!projectName) {
+        alert("Lütfen proje adını girin.");
+        return;
+    }
+    
+    // Process file upload
+    const chunkSize = 5 * 1024; // 5 KB
+    const blob = selectedFile.slice(0, chunkSize);
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result;
+        const lines = text.split(/\r?\n/).slice(0, 10).join("\n");
+        const payload = JSON.stringify({ sample: lines });
+        
+        // Update data info and switch to data info tab
+        fetch('/upload/get-head-api', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.head) {
+                updateDataInfo(data);
+                // Auto-switch to data info tab
+                document.querySelector('[onclick="showTab(event, \'tab-info\')"]').click();
+            }
+        })
+        .catch(err => console.error("Upload error:", err));
+        
+        // Get columns for dropdowns
+        fetch('/upload/get-columns-api', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.columns) {
+                updateColumnSelections(data.columns);
+            }
+        })
+        .catch(err => console.error("Columns error:", err));
+    };
+    
+    reader.readAsText(blob);
+}
+
+function clearFile() {
+    selectedFile = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('file-info').style.display = 'none';
+    document.getElementById('projectNameInput').value = '';
+}
+
+// Update data info tab with file statistics
+function updateDataInfo(data) {
+    const rows = JSON.parse(data.head);
+    if (rows && rows.length > 0) {
+        const columns = Object.keys(rows[0]);
+        
+        // Update basic stats
+        document.getElementById('total-rows').textContent = rows.length + '+';
+        document.getElementById('total-columns').textContent = columns.length;
+        document.getElementById('file-size').textContent = (selectedFile.size / 1024).toFixed(2) + ' KB';
+        
+        // Simulate other stats (in a real app, these would come from backend)
+        document.getElementById('missing-values').textContent = '0';
+        document.getElementById('numeric-columns').textContent = '0';
+        document.getElementById('categorical-columns').textContent = columns.length;
+        document.getElementById('avg-skewness').textContent = '0.12';
+        document.getElementById('avg-std').textContent = '1.45';
+        document.getElementById('avg-variance').textContent = '2.1';
+        
+        // Update data preview table
+        const previewTable = document.getElementById('data-preview-table');
+        let table = '<table style="width:100%; color:white; border-collapse:collapse; margin-top: 1rem;">';
+        table += '<tr>' + columns.map(col => `<th style="border: 1px solid rgba(255,255,255,0.2); padding: 8px; background: rgba(0,195,255,0.2);">${col}</th>`).join('') + '</tr>';
+        rows.slice(0, 5).forEach(row => {
+            table += '<tr>' + columns.map(col => `<td style="border: 1px solid rgba(255,255,255,0.2); padding: 8px;">${row[col] || '-'}</td>`).join('') + '</tr>';
+        });
+        table += '</table>';
+        
+        previewTable.innerHTML = `
+            <h3 style="color: rgb(0, 195, 255); margin-bottom: 1rem;">Veri Önizleme</h3>
+            <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem; overflow-x: auto;">
+                ${table}
+            </div>
+        `;
+    }
+}
+
+// Update column selections in operations tab
+function updateColumnSelections(columns) {
+    // Update visualization dropdowns
+    const xAxis = document.getElementById('xAxis');
+    const yAxis = document.getElementById('yAxis');
+    
+    xAxis.innerHTML = '<option value="">X Ekseni Seç</option>';
+    yAxis.innerHTML = '<option value="">Y Ekseni Seç</option>';
+    
+    columns.forEach(col => {
+        xAxis.innerHTML += `<option value="${col}">${col}</option>`;
+        yAxis.innerHTML += `<option value="${col}">${col}</option>`;
+    });
+    
+    // Update operation column selectors
+    const columnSelectors = document.querySelectorAll('.column-dropdown');
+    columnSelectors.forEach(select => {
+        const currentOptions = select.innerHTML;
+        let newOptions = '';
+        
+        if (currentOptions.includes('📋 Tüm')) {
+            newOptions = select.querySelector('[value="all"]').outerHTML;
+        }
+        
+        columns.forEach(col => {
+            newOptions += `<option value="${col}">📄 ${col}</option>`;
+        });
+        
+        select.innerHTML = newOptions;
+    });
+}
+
+// Advanced operation toggle
+function toggleAdvancedOperation(element, operationType) {
+    const isExpanded = element.classList.contains('expanded');
+    const details = document.getElementById(`${operationType}-details`);
+    
+    // Close all other expanded operations
+    document.querySelectorAll('.operation-item.expanded').forEach(item => {
+        if (item !== element) {
+            item.classList.remove('expanded');
+            const otherDetails = item.nextElementSibling;
+            if (otherDetails && otherDetails.classList.contains('operation-details')) {
+                otherDetails.style.display = 'none';
+            }
+        }
+    });
+    
+    if (isExpanded) {
+        element.classList.remove('expanded', 'selected');
+        details.style.display = 'none';
+    } else {
+        element.classList.add('expanded', 'selected');
+        details.style.display = 'block';
+    }
+}
+
+// Simple operation toggle
+function toggleOperation(element) {
+    element.classList.toggle('selected');
+}
+
+// Preview functionality
+function togglePreview() {
+    const content = document.getElementById('affected-values-content');
+    const icon = document.getElementById('preview-icon');
+    const text = document.getElementById('preview-text');
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.classList.remove('ri-eye-line');
+        icon.classList.add('ri-eye-off-line');
+        text.textContent = 'Önizlemeyi Gizle';
+    } else {
+        content.style.display = 'none';
+        icon.classList.remove('ri-eye-off-line');
+        icon.classList.add('ri-eye-line');
+        text.textContent = 'Önizlemeyi Göster';
+    }
+}
+
+function togglePreviewGeneric(operationType) {
+    const content = document.getElementById(`${operationType}-values-content`);
+    const icon = document.getElementById(`${operationType}-preview-icon`);
+    const text = document.getElementById(`${operationType}-preview-text`);
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.classList.remove('ri-eye-line');
+        icon.classList.add('ri-eye-off-line');
+        text.textContent = 'Önizlemeyi Gizle';
+    } else {
+        content.style.display = 'none';
+        icon.classList.remove('ri-eye-off-line');
+        icon.classList.add('ri-eye-line');
+        text.textContent = 'Önizlemeyi Göster';
+    }
+}
+
+// Operations functionality
+function applyOperations() {
+    const selectedOps = document.querySelectorAll('.operation-item.selected');
+    if (selectedOps.length === 0) {
+        alert('Lütfen en az bir işlem seçin.');
+        return;
+    }
+    
+    alert(`${selectedOps.length} işlem uygulanacak. Bu özellik geliştirme aşamasındadır.`);
+}
+
+function resetOperations() {
+    document.querySelectorAll('.operation-item.selected').forEach(item => {
+        item.classList.remove('selected', 'expanded');
+    });
+    document.querySelectorAll('.operation-details').forEach(detail => {
+        detail.style.display = 'none';
+    });
+}
+
+// Visualization functionality
+function generateVisualization() {
+    const plotType = document.getElementById('plotType').value;
+    const xAxis = document.getElementById('xAxis').value;
+    const yAxis = document.getElementById('yAxis').value;
+    
+    if (!plotType || !xAxis || !yAxis) {
+        alert('Lütfen tüm grafik parametrelerini seçin.');
+        return;
+    }
+    
+    // This would integrate with existing visualization logic
+    alert('Görselleştirme özelliği mevcut sistem ile entegre edilecek.');
+}
+
+function exportChart() {
+    alert('Grafik indirme özelliği geliştirme aşamasındadır.');
+}
+
+// Enhanced upload area interactions
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.querySelector('.upload-area');
+    const fileInput = document.getElementById('fileInput');
+    
+    if (uploadArea && fileInput) {
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        uploadArea.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            if (!uploadArea.contains(e.relatedTarget)) {
+                uploadArea.classList.remove('drag-over');
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
+    }
+});
+
     // --- WEBSOCKET DİNLEYİCİSİ SONU ---
 });
