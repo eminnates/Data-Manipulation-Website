@@ -1278,6 +1278,19 @@ input[type="checkbox"]:checked + .checkbox-custom {
     max-width: 1200px;
     min-height: 600px;
     backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: containerFadeIn 0.6s ease-out;
+}
+
+@keyframes containerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .tab-wrapper {
@@ -1301,13 +1314,35 @@ input[type="checkbox"]:checked + .checkbox-custom {
     color: rgba(255, 255, 255, 0.7);
     padding: 1.5rem 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
     position: relative;
     border-radius: 16px 16px 0 0;
+    overflow: hidden;
+}
+
+.tab-nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+    z-index: 1;
+}
+
+.tab-nav-item:hover::before {
+    left: 100%;
+}
+
+.tab-nav-item > * {
+    position: relative;
+    z-index: 2;
 }
 
 .tab-nav-item:first-child {
@@ -1321,12 +1356,14 @@ input[type="checkbox"]:checked + .checkbox-custom {
 .tab-nav-item.active {
     background: linear-gradient(135deg, rgba(79, 195, 247, 0.3), rgba(0, 195, 255, 0.2));
     color: rgb(0, 195, 255);
-    box-shadow: inset 0 -3px 0 rgb(0, 195, 255);
+    box-shadow: inset 0 -3px 0 rgb(0, 195, 255), 0 4px 20px rgba(0, 195, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .tab-nav-item:hover:not(.active) {
     background: rgba(79, 195, 247, 0.1);
     color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
 }
 
 .tab-nav-icon {
@@ -1343,10 +1380,27 @@ input[type="checkbox"]:checked + .checkbox-custom {
     flex: 1;
     padding: 2rem;
     overflow-y: auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tab-content.active {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
+    animation: tabContentFadeIn 0.4s ease-out;
+}
+
+@keyframes tabContentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .tab-section {
@@ -1387,13 +1441,35 @@ input[type="checkbox"]:checked + .checkbox-custom {
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 15px rgba(0, 195, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.tab-btn:hover::before {
+    left: 100%;
 }
 
 .tab-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 195, 255, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 195, 255, 0.4);
+}
+
+.tab-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 195, 255, 0.3);
 }
 
 .tab-btn.secondary {
@@ -1414,16 +1490,47 @@ input[type="checkbox"]:checked + .checkbox-custom {
     padding: 3rem;
     text-align: center;
     background: rgba(79, 195, 247, 0.05);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     position: relative;
     overflow: hidden;
+}
+
+.upload-area::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(transparent, rgba(0, 195, 255, 0.1), transparent);
+    animation: rotate 3s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.upload-area:hover::before {
+    opacity: 1;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .upload-area:hover {
     border-color: rgb(0, 195, 255);
     background: rgba(79, 195, 247, 0.1);
     transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 195, 255, 0.2);
+}
+
+.upload-area.dragover {
+    border-color: rgb(0, 255, 136);
+    background: rgba(0, 255, 136, 0.1);
+    transform: scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 255, 136, 0.3);
+}
     box-shadow: 0 8px 25px rgba(0, 195, 255, 0.2);
 }
 
@@ -1804,6 +1911,196 @@ input[type="checkbox"]:checked + .checkbox-custom {
     display: flex;
     justify-content: center;
     margin-top: 24px;
+}
+
+/* Enhanced Loading Animations */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: rgb(0, 195, 255);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 1rem 0;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, rgb(0, 195, 255), rgb(79, 195, 247));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.progress-bar-fill::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-image: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 50px 50px;
+    animation: move 1s linear infinite;
+}
+
+@keyframes move {
+    0% { background-position: 0 0; }
+    100% { background-position: 50px 50px; }
+}
+
+/* Enhanced Notification Styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(30, 30, 40, 0.95);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid rgb(0, 195, 255);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+.notification.success {
+    border-left-color: #00ff88;
+}
+
+.notification.error {
+    border-left-color: #ff4757;
+}
+
+.notification.warning {
+    border-left-color: #ffa502;
+}
+
+/* Enhanced Mobile Responsive Design */
+@media screen and (max-width: 480px) {
+    .tab-container {
+        margin: 0.5rem;
+        border-radius: 8px;
+    }
+    
+    .tab-content {
+        padding: 1rem 0.5rem;
+    }
+    
+    .tab-nav-item {
+        padding: 0.75rem 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .tab-nav-icon {
+        font-size: 1rem;
+    }
+    
+    .upload-area {
+        padding: 1.5rem 1rem;
+    }
+    
+    .data-info-grid {
+        gap: 0.75rem;
+    }
+    
+    .info-card {
+        padding: 1rem;
+    }
+    
+    .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* Modern Scroll Styling */
+.tab-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tab-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.tab-content::-webkit-scrollbar-thumb {
+    background: rgba(79, 195, 247, 0.5);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.tab-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(79, 195, 247, 0.8);
+}
+
+/* Enhanced Focus States for Accessibility */
+.tab-nav-item:focus {
+    outline: 2px solid rgb(0, 195, 255);
+    outline-offset: 2px;
+}
+
+.tab-btn:focus {
+    outline: 2px solid rgb(0, 195, 255);
+    outline-offset: 2px;
+}
+
+.upload-area:focus {
+    outline: 2px solid rgb(0, 195, 255);
+    outline-offset: 2px;
+}
+
+/* Pulse Animation for Important Elements */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Shake Animation for Errors */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.6s ease-in-out;
 }
 
 

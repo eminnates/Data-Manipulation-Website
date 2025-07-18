@@ -1,3 +1,81 @@
+/*=============== ENHANCED INITIALIZATION ===============*/
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTabInterface();
+    initializeUploadArea();
+    initializeFormValidation();
+    showNotification('Data Manipulation Platform - Hoş geldiniz!', 'info', 5000);
+});
+
+function initializeTabInterface() {
+    // Add keyboard navigation for tabs
+    const tabNavItems = document.querySelectorAll('.tab-nav-item');
+    tabNavItems.forEach((tab, index) => {
+        tab.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                const newIndex = e.key === 'ArrowLeft' 
+                    ? (index - 1 + tabNavItems.length) % tabNavItems.length
+                    : (index + 1) % tabNavItems.length;
+                tabNavItems[newIndex].focus();
+                tabNavItems[newIndex].click();
+            }
+        });
+    });
+}
+
+function initializeUploadArea() {
+    const uploadArea = document.querySelector('.upload-area');
+    if (uploadArea) {
+        // Enhanced drag and drop functionality
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        
+        // Click to upload functionality
+        uploadArea.addEventListener('click', function() {
+            const hiddenFileInput = document.getElementById('hiddenFileInput');
+            if (hiddenFileInput) {
+                hiddenFileInput.click();
+            }
+        });
+    }
+}
+
+function initializeFormValidation() {
+    // Real-time validation for project name input
+    const projectNameInput = document.getElementById('projectNameInput');
+    if (projectNameInput) {
+        projectNameInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            const isValid = value.length >= 3 && /^[a-zA-Z0-9_\-\s]+$/.test(value);
+            
+            this.style.borderColor = isValid ? 'rgb(0, 195, 255)' : '#ff4757';
+            
+            // Show validation message
+            let validationMsg = this.parentNode.querySelector('.validation-message');
+            if (!validationMsg) {
+                validationMsg = document.createElement('div');
+                validationMsg.className = 'validation-message';
+                validationMsg.style.cssText = 'font-size: 0.8rem; margin-top: 0.25rem; transition: color 0.3s ease;';
+                this.parentNode.appendChild(validationMsg);
+            }
+            
+            if (value.length === 0) {
+                validationMsg.textContent = '';
+            } else if (value.length < 3) {
+                validationMsg.textContent = 'Proje adı en az 3 karakter olmalıdır';
+                validationMsg.style.color = '#ff4757';
+            } else if (!/^[a-zA-Z0-9_\-\s]+$/.test(value)) {
+                validationMsg.textContent = 'Sadece harf, rakam, tire ve alt çizgi kullanılabilir';
+                validationMsg.style.color = '#ff4757';
+            } else {
+                validationMsg.textContent = '✓ Geçerli proje adı';
+                validationMsg.style.color = '#00ff88';
+            }
+        });
+    }
+}
+
 /*=============== SHOW MENU ===============*/
 const showMenu = (toggleId, navId) => {
   const toggle = document.getElementById(toggleId),
@@ -17,17 +95,16 @@ showMenu('nav-toggle', 'nav-menu')
 /*=============== FILE MENU ===============*/
 let selectedFile = null;
 
-// Old file input handler (for backward compatibility)
+// Enhanced file input handler
 const hiddenFileInput = document.getElementById("hiddenFileInput");
 if (hiddenFileInput) {
   hiddenFileInput.addEventListener("change", function () {
-    selectedFile = this.files[0];
-    const validExtensions = ['csv', 'xlsx', 'xml', 'json'];
-    const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
-
-    if (!validExtensions.includes(fileExtension)) {
-      alert("Geçersiz dosya formatı. Lütfen csv, xlsx, xml veya json dosyası seçin.");
-      this.value = '';
+    const file = this.files[0];
+    if (file) {
+        handleFileSelection(file);
+    }
+  });
+}
     }
   });
 }
@@ -565,12 +642,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
 /*=============== TAB INTERFACE FUNCTIONS ===============*/
 
-// Tab switching functionality
+// Enhanced Tab switching functionality with animations
 function showTab(evt, tabName) {
-    // Hide all tab contents
+    // Hide all tab contents with fade out effect
     const tabcontents = document.getElementsByClassName("tab-content");
     for (let i = 0; i < tabcontents.length; i++) {
-        tabcontents[i].classList.remove("active");
+        if (tabcontents[i].classList.contains("active")) {
+            tabcontents[i].style.opacity = '0';
+            tabcontents[i].style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                tabcontents[i].classList.remove("active");
+            }, 200);
+        }
     }
     
     // Remove active class from all tab navigation items
@@ -579,23 +663,240 @@ function showTab(evt, tabName) {
         tabnavitems[i].classList.remove("active");
     }
     
-    // Show the selected tab and mark navigation item as active
-    document.getElementById(tabName).classList.add("active");
-    evt.currentTarget.classList.add("active");
+    // Show the selected tab with fade in effect
+    setTimeout(() => {
+        const selectedTab = document.getElementById(tabName);
+        selectedTab.classList.add("active");
+        
+        // Force a reflow
+        selectedTab.offsetHeight;
+        
+        // Apply fade in animation
+        selectedTab.style.opacity = '1';
+        selectedTab.style.transform = 'translateY(0)';
+        
+        // Mark navigation item as active
+        evt.currentTarget.classList.add("active");
+        
+        // Show notification for tab switch
+        showNotification(`Sekmede geçiş yapıldı: ${getTabTitle(tabName)}`, 'success');
+    }, 200);
 }
 
-// Upload area functionality
+// Get user-friendly tab title
+function getTabTitle(tabName) {
+    const titles = {
+        'tab-upload': 'Veri Yükleme',
+        'tab-info': 'Veri Bilgisi',
+        'tab-operations': 'Veri İşlemleri',
+        'tab-visualization': 'Veri Görselleştirme'
+    };
+    return titles[tabName] || tabName;
+}
+
+// Enhanced notification system
+function showNotification(message, type = 'info', duration = 3000) {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+    
+    // Create new notification
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <i class="ri-${getNotificationIcon(type)}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Show notification with animation
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Auto-hide notification
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, duration);
+}
+
+function getNotificationIcon(type) {
+    const icons = {
+        'success': 'check-line',
+        'error': 'error-warning-line',
+        'warning': 'alert-line',
+        'info': 'information-line'
+    };
+    return icons[type] || 'information-line';
+}
+
+// Enhanced progress bar functionality
+function updateProgressBar(percentage, containerId = 'progress-container') {
+    let progressContainer = document.getElementById(containerId);
+    
+    if (!progressContainer) {
+        progressContainer = document.createElement('div');
+        progressContainer.id = containerId;
+        progressContainer.innerHTML = `
+            <div class="progress-bar">
+                <div class="progress-bar-fill" style="width: 0%"></div>
+            </div>
+        `;
+        
+        // Add to the active tab
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab) {
+            activeTab.appendChild(progressContainer);
+        }
+    }
+    
+    const progressFill = progressContainer.querySelector('.progress-bar-fill');
+    progressFill.style.width = `${percentage}%`;
+    
+    if (percentage >= 100) {
+        setTimeout(() => {
+            progressContainer.remove();
+        }, 1000);
+    }
+}
+
+// Enhanced loading spinner
+function showLoadingSpinner(containerId, message = 'İşleme devam ediliyor...') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const loadingElement = document.createElement('div');
+    loadingElement.className = 'loading-overlay';
+    loadingElement.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 2rem; background: rgba(30, 30, 40, 0.95); border-radius: 8px; backdrop-filter: blur(10px);">
+            <div class="loading-spinner"></div>
+            <span style="color: rgba(255, 255, 255, 0.8);">${message}</span>
+        </div>
+    `;
+    loadingElement.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    `;
+    
+    container.style.position = 'relative';
+    container.appendChild(loadingElement);
+    
+    // Fade in
+    setTimeout(() => loadingElement.style.opacity = '1', 10);
+    
+    return loadingElement;
+}
+
+function hideLoadingSpinner(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const loadingElement = container.querySelector('.loading-overlay');
+    if (loadingElement) {
+        loadingElement.style.opacity = '0';
+        setTimeout(() => loadingElement.remove(), 300);
+    }
+}
+
+// Enhanced Upload area functionality
 function handleDrop(event) {
     event.preventDefault();
     event.stopPropagation();
     
     const uploadArea = event.currentTarget;
-    uploadArea.classList.remove('drag-over');
+    uploadArea.classList.remove('dragover');
     
     const files = event.dataTransfer.files;
     if (files.length > 0) {
         const file = files[0];
         handleFileSelection(file);
+        showNotification(`Dosya seçildi: ${file.name}`, 'success');
+    } else {
+        showNotification('Dosya yüklenemedi. Lütfen tekrar deneyin.', 'error');
+        uploadArea.classList.add('shake');
+        setTimeout(() => uploadArea.classList.remove('shake'), 600);
+    }
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.currentTarget.classList.add('dragover');
+}
+
+function handleDragLeave(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Only remove dragover if we're actually leaving the upload area
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+        event.currentTarget.classList.remove('dragover');
+    }
+}
+
+// Enhanced file selection handler
+function handleFileSelection(file) {
+    if (!file) return;
+    
+    // Validate file type
+    const validExtensions = ['csv', 'xlsx', 'xml', 'json'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    
+    if (!validExtensions.includes(fileExtension)) {
+        showNotification(`Geçersiz dosya formatı: ${fileExtension}. Desteklenen formatlar: ${validExtensions.join(', ')}`, 'error');
+        return;
+    }
+    
+    // Validate file size (max 50MB)
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+        showNotification('Dosya boyutu çok büyük. Maksimum 50MB desteklenmektedir.', 'error');
+        return;
+    }
+    
+    selectedFile = file;
+    
+    // Update UI
+    updateFileInfo(file);
+    
+    // Show success feedback
+    showNotification(`Dosya başarıyla seçildi: ${file.name}`, 'success');
+    
+    // Add visual feedback
+    const uploadArea = document.querySelector('.upload-area');
+    if (uploadArea) {
+        uploadArea.classList.add('pulse');
+        setTimeout(() => uploadArea.classList.remove('pulse'), 2000);
+    }
+}
+
+// Update file information display
+function updateFileInfo(file) {
+    const fileInfoElement = document.getElementById('file-info');
+    if (fileInfoElement) {
+        const fileSize = (file.size / 1024 / 1024).toFixed(2);
+        fileInfoElement.innerHTML = `
+            <div style="background: rgba(79, 195, 247, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid rgb(0, 195, 255);">
+                <h4 style="color: rgb(0, 195, 255); margin-bottom: 0.5rem;">Seçili Dosya</h4>
+                <p><strong>Ad:</strong> ${file.name}</p>
+                <p><strong>Boyut:</strong> ${fileSize} MB</p>
+                <p><strong>Tip:</strong> ${file.type || 'Bilinmiyor'}</p>
+                <p><strong>Son Değişiklik:</strong> ${new Date(file.lastModified).toLocaleString('tr-TR')}</p>
+            </div>
+        `;
     }
 }
 
@@ -631,18 +932,36 @@ function handleFileSelection(file) {
     fileInfo.style.display = 'block';
 }
 
-// Upload button functionality
+// Enhanced Upload button functionality
 function uploadFile() {
     if (!selectedFile) {
-        alert("Lütfen önce bir dosya seçin.");
+        showNotification("Lütfen önce bir dosya seçin.", 'warning');
+        const uploadArea = document.querySelector('.upload-area');
+        if (uploadArea) {
+            uploadArea.classList.add('shake');
+            setTimeout(() => uploadArea.classList.remove('shake'), 600);
+        }
         return;
     }
     
     const projectName = document.getElementById('projectNameInput').value.trim();
     if (!projectName) {
-        alert("Lütfen proje adını girin.");
+        showNotification("Lütfen proje adını girin.", 'warning');
+        document.getElementById('projectNameInput').focus();
         return;
     }
+    
+    // Show loading state
+    const loadingOverlay = showLoadingSpinner('tab-upload', 'Dosya yükleniyor...');
+    updateProgressBar(0);
+    
+    // Simulate upload progress
+    let progress = 0;
+    const progressInterval = setInterval(() => {
+        progress += Math.random() * 30;
+        if (progress > 90) progress = 90;
+        updateProgressBar(progress);
+    }, 200);
     
     // Process file upload
     const chunkSize = 5 * 1024; // 5 KB
@@ -660,15 +979,37 @@ function uploadFile() {
             headers: { 'Content-Type': 'application/json' },
             body: payload
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.head) {
+                clearInterval(progressInterval);
+                updateProgressBar(100);
+                
                 updateDataInfo(data);
-                // Auto-switch to data info tab
-                document.querySelector('[onclick="showTab(event, \'tab-info\')"]').click();
+                
+                // Hide loading and show success
+                hideLoadingSpinner('tab-upload');
+                showNotification('Dosya başarıyla yüklendi!', 'success');
+                
+                // Auto-switch to data info tab with delay
+                setTimeout(() => {
+                    document.querySelector('[onclick="showTab(event, \'tab-info\')"]').click();
+                }, 1000);
+            } else {
+                throw new Error('Dosya işlenemedi');
             }
         })
-        .catch(err => console.error("Upload error:", err));
+        .catch(err => {
+            clearInterval(progressInterval);
+            hideLoadingSpinner('tab-upload');
+            console.error("Upload error:", err);
+            showNotification(`Yükleme hatası: ${err.message}`, 'error');
+        });
         
         // Get columns for dropdowns
         fetch('/upload/get-columns-api', {
