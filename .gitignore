@@ -1,3 +1,42 @@
-__pycache__/config.cpython-313.pyc
-app/__pycache__/__init__.cpython-313.pyc
-app/routes/__pycache__/logs_api.cpython-313.pyc
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Flask stuff
+instance/
+.webassets-cache
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/

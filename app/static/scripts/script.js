@@ -17,35 +17,46 @@ showMenu('nav-toggle', 'nav-menu')
 /*=============== FILE MENU ===============*/
 let selectedFile = null;
 
-document.getElementById("hiddenFileInput").addEventListener("change", function () {
-  selectedFile = this.files[0];
-  const validExtensions = ['csv', 'xlsx', 'xml', 'json'];
-  const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
+// Old file input handler (for backward compatibility)
+const hiddenFileInput = document.getElementById("hiddenFileInput");
+if (hiddenFileInput) {
+  hiddenFileInput.addEventListener("change", function () {
+    selectedFile = this.files[0];
+    const validExtensions = ['csv', 'xlsx', 'xml', 'json'];
+    const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
 
-  if (!validExtensions.includes(fileExtension)) {
-    alert("Geçersiz dosya formatı. Lütfen csv, xlsx, xml veya json dosyası seçin.");
-    this.value = '';
-  }
-});
+    if (!validExtensions.includes(fileExtension)) {
+      alert("Geçersiz dosya formatı. Lütfen csv, xlsx, xml veya json dosyası seçin.");
+      this.value = '';
+    }
+  });
+}
 
-document.getElementById("glowButton").addEventListener("click", () => {
-  document.getElementById("hiddenFileInput").click();
-});
+const glowButton = document.getElementById("glowButton");
+if (glowButton) {
+  glowButton.addEventListener("click", () => {
+    if (hiddenFileInput) {
+      hiddenFileInput.click();
+    }
+  });
+}
 
-document.getElementById('hiddenFileInput').addEventListener('change', function(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+// Updated file input handler (compatible with new template)
+if (hiddenFileInput) {
+  hiddenFileInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const chunkSize = 5 * 1024; // 5 KB
-  const blob = file.slice(0, chunkSize);
+    const chunkSize = 5 * 1024; // 5 KB
+    const blob = file.slice(0, chunkSize);
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const text = e.target.result;
-    // İlk 10 satırı ayır
-    const lines = text.split(/\r?\n/).slice(0, 10).join("\n");
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const text = e.target.result;
+      // İlk 10 satırı ayır
+      const lines = text.split(/\r?\n/).slice(0, 10).join("\n");
 
-    const payload = JSON.stringify({ sample: lines });
+      const payload = JSON.stringify({ sample: lines });
 
     // get-head-api çağrısı
     fetch('/upload/get-head-api', {
@@ -99,23 +110,28 @@ document.getElementById('hiddenFileInput').addEventListener('change', function(e
   };
 
   reader.readAsText(blob);
-});
+  });
+}
 
 
 function showDataPreview(rows) {
     const previewDiv = document.getElementById('data-preview');
-    previewDiv.innerHTML = ''; // Tabloyu tamamen kaldır
+    if (previewDiv) {
+        previewDiv.innerHTML = ''; // Tabloyu tamamen kaldır
+    }
 }
 
 function fillDropdowns(columns) {
     const xAxis = document.getElementById('xAxis');
     const yAxis = document.getElementById('yAxis');
-    xAxis.innerHTML = '';
-    yAxis.innerHTML = '';
-    columns.forEach(col => {
-        xAxis.innerHTML += `<option value="${col}">${col}</option>`;
-        yAxis.innerHTML += `<option value="${col}">${col}</option>`;
-    });
+    if (xAxis && yAxis) {
+        xAxis.innerHTML = '';
+        yAxis.innerHTML = '';
+        columns.forEach(col => {
+            xAxis.innerHTML += `<option value="${col}">${col}</option>`;
+            yAxis.innerHTML += `<option value="${col}">${col}</option>`;
+        });
+    }
 
     // Sütun adlarını datalist'e ekle
     const datalist = document.getElementById('columns-list');
@@ -168,11 +184,13 @@ const navClose = document.querySelector('.nav__close');
 
 /*=============== GÖNDER & POLLING ===============*/
 
-document.getElementById("visualizeBtn").addEventListener("click", () => {
-  const plotType = document.getElementById("plotType").value;
-  const xAxis = document.getElementById("xAxis").value;
-  const yAxis = document.getElementById("yAxis").value;
-  const projectTitle = document.getElementById("projectTitle").value;
+const visualizeBtn = document.getElementById("visualizeBtn");
+if (visualizeBtn) {
+  visualizeBtn.addEventListener("click", () => {
+    const plotType = document.getElementById("plotType").value;
+    const xAxis = document.getElementById("xAxis").value;
+    const yAxis = document.getElementById("yAxis").value;
+    const projectTitle = document.getElementById("projectTitle").value;
 
   if (!selectedFile) {
     alert("Lütfen bir dosya seçin.");
@@ -248,9 +266,12 @@ document.getElementById("visualizeBtn").addEventListener("click", () => {
     .catch(err => {
       alert(err.message || "Bir hata oluştu.");
     });
-});
+  });
+}
 
-document.getElementById("addProcessBtn").addEventListener("click", () => {
+const addProcessBtn = document.getElementById("addProcessBtn");
+if (addProcessBtn) {
+  addProcessBtn.addEventListener("click", () => {
     const selectedProcesses = [];
     const checkboxes = document.querySelectorAll('.process-controls input[type="checkbox"]:checked');
 
@@ -362,7 +383,8 @@ document.getElementById("addProcessBtn").addEventListener("click", () => {
     .catch(err => {
         alert("Bir hata oluştu: " + err.message);
     });
-});
+  });
+}
 
 // Grafikleri kontrol etmek için polling fonksiyonu
 function pollForGraphs() {
@@ -493,7 +515,9 @@ function onStateMachineComplete() {
 }
 
 // İndirme butonuna tıklanınca dosya var mı tekrar kontrol et ve indir
-document.getElementById("DownloadBtn").addEventListener("click", function() {
+const downloadBtn = document.getElementById("DownloadBtn");
+if (downloadBtn) {
+  downloadBtn.addEventListener("click", function() {
     fetch('/download/check-file')
     .then(res => res.json())
     .then(data => {
@@ -507,7 +531,8 @@ document.getElementById("DownloadBtn").addEventListener("click", function() {
         console.error("Hata:", err);
         alert("Bir hata oluştu. Sayfayı yenileyip tekrar deneyin.");
     });
-});
+  });
+}
 
 /* =============== WEBSOCKET DİNLEYİCİSİ ===============*/
 document.addEventListener("DOMContentLoaded", function () {
@@ -534,6 +559,10 @@ document.addEventListener("DOMContentLoaded", function () {
     socket.on('disconnect', () => {
         console.log('WebSocket bağlantısı kesildi.');
     });
+    
+    // --- WEBSOCKET DİNLEYİCİSİ SONU ---
+});
+
 /*=============== TAB INTERFACE FUNCTIONS ===============*/
 
 // Tab switching functionality
@@ -841,6 +870,8 @@ function exportChart() {
     alert('Grafik indirme özelliği geliştirme aşamasındadır.');
 }
 
+});
+
 // Enhanced upload area interactions
 document.addEventListener('DOMContentLoaded', function() {
     const uploadArea = document.querySelector('.upload-area');
@@ -869,7 +900,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
-
-    // --- WEBSOCKET DİNLEYİCİSİ SONU ---
 });
