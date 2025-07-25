@@ -1,9 +1,0 @@
-2025-06-23 18:17:06,998 - INFO - State Machine initialized. Project: emin8, Mode: visualize_only
-2025-06-23 18:17:07,036 - INFO - Loading data...
-2025-06-23 18:17:07,041 - INFO - Transitioning from INITIAL to VISUALIZATION
-2025-06-23 18:17:07,047 - INFO - Entering VISUALIZATION state...
-2025-06-23 18:17:07,051 - INFO - Attempting to generate graph with params: project='emin8', type='Histogram', x='close', y='date', output='raw'
-2025-06-23 18:17:08,436 - INFO - Visualization successful. Graph saved to C:\Users\mhmtm\Desktop\project\Project\master\app/static/outputs\emin8_raw.json
-2025-06-23 18:17:08,456 - INFO - Transitioning from VISUALIZATION to COMPLETE
-2025-06-23 18:17:08,458 - INFO - State machine finished. No further processing.
-2025-06-23 18:17:08,462 - INFO - Redis flag set: state_machine:complete = 1

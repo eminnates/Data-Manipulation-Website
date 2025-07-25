@@ -22,7 +22,9 @@ class ProjectContext:
     def __post_init__(self):
         """Set the initial active file path after the object is created."""
         if self.active_file_path is None:
-            self.active_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], self.file_name)
+            # Dosya yolu proje adına göre klasör içinde olmalı
+            project_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], self.project_name)
+            self.active_file_path = os.path.join(project_folder, self.file_name)
 
     @property
     def extension(self) -> str:

@@ -142,8 +142,8 @@
                                     💡 Proje adı dosyalarınızın organize edilmesi için kullanılacak
                                 </div>
                             </div>
-                            
-                            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+
+                            <div class="upload-area" draggable="true" ondragover="event.preventDefault()" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
                                 <i class="upload-icon ri-upload-cloud-2-line"></i>
                                 <div class="upload-text">Dosyanızı buraya sürükleyin veya tıklayın</div>
                                 <div class="upload-subtext">CSV, XLSX, JSON ve XML formatları desteklenir</div>
