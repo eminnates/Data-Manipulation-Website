@@ -9,21 +9,98 @@ class Cleanse:
         self.data = data
 
     # 1. Boşluk ve özel karakter temizliği
-    def RemoveWhitespace(self):
-        """Tüm string sütunlardaki baştaki ve sondaki boşlukları temizler."""
-        for col in self.data.select_dtypes(include=['object']).columns:
-            self.data[col] = self.data[col].str.strip()
+    def RemoveWhitespace(self, type='all', columns=None):
+        """
+        String sütunlardaki boşlukları temizler.
+        type: 'leading', 'trailing', 'multiple', 'all'
+        columns: Temizlenecek sütun listesi, None ise tüm string sütunlar
+        """
+        if columns is None:
+            target_columns = self.data.select_dtypes(include=['object']).columns
+        elif isinstance(columns, str):
+            target_columns = [columns] if columns in self.data.columns else []
+        else:
+            target_columns = [col for col in columns if col in self.data.columns]
+        
+        for col in target_columns:
+            if type == 'leading':
+                # Sadece baştaki boşlukları temizle
+                self.data[col] = self.data[col].str.lstrip()
+            elif type == 'trailing':
+                # Sadece sondaki boşlukları temizle
+                self.data[col] = self.data[col].str.rstrip()
+            elif type == 'multiple':
+                # Çoklu boşlukları tek boşluğa dönüştür
+                self.data[col] = self.data[col].str.replace(r'\s+', ' ', regex=True)
+            elif type == 'all':
+                # Tüm boşlukları kaldır
+                self.data[col] = self.data[col].str.replace(r'\s+', '', regex=True)
+            else:
+                # Varsayılan: baş ve sondaki boşlukları temizle
+                self.data[col] = self.data[col].str.strip()
 
-    def StripSpecialChars(self):
-        """Remove special characters from all string columns."""
-        for col in self.data.select_dtypes(include=['object']).columns:
-            self.data[col] = self.data[col].apply(lambda x: re.sub(r'[^\w\s]', '', x) if isinstance(x, str) else x)
+    def StripSpecialChars(self, type='all', columns=None, custom_chars=None):
+        """
+        String sütunlardaki özel karakterleri temizler.
+        type: 'punctuation', 'numbers', 'symbols', 'all', 'custom'
+        columns: Temizlenecek sütun listesi, None ise tüm string sütunlar
+        custom_chars: type='custom' ise kaldırılacak karakter dizisi (örn: "@#$%")
+        """
+        if columns is None:
+            target_columns = self.data.select_dtypes(include=['object']).columns
+        elif isinstance(columns, str):
+            target_columns = [columns] if columns in self.data.columns else []
+        else:
+            target_columns = [col for col in columns if col in self.data.columns]
+        
+        for col in target_columns:
+            if type == 'punctuation':
+                # Sadece noktalama işaretlerini kaldır
+                self.data[col] = self.data[col].apply(lambda x: re.sub(r'[^\w\s]', '', x) if isinstance(x, str) else x)
+            elif type == 'numbers':
+                # Sadece rakamları kaldır
+                self.data[col] = self.data[col].apply(lambda x: re.sub(r'\d', '', x) if isinstance(x, str) else x)
+            elif type == 'symbols':
+                # Sadece sembol karakterleri kaldır
+                self.data[col] = self.data[col].apply(lambda x: re.sub(r'[^\w\s.,!?;:]', '', x) if isinstance(x, str) else x)
+            elif type == 'custom' and custom_chars:
+                # Belirtilen karakterleri kaldır
+                escaped_chars = re.escape(custom_chars)
+                pattern = f'[{escaped_chars}]'
+                self.data[col] = self.data[col].apply(lambda x: re.sub(pattern, '', x) if isinstance(x, str) else x)
+            elif type == 'all':
+                # Tüm özel karakterleri kaldır (sadece harf ve boşluk bırak)
+                self.data[col] = self.data[col].apply(lambda x: re.sub(r'[^\w\s]', '', x) if isinstance(x, str) else x)
+            else:
+                # Varsayılan: tüm özel karakterleri kaldır
+                self.data[col] = self.data[col].apply(lambda x: re.sub(r'[^\w\s]', '', x) if isinstance(x, str) else x)
 
     # 2. Küçük harfe çevirme
-    def LowercaseColumns(self):
-        """Tüm string sütunlardaki değerleri küçük harfe çevirir."""
-        for col in self.data.select_dtypes(include=['object']).columns:
-            self.data[col] = self.data[col].str.lower()
+    def LowercaseColumns(self, type='lower', columns=None):
+        """
+        String sütunlardaki değerleri büyük/küçük harfe çevirir.
+        type: 'lower', 'upper', 'title', 'capitalize'
+        columns: Dönüştürülecek sütun listesi, None ise tüm string sütunlar
+        """
+        if columns is None:
+            target_columns = self.data.select_dtypes(include=['object']).columns
+        elif isinstance(columns, str):
+            target_columns = [columns] if columns in self.data.columns else []
+        else:
+            target_columns = [col for col in columns if col in self.data.columns]
+        
+        for col in target_columns:
+            if type == 'lower':
+                self.data[col] = self.data[col].str.lower()
+            elif type == 'upper':
+                self.data[col] = self.data[col].str.upper()
+            elif type == 'title':
+                self.data[col] = self.data[col].str.title()
+            elif type == 'capitalize':
+                self.data[col] = self.data[col].str.capitalize()
+            else:
+                # Varsayılan: küçük harfe çevir
+                self.data[col] = self.data[col].str.lower()
 
     # 3. Hatalı tip düzeltme
     def FixNumericColumn(self, column_name, fillna_method=None):
@@ -49,27 +126,6 @@ class Cleanse:
         else:
             print(f"Column '{column_name}' not found.")
 
-    def AutoFixNumericColumns(self, fillna_method=None):
-        """
-        Tüm sayısal olması beklenen sütunlarda otomatik olarak sayısal olmayan değerleri NaN yapar ve istenirse doldurur.
-        """
-        keywords = ['age', 'yas', 'price', 'fiyat', 'score', 'puan', 'adet', 'count', 'total', 'sum', 'number', 'num', 'quantity', 'amount']
-        for col in self.data.columns:
-            if any(key in col.lower() for key in keywords):
-                before = self.data[col].copy()
-                self.data[col] = pd.to_numeric(self.data[col], errors='coerce')
-                n_fixed = (before != self.data[col]).sum()
-                if n_fixed > 0:
-                    print(f"{col} sütununda {n_fixed} adet sayısal olmayan değer düzeltildi (NaN yapıldı).")
-                if fillna_method:
-                    if fillna_method == 'mean':
-                        self.data[col] = self.data[col].fillna(self.data[col].mean())
-                    elif fillna_method == 'median':
-                        self.data[col] = self.data[col].fillna(self.data[col].median())
-                    elif fillna_method == 'mode':
-                        self.data[col] = self.data[col].fillna(self.data[col].mode()[0])
-                    elif fillna_method == 'zero':
-                        self.data[col] = self.data[col].fillna(0)
 
     # 4. Eksik değer doldurma veya sütun silme
     def FillMissing(self, column_name, method='mean', value=None):
@@ -92,124 +148,12 @@ class Cleanse:
         else:
             print(f"Column '{column_name}' not found.")
 
-    def RemoveHighNullColumns(self, threshold=0.5):
-        """
-        Belirli orandan fazla eksik değeri olan sütunları kaldırır.
-        threshold: 0.5 -> %50'den fazla eksik varsa sil
-        """
-        null_ratio = self.data.isnull().mean()
-        to_drop = null_ratio[null_ratio > threshold].index.tolist()
-        self.data = self.data.drop(columns=to_drop)
-        if to_drop:
-            print(f"Removed columns with high null ratio: {to_drop}")
-
-    # 5. Tekrarlı satır/sütun temizliği
-    def DeleteDupValues(self):
-        """Remove duplicate rows."""
-        self.data = self.data.drop_duplicates()
-
-    def RemoveConstantColumns(self):
-        """Tüm değerleri aynı olan sütunları kaldırır."""
-        nunique = self.data.nunique()
-        constant_cols = nunique[nunique == 1].index.tolist()
-        self.data = self.data.drop(columns=constant_cols)
-        if constant_cols:
-            print(f"Removed constant columns: {constant_cols}")
-
-    # 6. Aykırı değer işlemleri
-    def detectAndDeleteOutliers(self):
-        """Detect outliers in all numeric columns using IQR method."""
-        for column_name in self.data.select_dtypes(include=[np.number]).columns:
-            Q1 = self.data[column_name].quantile(0.25)
-            Q3 = self.data[column_name].quantile(0.75)
-            IQR = Q3 - Q1
-            lower_bound = Q1 - 1.5 * IQR
-            upper_bound = Q3 + 1.5 * IQR
-            outliers = self.data[(self.data[column_name] < lower_bound) | (self.data[column_name] > upper_bound)]
-            if not outliers.empty:
-                self.data = self.data[(self.data[column_name] >= lower_bound) & (self.data[column_name] <= upper_bound)]
-            else:
-                print(f"Column '{column_name}' has no outliers.")
-
-    # 7. Alan bazlı özel temizlik
-    def CleanEmails(self, column_name='email'):
-        """
-        Email sütunundaki hatalı değerleri düzeltir:
-        - 'none' içerenleri siler (NaN yapar)
-        - '[at]' ifadesini '@' ile değiştirir
-        - E-posta formatına uymayanları siler (NaN yapar)
-        """
-        if column_name in self.data.columns:
-            def fix_email(val):
-                if not isinstance(val, str):
-                    return np.nan
-                v = val.strip().lower()
-                if 'none' in v:
-                    return np.nan
-                v = v.replace('[at]', '@')
-                if not re.match(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$", v):
-                    return np.nan
-                return v
-            self.data[column_name] = self.data[column_name].apply(fix_email)
-        else:
-            print(f"Column '{column_name}' not found.")
-
-    def NormalizeColumnValues(self):
-        """Normalize specific column values (e.g., phone numbers, addresses)."""
-        if 'phone' in self.data.columns:
-            self.data['phone'] = self.data['phone'].apply(
-                lambda x: re.sub(r'\D', '', x) if isinstance(x, str) else x
-            )
-            self.data['phone'] = self.data['phone'].apply(
-                lambda x: f"{x[:3]}-{x[3:6]}-{x[6:]}" if isinstance(x, str) and len(x) == 10 else x
-            )
-
-    def AutoRemoveDigitsFromStringColumns(self):
-        """
-        İsim, soyisim, şehir, ülke, adres gibi sütunlarda rakamları otomatik olarak siler.
-        """
-        string_columns = [col for col in self.data.select_dtypes(include=['object']).columns]
-        keywords = ['name', 'isim', 'surname', 'soyisim', 'city', 'şehir', 'country', 'ülke', 'address', 'adres']
-        for col in string_columns:
-            if any(key in col.lower() for key in keywords):
-                self.data[col] = self.data[col].apply(lambda x: re.sub(r'\d+', '', x) if isinstance(x, str) else x)
-
-    # 8. Filtreleme ve son kontroller
-    def FilterRows(self, condition):
-        """Filter rows based on a condition."""
-        condition_columns = [col.strip() for col in re.findall(r'\b\w+\b', condition) if col in self.data.columns]
-        if all(col in self.data.columns for col in condition_columns):
-            try:
-                self.data = self.data.query(condition)
-            except Exception as e:
-                print(f"Error while applying the condition: {e}")
-        else:
-            missing_columns = [col for col in condition_columns if col not in self.data.columns]
-            print(f"Error: The following columns are not found in the DataFrame: {missing_columns}")
-
-    def DynamicFilter(self, filters):
-        """
-        Dynamically filter rows based on a dictionary of conditions.
-        Example: filters = {'price': '> 100', 'quantity': '<= 50'}
-        """
-        for column, condition in filters.items():
-            if column in self.data.columns:
-                try:
-                    self.data = self.data.query(f"{column} {condition}")
-                except Exception as e:
-                    print(f"Error while applying the condition on column '{column}': {e}")
-            else:
-                print(f"Error: Column '{column}' not found in the DataFrame.")
-
     # Diğer yardımcı fonksiyonlar (gerekirse ekleyebilirsin)
     def DropColumn(self, column_name):
         """Drop a specific column by name."""
         if column_name in self.data.columns:
             self.data = self.data.drop(columns=column_name)
 
-    def RemoveDuplicatesByColumns(self, columns):
-        """Belirli sütunlara göre tekrar eden satırları siler."""
-        self.data = self.data.drop_duplicates(subset=columns)
 
     def ReplaceValues(self, column_name, to_replace, value):
         """Bir sütunda belirli değerleri başka bir değerle değiştirir."""
@@ -217,6 +161,328 @@ class Cleanse:
             self.data[column_name] = self.data[column_name].replace(to_replace, value)
         else:
             print(f"Column '{column_name}' not found.")
+
+    def DetectChanges(self, operation_type, parameters=None):
+        if parameters is None:
+            parameters = {}
+
+        current_rows = len(self.data)
+        # DÜZELTME: İşlemden önce verinin bir kopyasını alarak içerik karşılaştırması yapmaya hazırlan.
+        before_data = self.data.copy()
+        
+        # Spesifik işlem türleri için özel hesaplamalar
+        if operation_type == 'RemoveWhitespace':
+            return self._calculate_whitespace_effects(parameters)
+        elif operation_type == 'StripSpecialChars':
+            return self._calculate_special_chars_effects(parameters)
+        elif operation_type == 'LowercaseColumns':
+            return self._calculate_case_effects(parameters)
+        elif operation_type == 'DeleteDupValues':
+            return self._calculate_duplicate_effects(parameters)
+        elif operation_type == 'DropColumn':
+            return self._calculate_drop_column_effects(parameters)
+        elif operation_type == 'AutoFixNumericColumns':
+            return self._calculate_numeric_fix_effects(parameters)
+        
+        # Diğer işlemler için genel handler
+        operation_handlers = {
+            'FixNumericColumn': self.FixNumericColumn,
+            'FillMissing': self.FillMissing,
+            'RemoveHighNullColumns': self.RemoveHighNullColumns,
+            'RemoveConstantColumns': self.RemoveConstantColumns,
+            'CleanEmails': self.CleanEmails,
+            'NormalizeColumnValues': self.NormalizeColumnValues,
+            'AutoRemoveDigitsFromStringColumns': self.AutoRemoveDigitsFromStringColumns,
+            'FilterRows': self.FilterRows,
+            'DynamicFilter': self.DynamicFilter,
+            'RemoveDuplicatesByColumns': self.RemoveDuplicatesByColumns,
+            'ReplaceValues': self.ReplaceValues,
+            'SampleData': self.SampleData,
+        }
+
+        if operation_type in operation_handlers:
+            try:
+                operation_handlers[operation_type](**parameters)
+            except TypeError as e:
+                print(f"Hata: '{operation_type}' operasyonu yanlış parametrelerle çağrıldı. Detay: {e}")
+                return None
+            except Exception as e:
+                print(f"'{operation_type}' işlemi sırasında beklenmedik bir hata oluştu: {e}")
+                return None
+        else:
+            print(f"Desteklenmeyen operasyon tipi: {operation_type}")
+            return None
+
+        # DÜZELTME: Etkilenen satır sayısını, hem satır silme hem de içerik değişikliğini dikkate alarak hesapla.
+        if current_rows != len(self.data):
+            # Eğer satır sayısı değiştiyse (örn: DeleteDupValues, FilterRows), etki satır farkıdır.
+            affected_rows = current_rows - len(self.data)
+        else:
+            # Eğer satır sayısı aynıysa, içerik değişikliğini kontrol et.
+            try:
+                # Önce DataFrame'lerin aynı boyutta olduğunu kontrol et
+                if before_data.shape == self.data.shape:
+                    # İndeks ve sütunların aynı olduğunu kontrol et
+                    if before_data.index.equals(self.data.index) and before_data.columns.equals(self.data.columns):
+                        # NaN değerleri dikkate alarak karşılaştırma yap
+                        comparison = before_data.compare(self.data, align_axis=1, keep_shape=True, keep_equal=False)
+                        if not comparison.empty:
+                            # Değişiklik olan satırları bul
+                            affected_rows = len(comparison.index.unique())
+                        else:
+                            affected_rows = 0
+                    else:
+                        # İndeks veya sütunlar farklıysa, güvenli karşılaştırma yap
+                        affected_rows = 0
+                        try:
+                            # Ortak sütunları bul
+                            common_cols = before_data.columns.intersection(self.data.columns)
+                            if len(common_cols) > 0:
+                                # Ortak satırları bul
+                                common_idx = before_data.index.intersection(self.data.index)
+                                if len(common_idx) > 0:
+                                    before_subset = before_data.loc[common_idx, common_cols]
+                                    after_subset = self.data.loc[common_idx, common_cols]
+                                    # Değişiklikleri kontrol et
+                                    changes = (before_subset != after_subset).any(axis=1)
+                                    affected_rows = changes.sum()
+                        except Exception:
+                            # Karşılaştırma başarısız olursa, tüm satırları etkilenmiş say
+                            affected_rows = min(current_rows, len(self.data))
+                else:
+                    # Farklı boyuttaki DataFrame'ler için basit yaklaşım
+                    affected_rows = abs(current_rows - len(self.data))
+            except Exception:
+                # Karşılaştırma başarısız olursa, değişiklik varsay
+                affected_rows = max(current_rows, len(self.data))
+
+        remaining_rows = len(self.data)
+        affected_percentage = (affected_rows / current_rows * 100) if current_rows > 0 else 0
+        
+        return {
+            'current_rows': current_rows,
+            'affected_rows': int(affected_rows), # Sonucun integer olduğundan emin ol
+            'remaining_rows': remaining_rows,
+            'affected_percentage': round(affected_percentage, 2)
+        }
+
+    # DÜZELTME: Fonksiyonu doğru bir sınıf metodu olarak yeniden yaz
+    def SampleData(self, sample_size=0.1, random_state=None, stratify_column=None):
+        """
+        Veri setinden bir örneklem alır. Metod imzası, DetectChanges ile uyumlu olacak şekilde güncellenmiştir.
+        Bu metod, self.data'yı doğrudan günceller ve bir değer döndürmez.
+        """
+        # DÜZELTME: Parametre olarak gelen 'data' yerine sınıfın kendi 'self.data'sını kullan
+        data_to_use = self.data.copy()
+        total_rows = len(data_to_use)
+        
+        # Örneklem boyutunu belirle
+        if isinstance(sample_size, float) and 0 < sample_size < 1:
+            n_samples = int(total_rows * sample_size)
+        elif isinstance(sample_size, int) and sample_size > 0:
+            n_samples = min(sample_size, total_rows)
+        else:
+            n_samples = int(total_rows * 0.1)  # Geçersizse varsayılan olarak %10 al
+
+        # Eğer stratify_column belirtilmişse ve geçerliyse katmanlı örnekleme yap
+        if stratify_column and stratify_column in data_to_use.columns:
+            try:
+                # Her gruptan en az 1 örnek alınmasını sağla (eğer mümkünse)
+                self.data = data_to_use.groupby(stratify_column, group_keys=False).apply(
+                    lambda x: x.sample(n=min(len(x), max(1, int(n_samples * len(x) / total_rows))), 
+                                       random_state=random_state)
+                ).reset_index(drop=True)
+            except Exception as e:
+                print(f"Katmanlı örnekleme başarısız oldu: {e}. Normal rastgele örneklemeye geçiliyor.")
+                self.data = data_to_use.sample(n=n_samples, random_state=random_state)
+        else:
+            # Normal rastgele örnekleme
+            self.data = data_to_use.sample(n=n_samples, random_state=random_state)
+        # Özel hesaplama metodları - DetectChanges için
+    def _calculate_whitespace_effects(self, parameters):
+        """RemoveWhitespace işlemi için etki hesaplama"""
+        whitespace_type = parameters.get('type', 'all')
+        columns = parameters.get('columns', [])
+        
+        if not columns:
+            target_columns = self.data.select_dtypes(include=['object']).columns
+        else:
+            target_columns = [col for col in columns if col in self.data.columns]
+        
+        affected_rows = 0
+        
+        for col in target_columns:
+            if col in self.data.columns:
+                try:
+                    # Boşluk içeren satırları say
+                    if whitespace_type == 'leading':
+                        # Baştaki boşluk
+                        affected_rows += self.data[col].str.match(r'^\s+').fillna(False).sum()
+                    elif whitespace_type == 'trailing':
+                        # Sondaki boşluk
+                        affected_rows += self.data[col].str.match(r'\s+$').fillna(False).sum()
+                    elif whitespace_type == 'multiple':
+                        # Çoklu boşluk
+                        affected_rows += self.data[col].str.contains(r'\s{2,}').fillna(False).sum()
+                    elif whitespace_type == 'all':
+                        # Herhangi bir boşluk
+                        affected_rows += self.data[col].str.contains(r'\s').fillna(False).sum()
+                    else:
+                        # Baş/son boşluk
+                        affected_rows += (self.data[col].str.match(r'^\s+').fillna(False) | self.data[col].str.match(r'\s+$').fillna(False)).sum()
+                except:
+                    # Hata durumunda o sütunu atla
+                    continue
+        
+        return {
+            'current_rows': len(self.data),
+            'affected_rows': int(affected_rows),
+            'remaining_rows': len(self.data),
+            'affected_percentage': round((affected_rows / len(self.data) * 100) if len(self.data) > 0 else 0, 2)
+        }
+    
+    def _calculate_special_chars_effects(self, parameters):
+        """StripSpecialChars işlemi için etki hesaplama"""
+        special_type = parameters.get('type', 'all')
+        columns = parameters.get('columns', [])
+        custom_chars = parameters.get('custom_chars', None)
+        
+        if not columns:
+            target_columns = self.data.select_dtypes(include=['object']).columns
+        else:
+            target_columns = [col for col in columns if col in self.data.columns]
+        
+        affected_rows = 0
+        
+        for col in target_columns:
+            if col in self.data.columns:
+                try:
+                    if special_type == 'punctuation':
+                        # Noktalama işaretleri
+                        affected_rows += self.data[col].str.contains(r'[^\w\s]').fillna(False).sum()
+                    elif special_type == 'numbers':
+                        # Rakamlar
+                        affected_rows += self.data[col].str.contains(r'\d').fillna(False).sum()
+                    elif special_type == 'symbols':
+                        # Semboller
+                        affected_rows += self.data[col].str.contains(r'[^\w\s.,!?;:]').fillna(False).sum()
+                    elif special_type == 'custom' and custom_chars:
+                        # Özel karakterler
+                        pattern = f'[{re.escape(custom_chars)}]'
+                        affected_rows += self.data[col].str.contains(pattern).fillna(False).sum()
+                    else:
+                        # Tüm özel karakterler
+                        affected_rows += self.data[col].str.contains(r'[^\w\s]').fillna(False).sum()
+                except:
+                    # Hata durumunda o sütunu atla
+                    continue
+        
+        return {
+            'current_rows': len(self.data),
+            'affected_rows': int(affected_rows),
+            'remaining_rows': len(self.data),
+            'affected_percentage': round((affected_rows / len(self.data) * 100) if len(self.data) > 0 else 0, 2)
+        }
+    
+    def _calculate_case_effects(self, parameters):
+        """LowercaseColumns işlemi için etki hesaplama"""
+        case_type = parameters.get('type', 'lower')
+        columns = parameters.get('columns', [])
+        
+        if not columns:
+            target_columns = self.data.select_dtypes(include=['object']).columns
+        else:
+            target_columns = [col for col in columns if col in self.data.columns]
+        
+        affected_rows = 0
+        
+        for col in target_columns:
+            if col in self.data.columns:
+                try:
+                    if case_type == 'lower':
+                        # Büyük harf içeren satırları say
+                        affected_rows += self.data[col].str.contains(r'[A-Z]').fillna(False).sum()
+                    elif case_type == 'upper':
+                        # Küçük harf içeren satırları say
+                        affected_rows += self.data[col].str.contains(r'[a-z]').fillna(False).sum()
+                    elif case_type in ['title', 'capitalize']:
+                        # Başlık formatında olmayan satırları say
+                        affected_rows += (~self.data[col].str.match(r'^[A-Z][a-z]*')).fillna(True).sum()
+                except:
+                    # Hata durumunda o sütunu atla
+                    continue
+        
+        return {
+            'current_rows': len(self.data),
+            'affected_rows': int(affected_rows),
+            'remaining_rows': len(self.data),
+            'affected_percentage': round((affected_rows / len(self.data) * 100) if len(self.data) > 0 else 0, 2)
+        }
+    
+    def _calculate_duplicate_effects(self, parameters):
+        """DeleteDupValues işlemi için etki hesaplama"""
+        duplicate_type = parameters.get('type', 'all')
+        columns = parameters.get('columns', [])
+        
+        if duplicate_type == 'all':
+            # Tüm satırları kontrol et
+            duplicate_count = self.data.duplicated().sum()
+        else:
+            # Belirli sütunları kontrol et
+            if columns:
+                duplicate_count = self.data.duplicated(subset=columns).sum()
+            else:
+                duplicate_count = self.data.duplicated().sum()
+        
+        return {
+            'current_rows': len(self.data),
+            'affected_rows': int(duplicate_count),
+            'remaining_rows': len(self.data) - duplicate_count,
+            'affected_percentage': round((duplicate_count / len(self.data) * 100) if len(self.data) > 0 else 0, 2)
+        }
+    
+    def _calculate_drop_column_effects(self, parameters):
+        """DropColumn işlemi için etki hesaplama"""
+        columns = parameters.get('columns', [])
+        
+        if isinstance(columns, str):
+            columns = [columns]
+        
+        # Var olan sütunları say
+        existing_columns = [col for col in columns if col in self.data.columns]
+        
+        return {
+            'current_rows': len(self.data),
+            'affected_rows': len(existing_columns),  # Etkilenen sütun sayısı
+            'remaining_rows': len(self.data),
+            'affected_percentage': round((len(existing_columns) / len(self.data.columns) * 100) if len(self.data.columns) > 0 else 0, 2)
+        }
+    
+    def _calculate_numeric_fix_effects(self, parameters):
+        """AutoFixNumericColumns işlemi için etki hesaplama"""
+        affected_rows = 0
+        keywords = ['age', 'yas', 'price', 'fiyat', 'score', 'puan', 'adet', 'count', 'total', 'sum', 'number', 'num', 'quantity', 'amount']
+        
+        for col in self.data.columns:
+            if any(key in col.lower() for key in keywords):
+                # Sayısal olmayan değerleri say
+                try:
+                    numeric_conversion = pd.to_numeric(self.data[col], errors='coerce')
+                    non_numeric_count = numeric_conversion.isna().sum() - self.data[col].isna().sum()
+                    affected_rows += non_numeric_count
+                except:
+                    continue
+        
+        return {
+            'current_rows': len(self.data),
+            'affected_rows': int(affected_rows),
+            'remaining_rows': len(self.data),
+            'affected_percentage': round((affected_rows / len(self.data) * 100) if len(self.data) > 0 else 0, 2)
+        }
+
+
+
+
 
 class Manipulation:
     def __init__(self, data):
@@ -266,14 +532,14 @@ class Manipulation:
             else:
                 print(f"Column '{column_name}' has no outliers.")
 
-        def scaleValues(self, column_name, min_val=0, max_val=1):
-            """Scale numeric column values to a specific range."""
-            if column_name in self.data.columns and is_numeric_dtype(self.data[column_name]):
-                col_min = self.data[column_name].min()
-                col_max = self.data[column_name].max()
-                self.data[column_name] = (self.data[column_name] - col_min) / (col_max - col_min) * (max_val - min_val) + min_val
-            else:
-                print(f"Error: Column '{column_name}' is not numeric or not found in the DataFrame.")
+    def scaleValues(self, column_name, min_val=0, max_val=1):
+        """Scale numeric column values to a specific range."""
+        if column_name in self.data.columns and is_numeric_dtype(self.data[column_name]):
+            col_min = self.data[column_name].min()
+            col_max = self.data[column_name].max()
+            self.data[column_name] = (self.data[column_name] - col_min) / (col_max - col_min) * (max_val - min_val) + min_val
+        else:
+            print(f"Error: Column '{column_name}' is not numeric or not found in the DataFrame.")
 
     def logTransform(self, column_name):
         """Apply log transformation to a numeric column."""
@@ -365,6 +631,4 @@ class Augmentation:
                 ops.append('generate_synthetic_data')
             operations[col] = ops
         return operations
-
-
 

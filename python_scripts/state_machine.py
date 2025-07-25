@@ -4,8 +4,9 @@ import logging
 from datetime import datetime
 from app.features.redis.redis_client import get_redis_client
 from python_scripts.dataCleaning import Cleanse, Manipulation, Augmentation
-from python_scripts.visualization import Project
+from python_scripts.visualization import GraphGenerator
 from flask import current_app
+from app.domain.models import ProjectContext
 
 
 # State tanımlamaları
@@ -49,17 +50,21 @@ def configure_state_logger():
     return state_logger
 
 class DataStateMachine:
-    def __init__(self, data, mode='full_auto', output_type='raw', processes=None, processed_data_save_path=None):
-        self.data = data
+    # DÜZELTME: __init__ metodunu ProjectContext alacak şekilde basitleştir
+    def __init__(self, context: ProjectContext, mode='full_auto', output_type='raw', processes=None, processed_data_save_path=None, visualization_params=None):
+        self.context = context # Artık tüm proje bilgisi burada
+        self.data = self.context.get_data() # Veriyi context üzerinden yükle
+        self.project_name = self.context.project_name # Proje adını context'ten al
+        
         self.state = DataState.INITIAL
         self.mode = mode
         self.processes = processes
         self.output_type = output_type
         self.processed_data_save_path = processed_data_save_path
+        self.visualization_params = visualization_params if visualization_params else {}
         
-        # Logger'ı başlat
         self.log = configure_state_logger()
-        self.log_info(f"State Machine initialized. Mode: {self.mode}, Save Path: {self.processed_data_save_path}")
+        self.log_info(f"State Machine initialized. Project: {self.project_name}, Mode: {self.mode}")
     
     def log_info(self, message):
         self.log.info(message)
@@ -223,14 +228,45 @@ class DataStateMachine:
 
             elif self.state == DataState.VISUALIZATION:
                 self.log_info("Entering VISUALIZATION state...")
+                
+                plot_type = self.visualization_params.get('plot_type')
+                x_col = self.visualization_params.get('x_col')
+                y_col = self.visualization_params.get('y_col')
+
+                if not all([plot_type, x_col]):
+                    self.log.warning(f"Visualization parameters missing or incomplete (plot_type: {plot_type}, x_col: {x_col}). Skipping visualization.")
+                    self.transition_to(DataState.FINAL)
+                    continue
+
                 try:
-                    cl = Project(output_type=self.output_type, data=self.data)
-                    cl.visualize()
+                    # YENİ: Hata ayıklama için gönderilen parametreleri logla
+                    self.log_info(f"Attempting to generate graph with params: project='{self.project_name}', type='{plot_type}', x='{x_col}', y='{y_col}', output='{self.output_type}'")
+                    
+                    generator = GraphGenerator(
+                        data_df=self.data,
+                        project_name=self.project_name,
+                        plot_type=plot_type,
+                        x_col=x_col,
+                        y_col=y_col,
+                        output_type=self.output_type
+                    )
+                    saved_path = generator.generate_and_save_json()
+                    
+                    if saved_path:
+                        self.log_info(f"Visualization successful. Graph saved to {saved_path}")
+                    else:
+                        self.log.warning("Visualization failed. Check parameters or logs.")
+
                 except Exception as e:
                     self.log.error(f"Visualization error details: {str(e)}")
                     import traceback
                     self.log.error(f"Traceback: {traceback.format_exc()}")
-                self.transition_to(DataState.FINAL)
+                
+                # DÜZELTME: Sadece görselleştirme modunda ise işlemi tamamla, değilse devam et.
+                if self.mode == 'visualize_only':
+                    self.transition_to(DataState.COMPLETE)
+                else:
+                    self.transition_to(DataState.FINAL)
 
             elif self.state == DataState.FINAL:
                 self.log_info("Finalizing data processing...")
