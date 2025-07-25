@@ -4,19 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veri Analizi ve İşleme Platformu</title>
 
     <!--=============== REMIXICONS ===============-->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
-    <!--=============== CSS ===============-->
-    <link rel="stylesheet" href="static\css\style.css">
-
-    <title>Data Manipulation</title>
-
+    
+    <!--=============== EXTERNAL CSS ===============-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
-    <!--=============== HEADER ===============-->
+        <!--=============== HEADER ===============-->
     <header class="header">
         <nav class="nav container">
             <div class="nav__data">
@@ -105,316 +104,1408 @@
         </nav>
     </header>
 
-    <!-- En üstte Nasıl Çalışır ve video bölümü sabit kalıyor -->
+
+    <!--=============== MAIN CONTENT ===============-->
     <div class="main-content">
-        <div class="x">
-            <h1 class="xh1">Nasıl Çalışır ?</h1><br>
-            <video controls autoplay muted loop>
-                <source src="static/media/pc.mp4">
-            </video>
-            <div class="box">
-                <div class="box-1">
-                    <button id="glowButton" class="center-button">Dosya Yükle</button>
+        <div class="tab-container">
+            <div class="tab-wrapper">
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <button class="tab-nav-item active" onclick="showTab(event, 'tab-upload')">
+                        <i class="tab-nav-icon ri-upload-cloud-2-line"></i>
+                        <span class="tab-nav-text">Veri Yükleme</span>
+                    </button>
+                    <button class="tab-nav-item" onclick="showTab(event, 'tab-info')">
+                        <i class="tab-nav-icon ri-information-line"></i>
+                        <span class="tab-nav-text">Veri Bilgisi</span>
+                    </button>
+                    <button class="tab-nav-item" onclick="showTab(event, 'tab-operations')">
+                        <i class="tab-nav-icon ri-tools-line"></i>
+                        <span class="tab-nav-text">Veri İşlemleri</span>
+                    </button>
+                    <button class="tab-nav-item" onclick="showTab(event, 'tab-visualization')">
+                        <i class="tab-nav-icon ri-bar-chart-line"></i>
+                        <span class="tab-nav-text">Veri Görselleştirme</span>
+                    </button>
                 </div>
-                <input type="file" id="hiddenFileInput" style="display: none;" />
-                <div class="box-2">
-                    <button id="glowButtonOldProject" class="center-button" disabled> Eski Projeyi Görüntülemek İçin Tıkla </button>
-                </div>
-            </div>
-        </div>
 
-        <!-- 1. İşlem olmadan Görselleştir -->
-        <section id="visualize-section">
-            <h2 class="xh1">1. İşlem Olmadan Görselleştir</h2>
-            <div id="data-preview">
-                <!-- JS ile veri önizlemesi buraya gelecek -->
-            </div>
-            <div class="visualize-controls box">
-                <select id="plotType" class="custom-dropdown">
-                    <option value="">Grafik Tipi Seç</option>
-                    <option value="Bar">Bar</option>
-                    <option value="Line">Line</option>
-                    <option value="Scatter">Scatter</option>
-                    <option value="Histogram">Histogram</option>
-                </select>
-                <select id="xAxis" class="custom-dropdown"></select>
-                <select id="yAxis" class="custom-dropdown"></select>
-                <!-- Proje başlığı için textbox -->
-                <input type="text" id="projectTitle" class="custom-textbox" placeholder="Proje Başlığı Yazınız" style="margin:0 8px;">
-                <button id="visualizeBtn" class="center-button">Görselleştir</button>
-            </div>
-            <datalist id="columns-list"></datalist>
-            <iframe id="beforeFrame" class="viz-frame"></iframe>
-        </section>
+                <!-- Tab Content 1: Veri Yükleme -->
+                <div id="tab-upload" class="tab-content active">
+                    <div class="tab-section">
+                        <h2 class="tab-section-title">Veri Yükleme</h2>
+                        <div class="tab-section-content">
+                            <!-- Proje Adı Input -->
+                            <div style="margin-bottom: 2rem;">
+                                <h3 style="color: rgb(0, 195, 255); margin-bottom: 1rem;">Proje Bilgileri</h3>
+                                <input type="text" id="projectNameInput" class="custom-textbox" placeholder="Proje adını girin (örn: musteri_analizi)" style="width: 100%; max-width: 400px;">
+                                <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem;">
+                                    💡 Proje adı dosyalarınızın organize edilmesi için kullanılacak
+                                </div>
+                            </div>
 
-        <!-- 2. İşlem Bölümü -->
-        <section id="process-section">
-            <h2 class="xh1">2. İşlem Bölümü</h2>
-            <div class="process-controls box">
-                <!-- Temizleme -->
-                <div class="process-group">
-                    <h3 class="process-title"><i class="ri-brush-line"></i> Temizleme</h3>
-                    <div class="checkbox-grid">
-                        <!-- 1. Boşluk ve özel karakter temizliği -->
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="RemoveWhitespace">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Boşlukları Temizle</span>
-                        </label>
-                        
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="StripSpecialChars">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Özel Karakterleri Temizle</span>
-                        </label>
-                    
-                        <!-- 2. Küçük harfe çevirme -->
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="LowercaseColumns">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Küçük Harfe Çevir</span>
-                        </label>
-                    
-                        <!-- 3. Hatalı tip düzeltme -->
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="FixNumericColumn">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Sayısal Sütunu Düzelt</span>
-                            <input type="text" name="FixNumericColumn_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
-                        </label>
-                        
-                        <!-- 4. Eksik değer doldurma veya sütun silme -->
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="FillMissing">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Eksik değerleri doldur</span>
-                            <input type="text" name="FillMissing_column" class="column-input" list="columns-list" placeholder="Sütun Adı">
-                            <select name="FillMissing_method" class="column-input" style="width:120px;">
-                                <option value="mean">Ortalama</option>
-                                <option value="median">Medyan</option>
-                                <option value="mode">Mod</option>
-                                <option value="0">Sıfır</option>
-                            </select>
-                        </label>
-
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="RemoveHighNullColumns">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Çok Eksik Sütunları Sil</span>
-                            <input type="number" name="RemoveHighNullColumns_param" min="0" max="1" step="0.05" placeholder="0.8" class="column-input">
-                        </label>
-
-                        <!-- 5. Tekrarlı satır/sütun temizliği -->
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="DeleteDupValues">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Duplicate Satırları Sil</span>
-                        </label>
-
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="RemoveConstantColumns">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Sabit Sütunları Sil</span>
-                        </label>
-
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="DropColumn">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Sütun Sil</span>
-                            <input type="text" name="DropColumn_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
-                        </label>
-
-
-                        <!-- 7. Alan bazlı özel temizlik -->
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="CleanEmails">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Email Temizle</span>
-                        </label>
-
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="NormalizeColumnValues">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Telefon Numaralarını Normalize Et</span>
-                        </label>
-
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="AutoRemoveDigitsFromStringColumns">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">İsim/Adres Sütunlarında Rakamları Sil</span>
-                        </label>
-
-                        <!-- 8. Filtreleme ve son kontroller -->
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="FilterRows">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Satır Filtrele</span>
-                            <input type="text" name="FilterRows_param" class="column-input" placeholder="örn: age > 30">
-                        </label>
-
-                        <label class="checkbox-item">
-                            <input type="checkbox" name="process" value="DynamicFilter">
-                            <span class="checkbox-custom"></span>
-                            <span class="checkbox-label">Dinamik Filtre</span>
-                            <input type="text" name="DynamicFilter_param" class="column-input" placeholder="örn: price > 100">
-                        </label>
-                    </div>
-                    <!-- Manipülasyon -->
-                    <div class="process-group">
-                        <h3 class="process-title"><i class="ri-tools-line"></i> Manipülasyon</h3>
-                        <div class="checkbox-grid">
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="process" value="detectAndDeleteOutliers">
-                                <span class="checkbox-custom"></span>
-                                <span class="checkbox-label">Aykırı Değerleri Sil</span>
-                            </label>
+                            <div class="upload-area" draggable="true" ondragover="event.preventDefault()" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()">
+                                <i class="upload-icon ri-upload-cloud-2-line"></i>
+                                <div class="upload-text">Dosyanızı buraya sürükleyin veya tıklayın</div>
+                                <div class="upload-subtext">CSV, XLSX, JSON ve XML formatları desteklenir</div>
+                                <input type="file" id="fileInput" style="display: none;" accept=".csv,.xlsx,.json,.xml">
+                            </div>
                             
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="process" value="logTransform">
-                                <span class="checkbox-custom"></span>
-                                <span class="checkbox-label">Log Transform</span>
-                                <input type="text" name="logTransform_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
-                            </label>
+                            <div id="file-info" style="margin-top: 2rem; display: none;">
+                                <h3 style="color: rgb(0, 195, 255); margin-bottom: 1rem;">Seçilen Dosya</h3>
+                                <div id="file-details"></div>
+                            </div>
                         </div>
-                    </div>
-                    <!-- Augmentasyon -->
-                    <div class="process-group">
-                        <h3 class="process-title"><i class="ri-add-circle-line"></i> Augmentasyon</h3>
-                        <div class="checkbox-grid">
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="process" value="generateSyntheticData">
-                                <span class="checkbox-custom"></span>
-                                <span class="checkbox-label">Sentetik Veri Üret</span>
-                                <input type="number" name="generateSyntheticData_param" value="10" class="column-input" placeholder="Miktar">
-                            </label>
-                            
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="process" value="sortValues">
-                                <span class="checkbox-custom"></span>
-                                <span class="checkbox-label">Sırala (Sort Values)</span>
-                                <input type="text" name="sortValues_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
-                            </label>
-                            
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="process" value="categoricalToNumeric">
-                                <span class="checkbox-custom"></span>
-                                <span class="checkbox-label">Kategorik Veriyi Sayısala Dönüştür</span>
-                                <input type="text" name="categoricalToNumeric_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
-                            </label>
-                            
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="process" value="combineColumns">
-                                <span class="checkbox-custom"></span>
-                                <span class="checkbox-label">Sütunları Birleştir</span>
-                                <input type="text" name="combineColumns_param" class="column-input" list="columns-list" placeholder="Sütun1, Sütun2">
-                                <input type="text" name="combineColumns_new" class="column-input" style="width:120px;" placeholder="Yeni sütun adı">
-                            </label>
-                            
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="process" value="addNoise">
-                                <span class="checkbox-custom"></span>
-                                <span class="checkbox-label">Gürültü Ekle</span>
-                                <input type="text" name="addNoise_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
-                                <input type="number" name="addNoise_level" class="column-input" value="0.01" step="0.01" style="width:80px;" placeholder="Seviye">
-                            </label>
-                            
-                            <label class="checkbox-item">
-                                <input type="checkbox" name="process" value="timeSeriesShift">
-                                <span class="checkbox-custom"></span>
-                                <span class="checkbox-label">Zaman Serisi Kaydır</span>
-                                <input type="text" name="timeSeriesShift_param" class="column-input" list="columns-list" placeholder="Sütun Adı">
-                                <input type="number" name="timeSeriesShift_period"  class="column-input" style="width:80px;" placeholder="Periyot">
-                            </label>
+                        <div class="tab-actions">
+                            <button class="tab-btn" onclick="uploadFile()">Dosyayı Yükle</button>
+                            <button class="tab-btn secondary" onclick="clearFile()">Temizle</button>
                         </div>
                     </div>
                 </div>
-            </div>
-            <button id="addProcessBtn" class="center-button" style="margin-top:16px;">İşlemleri Ekle</button>
-        </section>
 
-        <!-- 3. Önceki ve Sonraki Grafik Karşılaştırma -->
-        <section id="compare-section">
-            <h2 class="xh1">3. Önce/Sonra Karşılaştırma</h2>
-            <div class="compare-frames">
-                <div>
-                    <h4 style="color:white;text-align:center;">Önceki Grafik</h4>
-                    <iframe id="beforeProcessFrame" class="viz-frame"></iframe>
-                    <div id="beforeProcessDesc" class="process-desc"></div>
+                <!-- Tab Content 2: Veri Bilgisi -->
+                <div id="tab-info" class="tab-content">
+                    <div class="tab-section">
+                        <h2 class="tab-section-title">Veri Bilgisi</h2>
+                        <div class="tab-section-content">
+                            <div class="data-info-grid">
+                                <div class="data-info-card">
+                                    <div class="data-info-label">Toplam Satır Sayısı</div>
+                                    <div class="data-info-value" id="total-rows">-</div>
+                                </div>
+                                <div class="data-info-card">
+                                    <div class="data-info-label">Toplam Sütun Sayısı</div>
+                                    <div class="data-info-value" id="total-columns">-</div>
+                                </div>
+                                <div class="data-info-card">
+                                    <div class="data-info-label">Dosya Boyutu</div>
+                                    <div class="data-info-value" id="file-size">-</div>
+                                </div>
+                                <div class="data-info-card">
+                                    <div class="data-info-label">Eksik Değerler</div>
+                                    <div class="data-info-value" id="missing-values">-</div>
+                                </div>
+                                <div class="data-info-card">
+                                    <div class="data-info-label">Sayısal Sütunlar</div>
+                                    <div class="data-info-value" id="numeric-columns">-</div>
+                                </div>
+                                <div class="data-info-card">
+                                    <div class="data-info-label">Kategorik Sütunlar</div>
+                                    <div class="data-info-value" id="categorical-columns">-</div>
+                                </div>
+                            </div>
+
+                            <!-- İstatistiksel Özellikler -->
+                            <div style="margin-top: 2rem;">
+                                <h3 style="color: rgb(0, 195, 255); margin-bottom: 1rem;">İstatistiksel Özellikler</h3>
+                                <div class="data-info-grid">
+                                    <div class="data-info-card">
+                                        <div class="data-info-label">Ortalama Çarpıklık</div>
+                                        <div class="data-info-value" id="avg-skewness">-</div>
+                                    </div>
+                                    <div class="data-info-card">
+                                        <div class="data-info-label">Ortalama Standart Sapma</div>
+                                        <div class="data-info-value" id="avg-std">-</div>
+                                    </div>
+                                    <div class="data-info-card">
+                                        <div class="data-info-label">Ortalama Varyans</div>
+                                        <div class="data-info-value" id="avg-variance">-</div>
+                                    </div>
+                                    <div class="data-info-card">
+                                        <div class="data-info-label">Korelasyon Matrisi</div>
+                                        <div class="data-info-value" id="correlation-status">Mevcut</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Kolon Bazında İstatistikler -->
+                            <div style="margin-top: 2rem;">
+                                <h3 style="color: rgb(0, 195, 255); margin-bottom: 1rem;">Sayısal Sütunların Detaylı İstatistikleri</h3>
+                                <div id="column-statistics" style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem;">
+                                    <div style="text-align: center; color: rgba(255,255,255,0.6);">
+                                        Önce bir dosya yükleyin
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="data-preview-table" style="margin-top: 2rem;">
+                                <h3 style="color: rgb(0, 195, 255); margin-bottom: 1rem;">Veri Önizleme</h3>
+                                <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 1rem; text-align: center; color: rgba(255,255,255,0.6);">
+                                    Önce bir dosya yükleyin
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h4 style="color:white;text-align:center;">Sonraki Grafik</h4>
-                    <iframe id="afterProcessFrame" class="viz-frame"></iframe>
-                    <div id="afterProcessDesc" class="process-desc"></div>
+
+                <!-- Tab Content 3: Veri İşlemleri -->
+                <div id="tab-operations" class="tab-content">
+                    <div class="tab-section">
+                        <h2 class="tab-section-title">Veri İşlemleri</h2>
+                        <div class="tab-section-content">
+                            <div class="operations-grid">
+                                <!-- Temizleme İşlemleri -->
+                                <div class="operation-category">
+                                    <h3 class="operation-category-title">
+                                        <i class="ri-brush-line"></i>
+                                        Temizleme İşlemleri
+                                    </h3>
+                                    <ul class="operation-list">
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'whitespace')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Boşlukları temizle</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="whitespace-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="whitespace-columns" multiple size="5">
+                                                            <option value="all" style="font-weight: bold; background-color: rgba(0, 195, 255, 0.3);">📋 Tüm String Sütunlar</option>
+                                                            <option value="column1">📄 Sütun_1</option>
+                                                            <option value="column2">📄 Sütun_2</option>
+                                                            <option value="column3">📄 Sütun_3</option>
+                                                            <option value="column4">📄 Sütun_4</option>
+                                                            <option value="column5">📄 Sütun_5</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Ctrl tuşuna basılı tutarak birden fazla sütun seçebilirsiniz
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Temizleme Türü:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="whitespace-type" value="leading" checked> Soldan boşluk
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="whitespace-type" value="trailing"> Sağdan boşluk
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="whitespace-type" value="multiple"> Ortadaki çoklu boşluklar
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="whitespace-type" value="all"> Tüm boşlukları kaldır
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Etkilenen Değerler Önizlemesi:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="affected-count">0</span> değer etkilenecek
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreview()">
+                                                                <i class="ri-eye-line" id="preview-icon"></i>
+                                                                <span id="preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="affected-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Örnek Mevcut Değerler:</h4>
+                                                                <div class="values-list" id="original-values">
+                                                                    <span class="value-item">" Örnek Veri "</span>
+                                                                    <span class="value-item">"  Test  "</span>
+                                                                    <span class="value-item">"Başlık   "</span>
+                                                                    <span class="value-item">"   Sonuç"</span>
+                                                                    <span class="value-item">"Çoklu    Boşluk"</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Temizlenmiş Değerler:</h4>
+                                                                <div class="values-list" id="cleaned-values">
+                                                                    <span class="value-item">"Örnek Veri "</span>
+                                                                    <span class="value-item">"Test  "</span>
+                                                                    <span class="value-item">"Başlık"</span>
+                                                                    <span class="value-item">"Sonuç"</span>
+                                                                    <span class="value-item">"Çoklu Boşluk"</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'duplicate')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Duplicate kayıtları sil</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="duplicate-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="duplicate-columns" multiple size="5">
+                                                            <option value="all" style="font-weight: bold; background-color: rgba(0, 195, 255, 0.3);">📋 Tüm Sütunlar</option>
+                                                            <option value="column1">📄 Sütun_1</option>
+                                                            <option value="column2">📄 Sütun_2</option>
+                                                            <option value="column3">📄 Sütun_3</option>
+                                                            <option value="column4">📄 Sütun_4</option>
+                                                            <option value="column5">📄 Sütun_5</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Seçilen sütunlara göre duplicate kontrol edilir
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Duplicate Stratejisi:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="duplicate-type" value="first" checked> İlk kaydı tut
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="duplicate-type" value="last"> Son kaydı tut
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="duplicate-type" value="mark"> Sadece işaretle (silme)
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Etkilenen Değerler Önizlemesi:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="duplicate-affected-count">0</span> duplicate kayıt bulundu
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('duplicate')">
+                                                                <i class="ri-eye-line" id="duplicate-preview-icon"></i>
+                                                                <span id="duplicate-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="duplicate-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Duplicate Kayıtlar:</h4>
+                                                                <div class="values-list" id="duplicate-original-values">
+                                                                    <span class="value-item">"Ahmet, 25, İstanbul"</span>
+                                                                    <span class="value-item">"Ahmet, 25, İstanbul"</span>
+                                                                    <span class="value-item">"Mehmet, 30, Ankara"</span>
+                                                                    <span class="value-item">"Mehmet, 30, Ankara"</span>
+                                                                    <span class="value-item">"Ayşe, 28, İzmir"</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Temizlenmiş Kayıtlar:</h4>
+                                                                <div class="values-list" id="duplicate-cleaned-values">
+                                                                    <span class="value-item">"Ahmet, 25, İstanbul"</span>
+                                                                    <span class="value-item">"Mehmet, 30, Ankara"</span>
+                                                                    <span class="value-item">"Ayşe, 28, İzmir"</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'special-chars')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Özel karakterleri kaldır</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="special-chars-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="special-chars-columns" multiple size="5">
+                                                            <option value="all" style="font-weight: bold; background-color: rgba(0, 195, 255, 0.3);">📋 Tüm String Sütunlar</option>
+                                                            <option value="column1">📄 Sütun_1</option>
+                                                            <option value="column2">📄 Sütun_2</option>
+                                                            <option value="column3">📄 Sütun_3</option>
+                                                            <option value="column4">📄 Sütun_4</option>
+                                                            <option value="column5">📄 Sütun_5</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Sadece text sütunlardan özel karakterler temizlenir
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Kaldırılacak Karakterler:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="special-chars-type" value="punctuation" checked> Noktalama işaretleri
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="special-chars-type" value="symbols"> Semboller (@#$%&)
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="special-chars-type" value="numbers"> Sayılar
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="special-chars-type" value="all"> Tüm özel karakterler
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Etkilenen Değerler Önizlemesi:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="special-chars-affected-count">0</span> değer etkilenecek
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('special-chars')">
+                                                                <i class="ri-eye-line" id="special-chars-preview-icon"></i>
+                                                                <span id="special-chars-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="special-chars-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Mevcut Değerler:</h4>
+                                                                <div class="values-list" id="special-chars-original-values">
+                                                                    <span class="value-item">"Test@123"</span>
+                                                                    <span class="value-item">"Başlık!!!"</span>
+                                                                    <span class="value-item">"Email#Domain"</span>
+                                                                    <span class="value-item">"Kod$456"</span>
+                                                                    <span class="value-item">"İsim&Soyisim"</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Temizlenmiş Değerler:</h4>
+                                                                <div class="values-list" id="special-chars-cleaned-values">
+                                                                    <span class="value-item">"Test123"</span>
+                                                                    <span class="value-item">"Başlık"</span>
+                                                                    <span class="value-item">"EmailDomain"</span>
+                                                                    <span class="value-item">"Kod456"</span>
+                                                                    <span class="value-item">"İsimSoyisim"</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'case-normalize')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Büyük/küçük harf standardize et</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="case-normalize-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="case-normalize-columns" multiple size="5">
+                                                            <option value="all" style="font-weight: bold; background-color: rgba(0, 195, 255, 0.3);">📋 Tüm String Sütunlar</option>
+                                                            <option value="column1">📄 Sütun_1</option>
+                                                            <option value="column2">📄 Sütun_2</option>
+                                                            <option value="column3">📄 Sütun_3</option>
+                                                            <option value="column4">📄 Sütun_4</option>
+                                                            <option value="column5">📄 Sütun_5</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Text sütunlarındaki harf formatı düzenlenir
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Harf Formatı:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="case-normalize-type" value="lower" checked> Küçük harf
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="case-normalize-type" value="upper"> Büyük harf
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="case-normalize-type" value="title"> Başlık formatı
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="case-normalize-type" value="sentence"> Cümle formatı
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Etkilenen Değerler Önizlemesi:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="case-normalize-affected-count">0</span> değer etkilenecek
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('case-normalize')">
+                                                                <i class="ri-eye-line" id="case-normalize-preview-icon"></i>
+                                                                <span id="case-normalize-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="case-normalize-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Mevcut Değerler:</h4>
+                                                                <div class="values-list" id="case-normalize-original-values">
+                                                                    <span class="value-item">"ÖRNEK BAŞLIK"</span>
+                                                                    <span class="value-item">"Test VeRiSi"</span>
+                                                                    <span class="value-item">"karışık HaRfLeR"</span>
+                                                                    <span class="value-item">"BÜYÜK METIN"</span>
+                                                                    <span class="value-item">"küçük yazı"</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Standardize Edilmiş:</h4>
+                                                                <div class="values-list" id="case-normalize-cleaned-values">
+                                                                    <span class="value-item">"örnek başlık"</span>
+                                                                    <span class="value-item">"test verisi"</span>
+                                                                    <span class="value-item">"karışık harfler"</span>
+                                                                    <span class="value-item">"büyük metin"</span>
+                                                                    <span class="value-item">"küçük yazı"</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'delete-columns')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Sütun sil</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="delete-columns-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Silinecek Sütunlar (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="delete-columns-columns" multiple size="5">
+                                                            <option value="column1">📄 Sütun_1</option>
+                                                            <option value="column2">📄 Sütun_2</option>
+                                                            <option value="column3">📄 Sütun_3</option>
+                                                            <option value="column4">📄 Sütun_4</option>
+                                                            <option value="column5">📄 Sütun_5</option>
+                                                            <option value="column6">📄 Sütun_6</option>
+                                                            <option value="column7">📄 Sütun_7</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            ⚠️ <strong>Uyarı:</strong> Seçilen sütunlar kalıcı olarak silinecektir
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Silme Stratejisi:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="delete-columns-type" value="immediate" checked> Hemen sil
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="delete-columns-type" value="backup"> Yedek alıp sil
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="delete-columns-type" value="mark"> Sadece işaretle
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Silinecek Sütunlar Önizlemesi:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="delete-columns-affected-count">0</span> sütun silinecek
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('delete-columns')">
+                                                                <i class="ri-eye-line" id="delete-columns-preview-icon"></i>
+                                                                <span id="delete-columns-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="delete-columns-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Mevcut Sütunlar:</h4>
+                                                                <div class="values-list" id="delete-columns-original-values">
+                                                                    <span class="value-item">📊 ID</span>
+                                                                    <span class="value-item">📄 İsim</span>
+                                                                    <span class="value-item">📄 Soyisim</span>
+                                                                    <span class="value-item">🗑️ Temp_Data</span>
+                                                                    <span class="value-item">📊 Yaş</span>
+                                                                    <span class="value-item">🗑️ Unused_Col</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Kalan Sütunlar:</h4>
+                                                                <div class="values-list" id="delete-columns-cleaned-values">
+                                                                    <span class="value-item">📊 ID</span>
+                                                                    <span class="value-item">📄 İsim</span>
+                                                                    <span class="value-item">📄 Soyisim</span>
+                                                                    <span class="value-item">📊 Yaş</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <!-- Dönüşüm İşlemleri -->
+                                <div class="operation-category">
+                                    <h3 class="operation-category-title">
+                                        <i class="ri-repeat-line"></i>
+                                        Dönüşüm İşlemleri
+                                    </h3>
+                                    <ul class="operation-list">
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'data-types')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Veri tiplerini düzelt</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="data-types-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="data-types-columns" multiple size="5">
+                                                            <option value="all" style="font-weight: bold; background-color: rgba(0, 195, 255, 0.3);">📋 Tüm Sütunlar</option>
+                                                            <option value="column1">📄 Sütun_1</option>
+                                                            <option value="column2">📄 Sütun_2</option>
+                                                            <option value="column3">📄 Sütun_3</option>
+                                                            <option value="column4">📄 Sütun_4</option>
+                                                            <option value="column5">📄 Sütun_5</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Otomatik tip algılama yapılır
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Dönüştürme Stratejisi:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="data-types-type" value="auto" checked> Otomatik algıla
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="data-types-type" value="numeric"> Sayısal tiplere zorla
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="data-types-type" value="string"> String'e dönüştür
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="data-types-type" value="datetime"> Tarih/saat format
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Etkilenen Değerler Önizlemesi:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="data-types-affected-count">0</span> değer dönüştürülecek
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('data-types')">
+                                                                <i class="ri-eye-line" id="data-types-preview-icon"></i>
+                                                                <span id="data-types-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="data-types-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Mevcut Değerler (String):</h4>
+                                                                <div class="values-list" id="data-types-original-values">
+                                                                    <span class="value-item">"123"</span>
+                                                                    <span class="value-item">"45.67"</span>
+                                                                    <span class="value-item">"2024-01-15"</span>
+                                                                    <span class="value-item">"true"</span>
+                                                                    <span class="value-item">"89"</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Dönüştürülmüş Tipler:</h4>
+                                                                <div class="values-list" id="data-types-cleaned-values">
+                                                                    <span class="value-item">123 (int)</span>
+                                                                    <span class="value-item">45.67 (float)</span>
+                                                                    <span class="value-item">2024-01-15 (date)</span>
+                                                                    <span class="value-item">true (bool)</span>
+                                                                    <span class="value-item">89 (int)</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'categorical')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Kategorik verileri sayısala çevir</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="categorical-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="categorical-columns" multiple size="5">
+                                                            <option value="all" style="font-weight: bold; background-color: rgba(0, 195, 255, 0.3);">📋 Tüm Kategorik Sütunlar</option>
+                                                            <option value="column1">📄 Kategori_1</option>
+                                                            <option value="column2">📄 Kategori_2</option>
+                                                            <option value="column3">📄 Durum</option>
+                                                            <option value="column4">📄 Seviye</option>
+                                                            <option value="column5">📄 Tür</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Kategorik değerler sayılara dönüştürülür
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Kodlama Yöntemi:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="categorical-type" value="label" checked> Label Encoding
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="categorical-type" value="onehot"> One-Hot Encoding
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="categorical-type" value="ordinal"> Ordinal Encoding
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="categorical-type" value="binary"> Binary Encoding
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Etkilenen Değerler Önizlemesi:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="categorical-affected-count">0</span> kategorik değer
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('categorical')">
+                                                                <i class="ri-eye-line" id="categorical-preview-icon"></i>
+                                                                <span id="categorical-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="categorical-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Kategorik Değerler:</h4>
+                                                                <div class="values-list" id="categorical-original-values">
+                                                                    <span class="value-item">"Yüksek"</span>
+                                                                    <span class="value-item">"Orta"</span>
+                                                                    <span class="value-item">"Düşük"</span>
+                                                                    <span class="value-item">"Yüksek"</span>
+                                                                    <span class="value-item">"Orta"</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Sayısal Kodlar:</h4>
+                                                                <div class="values-list" id="categorical-cleaned-values">
+                                                                    <span class="value-item">2</span>
+                                                                    <span class="value-item">1</span>
+                                                                    <span class="value-item">0</span>
+                                                                    <span class="value-item">2</span>
+                                                                    <span class="value-item">1</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'date-format')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Tarih formatını standardize et</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="date-format-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="date-format-columns" multiple size="5">
+                                                            <option value="all" style="font-weight: bold; background-color: rgba(0, 195, 255, 0.3);">📋 Tüm Tarih Sütunları</option>
+                                                            <option value="column1">📅 Tarih_1</option>
+                                                            <option value="column2">📅 Kayıt_Tarihi</option>
+                                                            <option value="column3">📅 Oluşturma_Zamanı</option>
+                                                            <option value="column4">📅 Son_Güncelleme</option>
+                                                            <option value="column5">📅 Bitiş_Tarihi</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Farklı tarih formatları standardize edilir
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Hedef Format:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="date-format-type" value="iso" checked> ISO 8601 (YYYY-MM-DD)
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="date-format-type" value="european"> Avrupa (DD.MM.YYYY)
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="date-format-type" value="american"> Amerika (MM/DD/YYYY)
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="date-format-type" value="timestamp"> Unix Timestamp
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Etkilenen Değerler Önizlemesi:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="date-format-affected-count">0</span> tarih değeri
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('date-format')">
+                                                                <i class="ri-eye-line" id="date-format-preview-icon"></i>
+                                                                <span id="date-format-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="date-format-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Karışık Tarih Formatları:</h4>
+                                                                <div class="values-list" id="date-format-original-values">
+                                                                    <span class="value-item">"15/01/2024"</span>
+                                                                    <span class="value-item">"2024.02.20"</span>
+                                                                    <span class="value-item">"Mar 10, 2024"</span>
+                                                                    <span class="value-item">"2024-04-05"</span>
+                                                                    <span class="value-item">"25.12.2023"</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Standardize Edilmiş:</h4>
+                                                                <div class="values-list" id="date-format-cleaned-values">
+                                                                    <span class="value-item">"2024-01-15"</span>
+                                                                    <span class="value-item">"2024-02-20"</span>
+                                                                    <span class="value-item">"2024-03-10"</span>
+                                                                    <span class="value-item">"2024-04-05"</span>
+                                                                    <span class="value-item">"2023-12-25"</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'normalization')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Normalizasyon uygula</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="normalization-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="normalization-columns" multiple size="5">
+                                                            <option value="all" style="font-weight: bold; background-color: rgba(0, 195, 255, 0.3);">📋 Tüm Sayısal Sütunlar</option>
+                                                            <option value="column1">📊 Sayı_1</option>
+                                                            <option value="column2">📊 Değer_2</option>
+                                                            <option value="column3">📊 Oran_3</option>
+                                                            <option value="column4">📊 Miktar_4</option>
+                                                            <option value="column5">📊 Skor_5</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Sadece sayısal veriler normalize edilir
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Normalizasyon Yöntemi:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="normalization-type" value="minmax" checked> Min-Max (0-1)
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="normalization-type" value="custom"> Özel Aralık
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="normalization-type" value="zscore"> Z-Score Standardization
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="normalization-type" value="robust"> Robust Scaling
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="normalization-type" value="unit"> Unit Vector Scaling
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Özel Aralık Ayarları -->
+                                                <div class="config-row" id="custom-range-settings" style="display: none;">
+                                                    <label class="config-label">Hedef Aralık:</label>
+                                                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                            <label style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Min:</label>
+                                                            <input type="number" 
+                                                                   id="normalization-min" 
+                                                                   class="custom-textbox" 
+                                                                   placeholder="0" 
+                                                                   value="0"
+                                                                   style="width: 80px;"
+                                                                   onchange="updateNormalizationPreview()"
+                                                                   oninput="updateNormalizationPreview()">
+                                                        </div>
+                                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                            <label style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Max:</label>
+                                                            <input type="number" 
+                                                                   id="normalization-max" 
+                                                                   class="custom-textbox" 
+                                                                   placeholder="100" 
+                                                                   value="100"
+                                                                   style="width: 80px;"
+                                                                   onchange="updateNormalizationPreview()"
+                                                                   oninput="updateNormalizationPreview()">
+                                                        </div>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); line-height: 1.3;">
+                                                            💡 <strong>Örnek:</strong> 0-100 aralığı için Min: 0, Max: 100
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Etkilenen Değerler Önizlemesi:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="normalization-affected-count">0</span> sayısal değer
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('normalization')">
+                                                                <i class="ri-eye-line" id="normalization-preview-icon"></i>
+                                                                <span id="normalization-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="normalization-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Orijinal Değerler:</h4>
+                                                                <div class="values-list" id="normalization-original-values">
+                                                                    <span class="value-item">1000</span>
+                                                                    <span class="value-item">2500</span>
+                                                                    <span class="value-item">750</span>
+                                                                    <span class="value-item">3200</span>
+                                                                    <span class="value-item">1800</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Normalize Edilmiş:</h4>
+                                                                <div class="values-list" id="normalization-cleaned-values">
+                                                                    <span class="value-item">0.102</span>
+                                                                    <span class="value-item">0.714</span>
+                                                                    <span class="value-item">0.000</span>
+                                                                    <span class="value-item">1.000</span>
+                                                                    <span class="value-item">0.429</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Filtreleme İşlemleri -->
+                                <div class="operation-category">
+                                    <h3 class="operation-category-title">
+                                        <i class="ri-filter-line"></i>
+                                        Filtreleme İşlemleri
+                                    </h3>
+                                    <ul class="operation-list">
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'outliers')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Aykırı değerleri tespit et</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="outliers-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi (Çoklu Seçim):</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="outliers-columns" multiple size="5">
+                                                            <option value="all" style="font-weight: bold; background-color: rgba(0, 195, 255, 0.3);">📋 Tüm Sayısal Sütunlar</option>
+                                                            <option value="column1">📊 Sayı_1</option>
+                                                            <option value="column2">📊 Değer_2</option>
+                                                            <option value="column3">📊 Oran_3</option>
+                                                            <option value="column4">📊 Miktar_4</option>
+                                                            <option value="column5">📊 Skor_5</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Aykırı değerler işaretlenir veya kaldırılır
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Tespit Yöntemi:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="outliers-type" value="iqr" checked> IQR Yöntemi
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="outliers-type" value="zscore"> Z-Score (±3σ)
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="outliers-type" value="isolation"> Isolation Forest
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="outliers-type" value="percentile"> Percentile (5%-95%)
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Tespit Edilen Aykırı Değerler:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="outliers-affected-count">0</span> aykırı değer bulundu
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('outliers')">
+                                                                <i class="ri-eye-line" id="outliers-preview-icon"></i>
+                                                                <span id="outliers-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="outliers-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Normal Değerler:</h4>
+                                                                <div class="values-list" id="outliers-original-values">
+                                                                    <span class="value-item">45</span>
+                                                                    <span class="value-item">52</span>
+                                                                    <span class="value-item">38</span>
+                                                                    <span class="value-item">999999</span>
+                                                                    <span class="value-item">41</span>
+                                                                    <span class="value-item">-50</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Aykırı Değerler İşaretlendi:</h4>
+                                                                <div class="values-list" id="outliers-cleaned-values">
+                                                                    <span class="value-item">45 ✓</span>
+                                                                    <span class="value-item">52 ✓</span>
+                                                                    <span class="value-item">38 ✓</span>
+                                                                    <span class="value-item" style="background-color: rgba(255, 100, 100, 0.3);">999999 ⚠️</span>
+                                                                    <span class="value-item">41 ✓</span>
+                                                                    <span class="value-item" style="background-color: rgba(255, 100, 100, 0.3);">-50 ⚠️</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'range-filter')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Belirli aralıkta filtrele</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="range-filter-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Sütun Seçimi:</label>
+                                                    <div class="column-selector">
+                                                        <select class="column-dropdown" id="range-filter-columns" size="5">
+                                                            <option value="column1">📊 Sayı_1</option>
+                                                            <option value="column2">📊 Değer_2</option>
+                                                            <option value="column3">📊 Oran_3</option>
+                                                            <option value="column4">📊 Miktar_4</option>
+                                                            <option value="column5">📊 Skor_5</option>
+                                                        </select>
+                                                        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); margin-top: 0.5rem; line-height: 1.3;">
+                                                            💡 <strong>İpucu:</strong> Belirli değer aralığındaki kayıtları filtrele
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Filtre Aralığı:</label>
+                                                    <div style="display: flex; gap: 1rem; align-items: center;">
+                                                        <input type="number" placeholder="Min değer" class="custom-textbox" style="width: 120px;" id="range-min">
+                                                        <span style="color: rgba(255,255,255,0.7);">ile</span>
+                                                        <input type="number" placeholder="Max değer" class="custom-textbox" style="width: 120px;" id="range-max">
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Filtreleme Sonucu:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="range-filter-affected-count">0</span> kayıt aralıkta
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('range-filter')">
+                                                                <i class="ri-eye-line" id="range-filter-preview-icon"></i>
+                                                                <span id="range-filter-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="range-filter-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Tüm Değerler:</h4>
+                                                                <div class="values-list" id="range-filter-original-values">
+                                                                    <span class="value-item">15</span>
+                                                                    <span class="value-item">45</span>
+                                                                    <span class="value-item">75</span>
+                                                                    <span class="value-item">105</span>
+                                                                    <span class="value-item">35</span>
+                                                                    <span class="value-item">85</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Filtrelenmiş (30-80 arası):</h4>
+                                                                <div class="values-list" id="range-filter-cleaned-values">
+                                                                    <span class="value-item">45 ✓</span>
+                                                                    <span class="value-item">75 ✓</span>
+                                                                    <span class="value-item">35 ✓</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'conditional')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Koşullu filtreleme</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="conditional-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Koşul Tanımla:</label>
+                                                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; align-items: center;">
+                                                        <select class="column-dropdown">
+                                                            <option value="column1">Sütun_1</option>
+                                                            <option value="column2">Sütun_2</option>
+                                                            <option value="column3">Sütun_3</option>
+                                                        </select>
+                                                        <select class="column-dropdown" style="width: 80px;">
+                                                            <option value="eq">=</option>
+                                                            <option value="neq">≠</option>
+                                                            <option value="gt">></option>
+                                                            <option value="gte">≥</option>
+                                                            <option value="lt"><</option>
+                                                            <option value="lte">≤</option>
+                                                            <option value="contains">içerir</option>
+                                                        </select>
+                                                        <input type="text" placeholder="Değer" class="custom-textbox">
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Koşul Tipi:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="conditional-type" value="keep" checked> Koşulu sağlayanları tut
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="conditional-type" value="remove"> Koşulu sağlayanları kaldır
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="conditional-type" value="highlight"> Sadece işaretle
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Koşul Sonucu:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="conditional-affected-count">0</span> kayıt koşulu sağlıyor
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('conditional')">
+                                                                <i class="ri-eye-line" id="conditional-preview-icon"></i>
+                                                                <span id="conditional-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="conditional-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Tüm Kayıtlar:</h4>
+                                                                <div class="values-list" id="conditional-original-values">
+                                                                    <span class="value-item">"Ankara"</span>
+                                                                    <span class="value-item">"İstanbul"</span>
+                                                                    <span class="value-item">"İzmir"</span>
+                                                                    <span class="value-item">"Antalya"</span>
+                                                                    <span class="value-item">"Bursa"</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Koşul: "A" ile başlayan:</h4>
+                                                                <div class="values-list" id="conditional-cleaned-values">
+                                                                    <span class="value-item">"Ankara" ✓</span>
+                                                                    <span class="value-item">"Antalya" ✓</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        
+                                        <li class="operation-item advanced-operation" onclick="toggleAdvancedOperation(this, 'sampling')">
+                                            <div class="operation-checkbox"></div>
+                                            <span>Örnekleme yap</span>
+                                            <i class="ri-arrow-down-s-line operation-arrow"></i>
+                                        </li>
+                                        <li class="operation-details" id="sampling-details" style="display: none;">
+                                            <div class="operation-config">
+                                                <div class="config-row">
+                                                    <label class="config-label">Örnekleme Yöntemi:</label>
+                                                    <div class="checkbox-group">
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="sampling-type" value="random" checked> Rastgele örnekleme
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="sampling-type" value="systematic"> Sistematik örnekleme
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="sampling-type" value="stratified"> Tabakalamalı örnekleme
+                                                        </label>
+                                                        <label class="checkbox-item">
+                                                            <input type="radio" name="sampling-type" value="cluster"> Küme örnekleme
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="config-row">
+                                                    <label class="config-label">Örneklem Boyutu:</label>
+                                                    <div style="display: flex; gap: 1rem; align-items: center;">
+                                                        <input type="number" placeholder="Sayı" class="custom-textbox" style="width: 100px;" id="sample-size">
+                                                        <select class="column-dropdown" style="width: 120px;">
+                                                            <option value="count">Kayıt sayısı</option>
+                                                            <option value="percent">Yüzde (%)</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Etkilenen Değerler Bölümü -->
+                                                <div class="config-row">
+                                                    <label class="config-label">🎯 Örnekleme Sonucu:</label>
+                                                    <div class="affected-values-container">
+                                                        <div class="affected-values-header">
+                                                            <div class="affected-count">
+                                                                <i class="ri-information-line"></i>
+                                                                <span id="sampling-affected-count">0</span> kayıt seçilecek
+                                                            </div>
+                                                            <div class="toggle-preview" onclick="togglePreviewGeneric('sampling')">
+                                                                <i class="ri-eye-line" id="sampling-preview-icon"></i>
+                                                                <span id="sampling-preview-text">Önizlemeyi Göster</span>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="affected-values-content" id="sampling-values-content" style="display: none;">
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Toplam Veri (1000 kayıt):</h4>
+                                                                <div class="values-list" id="sampling-original-values">
+                                                                    <span class="value-item">Kayıt #001</span>
+                                                                    <span class="value-item">Kayıt #002</span>
+                                                                    <span class="value-item">Kayıt #003</span>
+                                                                    <span class="value-item">...</span>
+                                                                    <span class="value-item">Kayıt #1000</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="arrow-section">
+                                                                <i class="ri-arrow-down-line transform-arrow"></i>
+                                                            </div>
+                                                            
+                                                            <div class="values-section">
+                                                                <h4 class="values-title">Rastgele Örneklem (100 kayıt):</h4>
+                                                                <div class="values-list" id="sampling-cleaned-values">
+                                                                    <span class="value-item">Kayıt #045 ✓</span>
+                                                                    <span class="value-item">Kayıt #156 ✓</span>
+                                                                    <span class="value-item">Kayıt #789 ✓</span>
+                                                                    <span class="value-item">... +97 kayıt</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-actions">
+                            <button class="tab-btn" onclick="applyOperations()">İşlemleri Uygula</button>
+                            <button class="tab-btn secondary" onclick="resetOperations()">Sıfırla</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content 4: Veri Görselleştirme -->
+                <div id="tab-visualization" class="tab-content">
+                    <div class="tab-section">
+                        <h2 class="tab-section-title">Veri Görselleştirme</h2>
+                        <div class="tab-section-content">
+                            <div class="visualization-options">
+                                <div class="viz-option" onclick="selectVisualization(this, 'bar')">
+                                    <i class="viz-icon ri-bar-chart-line"></i>
+                                    <div class="viz-name">Bar Grafik</div>
+                                    <div class="viz-description">Kategorik verileri karşılaştırmak için ideal</div>
+                                </div>
+                                <div class="viz-option" onclick="selectVisualization(this, 'line')">
+                                    <i class="viz-icon ri-line-chart-line"></i>
+                                    <div class="viz-name">Çizgi Grafik</div>
+                                    <div class="viz-description">Zaman serisi verileri için mükemmel</div>
+                                </div>
+                                <div class="viz-option" onclick="selectVisualization(this, 'scatter')">
+                                    <i class="viz-icon ri-bubble-chart-line"></i>
+                                    <div class="viz-name">Scatter Plot</div>
+                                    <div class="viz-description">İki değişken arasındaki ilişkiyi gösterir</div>
+                                </div>
+                                <div class="viz-option" onclick="selectVisualization(this, 'pie')">
+                                    <i class="viz-icon ri-pie-chart-line"></i>
+                                    <div class="viz-name">Pasta Grafik</div>
+                                    <div class="viz-description">Bütün içindeki oranları gösterir</div>
+                                </div>
+                                <div class="viz-option" onclick="selectVisualization(this, 'histogram')">
+                                    <i class="viz-icon ri-histogram-line"></i>
+                                    <div class="viz-name">Histogram</div>
+                                    <div class="viz-description">Veri dağılımını analiz eder</div>
+                                </div>
+                                <div class="viz-option" onclick="selectVisualization(this, 'heatmap')">
+                                    <i class="viz-icon ri-grid-line"></i>
+                                    <div class="viz-name">Heatmap</div>
+                                    <div class="viz-description">Korelasyon matrisini görselleştirir</div>
+                                </div>
+                            </div>
+
+                            <div id="chart-config" style="margin-top: 2rem; display: none;">
+                                <h3 style="color: rgb(0, 195, 255); margin-bottom: 1rem;">Grafik Ayarları</h3>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                    <select id="x-axis" class="custom-dropdown">
+                                        <option value="">X Ekseni Seçin</option>
+                                    </select>
+                                    <select id="y-axis" class="custom-dropdown">
+                                        <option value="">Y Ekseni Seçin</option>
+                                    </select>
+                                    <input type="text" id="chart-title" class="custom-textbox" placeholder="Grafik Başlığı">
+                                </div>
+                            </div>
+
+                            <div id="chart-preview" style="margin-top: 2rem;">
+                                <h3 style="color: rgb(0, 195, 255); margin-bottom: 1rem;">Grafik Önizleme</h3>
+                                <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 3rem; text-align: center; color: rgba(255,255,255,0.6); min-height: 300px; display: flex; align-items: center; justify-content: center;">
+                                    Bir grafik türü seçin ve ayarları yapın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-actions">
+                            <button class="tab-btn" onclick="generateChart()">Grafiği Oluştur</button>
+                            <button class="tab-btn secondary" onclick="downloadChart()">Grafiği İndir</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
-        <div class="download-btn-wrapper">
-            <button id="DownloadBtn" class="center-button download-btn">
-                <i class="fa fa-download"></i> İşlenmiş Veriyi İndir
-            </button>
         </div>
-
-        <aside id="helper-panel" class="helper-panel">
-            <span class="helper-icon"><i class="fa-solid fa-bucket"></i></span>
-            <div id="helper-content" class="helper-content">
-                <div class="helper-header">
-                    <h3><i class="fa-solid fa-bucket"></i> Yardımcı Panel</h3>
-                    <div class="helper-controls">
-                        <button id="helper-expand" class="helper-btn" title="Tam Ekran"><i class="fa-solid fa-expand"></i></button>
-                        <button id="helper-close" class="helper-btn" title="Kapat"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                </div>
-                
-                <div class="helper-tabs">
-                    <button class="tablink active" data-tab="data-tab">Veri</button>
-                    <button class="tablink" data-tab="log-tab">Log</button>
-                    <button class="tablink" data-tab="info-tab">Bilgi</button>
-                </div>
-                
-                <div id="data-tab" class="tabcontent active">
-                    <div id="helper-head-content" class="scroll-container"></div>
-                </div>
-                
-                <div id="log-tab" class="tabcontent">
-                    <div class="scroll-container">
-                        <pre id="helper-log-content"></pre>
-                    </div>
-                </div>
-                
-                <div id="info-tab" class="tabcontent">
-                    <div class="scroll-container">
-                        <h4>Yardım & İpuçları</h4>
-                        <p>İşlem adımları:</p>
-                        <ol>
-                            <li>Dosyayı yükleyin</li>
-                            <li>Grafiğinizi yapılandırın</li>
-                            <li>İşlemleri seçin ve uygulayın</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </aside>
     </div>
+
+    <!--=============== SCRIPTS ===============-->
+    <!-- Socket.IO Client -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    
+    <!-- External JavaScript -->
     <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-    <script>
-        // İşlem tamamlandıktan sonra butonu aktifleştir
-        function enableDownloadButton() {
-            document.getElementById('DownloadBtn').disabled = false;
-            document.getElementById('DownloadBtn').classList.add('active');
-        }
-
-        // script.js dosyasında indirme butonunun olay dinleyicisini basitleştir
-        document.getElementById("DownloadBtn").addEventListener("click", function() {
-            // Doğrudan indirme URL'sine git
-            window.location.href = '/download/processed-data';
-        });
-    </script>
-
-
 </body>
 
 </html>
-`
-
-
