@@ -27,9 +27,8 @@ def create_app(testing=False):
     configure_logging(app)
 
     # Redis client'ı başlat
-    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
-        start_redis_listener(app)
-    
+    start_redis_listener(app)
+
     # WebSocket olaylarını başlat
     socketio.init_app(app)
     

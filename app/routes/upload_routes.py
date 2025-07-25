@@ -21,24 +21,17 @@ def upload_file(projectName):
         return jsonify({'status': 'error', 'message': 'Filename is empty'}), 400
     
     if allowed_file(file.filename):
-        # Proje bazlı klasör oluştur
         project_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], projectName)
-        if not os.path.exists(project_folder):
-            os.makedirs(project_folder)
-        
-        # Dosyayı proje klasörüne kaydet
+        os.makedirs(project_folder, exist_ok=True)
+
         filepath = os.path.join(project_folder, file.filename)
         file.save(filepath)
-        
-        # Arkaplanda veri analizi başlat - app instance'ını thread'e geç
+
+        # Eventlet Green Thread ile analiz başlat
         app_instance = current_app._get_current_object()
-        analysis_thread = threading.Thread(
-            target=analyze_data_background,
-            args=(filepath, projectName, file.filename, app_instance)
-        )
-        analysis_thread.daemon = True
-        analysis_thread.start()
-        
+        import eventlet
+        eventlet.spawn(analyze_data_background, filepath, projectName, file.filename, app_instance)
+
         return jsonify({
             'status': 'success', 
             'message': 'File uploaded successfully. Data analysis started in background.', 
@@ -49,6 +42,7 @@ def upload_file(projectName):
         }), 200
     else:
         return jsonify({'status': 'error', 'message': 'File type not allowed'}), 400
+
 
 @upload_blueprint.route('/get-head-api', methods=['POST'])
 def get_head_api():
