@@ -1,30 +1,33 @@
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Any
+from dataclasses import dataclass
+from typing import Optional
 import pandas as pd
 import os
-from flask import current_app
 
 @dataclass
 class ProjectContext:
-    """
-    Represents the state and data for a single project/request.
-    This object is intended to be created and used per-request, not shared globally.
+    """Framework bağımsız proje veri konteksi.
+
+    Flask `current_app` bağımlılığı kaldırıldı. Gerekli bağımlılıklar
+    (base_upload_dir, logger) DI ile sağlanır. Testlerde sade mock
+    logger ve temp dizin ile kolayca üretilebilir.
     """
     project_name: str
     file_name: str
-    
-    # The actual DataFrame, loaded into memory
+    base_upload_dir: str
+    logger: Optional[object] = None
     dataframe: Optional[pd.DataFrame] = None
-    
-    # Path to the currently active data file (could be original or a processed version)
     active_file_path: Optional[str] = None
 
     def __post_init__(self):
-        """Set the initial active file path after the object is created."""
         if self.active_file_path is None:
-            # Dosya yolu proje adına göre klasör içinde olmalı
-            project_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], self.project_name)
+            project_folder = os.path.join(self.base_upload_dir, self.project_name)
             self.active_file_path = os.path.join(project_folder, self.file_name)
+        # Lazy log
+        if self.logger:
+            try:
+                self.logger.info(f"ProjectContext initialized: {self.active_file_path}")
+            except Exception:
+                pass
 
     @property
     def extension(self) -> str:
@@ -33,7 +36,7 @@ class ProjectContext:
         return ext.lstrip('.')
 
     # DÜZELTME: Metodun 'use_cache' parametresini kabul etmesini sağla
-    def get_data(self, use_cache=True) -> pd.DataFrame:
+    def get_data(self, use_cache: bool = True) -> pd.DataFrame:
         """
         Proje dosyasını okur ve bir pandas DataFrame olarak döndürür.
         use_cache=True ise ve veri daha önce okunmuşsa, diskten tekrar okumak yerine
@@ -41,7 +44,8 @@ class ProjectContext:
         """
         # 1. Önbelleği kullan ve önbellek dolu mu diye kontrol et
         if use_cache and self.dataframe is not None:
-            current_app.logger.info(f"Önbellekten veri getiriliyor: {self.file_name}")
+            if self.logger:
+                self.logger.info(f"Önbellekten veri getiriliyor: {self.file_name}")
             return self.dataframe
 
         # 2. Dosyanın var olup olmadığını kontrol et
@@ -59,13 +63,22 @@ class ProjectContext:
                 raise ValueError(f"Desteklenmeyen dosya uzantısı: {file_extension}")
             
             # 4. Okunan veriyi önbelleğe al
-            current_app.logger.info(f"Disk'ten veri okunup önbelleğe alındı: {self.file_name}")
+            if self.logger:
+                self.logger.info(f"Disk'ten veri okunup önbelleğe alındı: {self.file_name}")
             
             return self.dataframe
 
         except Exception as e:
-            current_app.logger.error(f"Dosya okunurken hata oluştu: {self.active_file_path} - Hata: {e}")
+            if self.logger:
+                self.logger.error(f"Dosya okunurken hata oluştu: {self.active_file_path} - Hata: {e}")
             raise
 
     def __repr__(self):
         return f"<ProjectContext project='{self.project_name}' file='{self.file_name}'>"
+
+    # Factory method for backwards compatibility with Flask code paths
+    @classmethod
+    def from_flask(cls, project_name: str, file_name: str, flask_app):
+        base_upload_dir = flask_app.config['UPLOAD_FOLDER']
+        logger = flask_app.logger if hasattr(flask_app, 'logger') else None
+        return cls(project_name=project_name, file_name=file_name, base_upload_dir=base_upload_dir, logger=logger)

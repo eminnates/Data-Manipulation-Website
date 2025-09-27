@@ -1,6 +1,62 @@
 
 
 ---
+## Security (JWT Auth & Rate Limiting)
+
+Uygulama; HTTP `/status/metrics` endpoint'i ve WebSocket olayları için opsiyonel JWT doğrulaması ve temel hız sınırlama (rate limiting) içerir.
+
+### Konfigürasyon Değişkenleri
+| Env Var | Açıklama | Varsayılan |
+|---------|----------|-----------|
+| `JWT_SECRET` | HS256 için imzalama sırrı | `change-me-dev-secret` |
+| `JWT_ALG` | Algoritma | `HS256` |
+| `JWT_EXP_SECONDS` | Token yaşam süresi (s) | `3600` |
+| `WEBSOCKET_AUTH_ENABLED` | WS auth zorunlu | `1` |
+| `RATE_LIMIT_ENABLED` | Rate limit aktif | `1` |
+| `RATE_LIMIT_MAX` | Pencere başına istek | `60` |
+| `RATE_LIMIT_WINDOW` | Pencere süresi (s) | `60` |
+
+### JWT Token Oluşturma (Geçici Yardımcı)
+Geliştirme ortamında bir shell / test context'inde:
+```python
+from app import create_app
+from app.utils.auth import create_token
+app = create_app('development')
+with app.app_context():
+   print(create_token('demo-user'))
+```
+
+HTTP isteklerinde header:
+```
+Authorization: Bearer <TOKEN>
+```
+
+WebSocket bağlantısında query param veya Authorization header kullanılabilir:
+```
+ws://host/socket.io/?token=<TOKEN>
+```
+
+### Rate Limiting
+Sabit pencere (fixed window) yaklaşımı Redis `INCR + EXPIRE` ile uygulanır. Anahtar şablonu:
+```
+rl:<identity>:<scope>:<window_start_epoch>
+```
+
+Örnek HTTP yanıt header'ları:
+```
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 42
+X-RateLimit-Reset: 1731234567
+```
+
+Limit aşıldığında HTTP için `429` + JSON `{ "error": "rate_limit_exceeded" }`, WebSocket için `preview_error` event'i yayınlanır.
+
+### Güvenlik Notları
+- Geliştirmede varsayılan sırrı PROD'da değiştirin.
+- Token üretimi şu an basit; gerçek senaryoda kullanıcı kimlik doğrulama akışı ekleyin.
+- Sabit pencere yerine ileride kayar pencere (sliding window) veya token bucket tasarımı eklenebilir.
+
+---
 
 # Data Manipulation Website
 
@@ -118,5 +174,89 @@ This project is licensed under the [MIT License](LICENSE).
 ## Feedback
 
 If you have any feedback, questions, or suggestions, feel free to open an issue or contact the repository owner.
+
+---
+
+## Preview Pipeline (Real-Time Cleaning Impact)
+
+Mühendisler için hızlı özet:
+
+Amaç: Seçilen temizlik adımlarının veriyi NASIL etkileyeceğini (satır/sütun değişimleri, etkilenen satır sayısı, null değişimleri) kalıcı işlem yapmadan önce WebSocket üzerinden anlık göstermek.
+
+### Nasıl Çalışır?
+1. Frontend, `preview_pipeline_request` event'i ile bir oturum başlatır.
+2. Sunucu her adım için DataFrame kopyası üzerinde işlemi uygular (isteğe bağlı sample limit) ve metrikleri yayınlar.
+3. Kullanıcı iptal isterse `preview_cancel` gönderir; runner iptal edilir ve `preview_cancelled` + final özet döner.
+
+### Gönderilen Eventler
+- `preview_ack`: İstek alındı.
+- `preview_step_started`: Adım başlıyor.
+- `preview_step_done`: Adım tamamlandı ve metrikler hazır.
+- `preview_warning`: Örn. bilinmeyen step.
+- `preview_error`: Adım ya da veri yükleme hatası.
+- `preview_cancelled`: Döngü iptal edildi.
+- `preview_complete`: Tüm (veya iptal anına kadar) adımlar tamamlandı; final özet.
+
+### İstek Payload Örneği
+```json
+{
+   "project_name": "demo_proj",
+   "file_name": "data.csv",
+   "steps": [
+      {"name": "text.normalize", "params": {"columns": ["name"], "mode": "lower"}},
+      {"name": "numeric.impute", "params": {"strategy": "mean", "columns": ["age"]}}
+   ],
+   "sample_limit": 500,
+   "session_id": "frontend-uuid-optional"
+}
+```
+
+### `preview_step_done` Metrikleri
+Örnek payload alanları:
+```json
+{
+   "session_id": "...",
+   "step": "text.normalize",
+   "index": 0,
+   "ms": 4.12,
+   "rows_before": 1000,
+   "rows_after": 1000,
+   "rows_delta": 0,
+   "cols_before": 12,
+   "cols_after": 12,
+   "cols_delta": 0,
+   "affected_rows": 732,
+   "changed_columns": ["name"],
+   "null_delta": {"name": -5}
+}
+```
+Alan Açıklamaları:
+- `affected_rows`: Satır silinmişse fark; değilse içerik değişen satır sayısı.
+- `changed_columns`: İçeriği değişen (limitli) sütun listesi.
+- `null_delta`: İlgili sütun için null sayısındaki net değişim.
+
+### İptal
+```json
+{ "session_id": "same-session-id" }
+```
+`preview_cancel` gönderildiğinde mevcut adım tamamlanır, kalanlar atlanır, `preview_cancelled` ve ardından `preview_complete` gelir.
+
+### Desteklenen Step İsimleri
+- `text.normalize`
+- `numeric.impute`
+- `quality.outlier_iqr`
+- `quality.high_null_prune`
+- `quality.constant_prune`
+
+### Tasarım Notları
+- Orijinal (kalıcı) veri mutasyona uğramaz; sadece kopya üzerinde.
+- Performans için isteğe bağlı `sample_limit` kullanın.
+- İleride: Ek step türleri kolayca registry'ye eklenebilir.
+
+### Hızlı Test
+Pytest ile birim testleri:
+```bash
+pytest tests/test_preview_pipeline.py -q
+```
 
 ---
