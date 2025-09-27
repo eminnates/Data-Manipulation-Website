@@ -1,0 +1,101 @@
+id,name,age,email,join_date,salary
+1,Bob Black,,bob.black@example.com,not a date,not available
+2,Tom Brown,NaN,tom.brown[at]example.com,2019-07-12,48330
+3,123 Brown,twenty,123.brown@example.com,2019-02-03,55000
+4,Mike Doe,51,mike.doe@example.com,2020-08-06,50000
+5, Smith,,.smith[at]example.com,2019-10-18,55000
+6,Alice Doe,,alice.doe@example.com,2021-02-14,57100
+7,Alice Brown,NaN,alice.brown@example.com,2022-01-22,52466
+8,Alice Doe,NaN,alice.doe@example.com,2021-05-12,59491
+9,123 ,NaN,,2022-04-11,NaN
+10,Bob ,47,bob.@example.com,2021/02/20,62000
+11,John None,,john.none@example.com,2022-12-05,55000
+12,Bob Smith,,bob.smith@example.com,2021-05-12,66357
+13,None Lee,22,none.lee@example.com,2019-02-16,43764
+14, Black,NaN,.black@example.com,2022-13-01,59297
+15,Alice Smith,twenty,alice.smith[at]example.com,2019-02-18,65800
+16,Jane Black,twenty,jane.black@example.com,2021-05-12,60705
+17,Tom Smith,twenty,tom.smith@example.com,2021-10-06,58000
+18,Jane Smith,61,jane.smith@example.com,2020-12-17,53828
+19,Alice Doe,21,alice.doe[at]example.com,2022-03-13,55000
+20,Mike Brown,,mike.brown@example.com,2021-05-12,47024
+21,Tom Brown,twenty,tom.brown@example.com,2021-04-31,60000
+22,Alice None,NaN,alice.none@example.com,,
+23,Linda O'Reilly,,linda.oreilly[at]example.com,2021-09-02,60000
+24, Smith,NaN,.smith@example.com,2019-11-02,55000
+25,Tom Smith,NaN,tom.smith@example.com,2019-07-25,55000
+26,Alice Lee,,alice.lee@example.com,2020-06-26,55000
+27,Linda Smith,NaN,linda.smith[at]example.com,2021-06-10,
+28,Linda Smith,58,linda.smith@example.com,2020-01-13,55000
+29,123 Smith,,123.smith@example.com,2021-09-21,52650
+30,John Lee,,john.lee[at]example.com,2020-03-16,40241
+31,Alice Black,NaN,alice.black[at]example.com,2020-03-06,
+32,John Brown,,john.brown@example.com,2019-04-28,
+33,Alice O'Reilly,twenty,alice.oreilly@example.com,not a date,47005
+34, Brown,,.brown@example.com,2022-08-02,59453
+35,John O'Reilly,,john.oreilly@example.com,2021-05-12,50000
+36,Sarah Doe,twenty,sarah.doe@example.com,2019-03-14,62000
+37,Sarah Lee,twenty,sarah.lee@example.com,2021-06-02,48491
+38,John ,twenty,john.@example.com,2022-12-27,
+39,Sarah O'Reilly,NaN,sarah.oreilly@example.com,2019-04-11,not available
+40,Alice None,twenty,alice.none@example.com,2019-05-02,41099
+41,Alice Doe,,alice.doe@example.com,2020-02-03,not available
+42,Sarah ,23,sarah.@example.com,,69831
+43,123 Doe,,123.doe@example.com,,57826
+44,Jane Doe,twenty,jane.doe@example.com,2020-01-26,62000
+45,123 Lee,NaN,123.lee@example.com,2019-04-18,50000
+46,Mike Black,twenty,mike.black@example.com,2020-01-15,55000
+47,Alice Doe,twenty,alice.doe[at]example.com,2019-03-16,55669
+48,John Lee,,john.lee@example.com,2021-12-04,not available
+49,Jane None,,jane.none[at]example.com,2020-01-15,
+50,Linda Doe,twenty,linda.doe@example.com,2022-01-04,not available
+51,John Doe,,john.doe@example.com,2021-06-20,54385
+52,Linda Brown,twenty,linda.brown[at]example.com,2022-11-19,50000
+53,John Black,33,john.black@example.com,2022-07-14,not available
+54,Linda Brown,,linda.brown@example.com,2019-06-08,58000
+55,Mike Doe,49,mike.doe@example.com,2019-01-16,62000
+56,Alice O'Reilly,,alice.oreilly@example.com,2021-07-06,62330
+57,Mike Smith,NaN,mike.smith@example.com,2021-09-12,
+58,Linda Brown,,linda.brown[at]example.com,2019-04-15,50000
+59,Tom Smith,,tom.smith@example.com,2020-03-02,42935
+60,Jane Brown,NaN,jane.brown@example.com,2019-06-28,60000
+61,Tom O'Reilly,twenty,tom.oreilly@example.com,2022-09-13,40630
+62,Linda O'Reilly,48,linda.oreilly@example.com,2019-10-04,50000
+63, Black,,.black@example.com,2021-09-28,58000
+64,Tom O'Reilly,NaN,tom.oreilly@example.com,2022-09-10,55934
+65,Mike ,NaN,mike.@example.com,2022-01-04,58000
+66,Bob ,NaN,bob.[at]example.com,2022-06-02,64492
+67,123 O'Reilly,40,123.oreilly@example.com,2020-01-15,
+68,Jane Brown,,jane.brown@example.com,2022-09-21,69277
+69,None ,NaN,none.[at]example.com,2020-01-15,40897
+70,Tom Lee,42,tom.lee@example.com,2022-08-27,48174
+71, ,twenty,invalid.email,2022-13-01,52086
+72,None O'Reilly,NaN,none.oreilly@example.com,2021-04-31,NaN
+73,Tom Brown,,tom.brown@example.com,2022-04-21,55000
+74,Linda Smith,,linda.smith@example.com,,55000
+75,Mike Smith,NaN,mike.smith@example.com,2021-04-31,43945
+76,Tom Smith,,tom.smith@example.com,2019-11-08,
+77,Bob O'Reilly,twenty,bob.oreilly@example.com,2019-05-11,67005
+78,Mike Smith,NaN,mike.smith@example.com,2019-04-23,50211
+79,Jane Lee,twenty,jane.lee@example.com,2021-12-22,55000
+80,Tom ,,tom.@example.com,2021-10-01,62000
+81,Tom Doe,NaN,tom.doe@example.com,2022-13-01,
+82,Jane Lee,43,jane.lee@example.com,2022-13-01,60000
+83,None O'Reilly,,none.oreilly@example.com,2022-09-21,
+84,John Smith,,john.smith@example.com,2021-08-15,NaN
+85,None Brown,twenty,none.brown[at]example.com,2019-01-12,62000
+86,Tom Brown,twenty,tom.brown[at]example.com,2022-11-18,50000
+87,Mike O'Reilly,,mike.oreilly[at]example.com,2020-11-15,
+88,Sarah Black,,sarah.black@example.com,2022-13-01,50606
+89,None ,twenty,none.@example.com,2021-01-03,47948
+90,Tom None,,tom.none@example.com,2021-03-18,NaN
+91,Linda O'Reilly,,linda.oreilly@example.com,2021-04-31,55000
+92,Tom Smith,59,tom.smith[at]example.com,2019-05-12,60000
+93,Sarah Black,27,sarah.black[at]example.com,,55000
+94,Mike Black,43,mike.black@example.com,2021/02/20,
+95,Sarah ,52,sarah.@example.com,2022-12-17,not available
+96,Mike Black,,mike.black@example.com,2021-05-12,55000
+97,Jane O'Reilly,,jane.oreilly[at]example.com,2022-02-19,64825
+98,John O'Reilly,,john.oreilly@example.com,2021-03-17,50000
+99,None Black,NaN,none.black[at]example.com,2021-12-08,55000
+100,Alice Black,,alice.black@example.com,2021-12-08,50000

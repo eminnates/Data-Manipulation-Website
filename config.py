@@ -2,7 +2,7 @@ import os
 
 class Config:
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-    MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB
+    MAX_CONTENT_LENGTH = 100 * 1024 * 1024 * 8  # 800MB
 
     # Redis URL for Flask-SocketIO, Celery, or direct usage
     REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')

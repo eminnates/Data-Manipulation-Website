@@ -150,3 +150,26 @@ def handle_get_column_names(data):
     except Exception as e:
         current_app.logger.error(f"Column names fetch failed: {e}", exc_info=True)
         emit('column_names_result', {'error': f'Sütun adları alınırken hata oluştu: {str(e)}'})
+
+from app.features.analysis.analyze_helpers import (
+    analyze_data_background_main
+)
+
+from app.features.analysis.large_file_helpers import analyze_large_file_main
+
+def register_analysis_events(socketio, app_instance):
+    @socketio.on('start_data_analysis')
+    def handle_data_analysis_event(data):
+        filepath = data.get('filepath')
+        project_name = data.get('project_name')
+        file_name = data.get('file_name')
+        if not filepath or not project_name or not file_name:
+            emit('data_analysis_error', {
+                'status': 'error',
+                'message': 'Eksik parametre!',
+                'error_type': 'argument',
+                'project_name': project_name,
+                'file_name': file_name
+            })
+            return
+        analyze_data_background_main(filepath, project_name, file_name, app_instance)

@@ -148,6 +148,100 @@ class Cleanse:
         else:
             print(f"Column '{column_name}' not found.")
 
+    # 5. Yüksek null oranlı sütunları kaldırma
+    def RemoveHighNullColumns(self, threshold: float = 0.9):
+        """Belirtilen threshold'dan (0-1) daha yüksek oranda NaN içeren sütunları düşürür."""
+        if not 0 <= threshold <= 1:
+            print("Threshold 0-1 arasında olmalı. Varsayılan 0.9 kullanılıyor.")
+            threshold = 0.9
+        to_drop = []
+        for col in self.data.columns:
+            null_ratio = self.data[col].isna().mean()
+            if null_ratio > threshold:
+                to_drop.append(col)
+        if to_drop:
+            self.data = self.data.drop(columns=to_drop)
+
+    # 6. Sabit (tekil) değer içeren sütunları kaldırma
+    def RemoveConstantColumns(self):
+        """Tüm satırlarda aynı değeri taşıyan sütunları kaldırır."""
+        to_drop = []
+        for col in self.data.columns:
+            try:
+                if self.data[col].nunique(dropna=False) <= 1:
+                    to_drop.append(col)
+            except Exception:
+                continue
+        if to_drop:
+            self.data = self.data.drop(columns=to_drop)
+
+    # 7. E-posta temizliği
+    def CleanEmails(self):
+        """Email içeren sütunları normalize eder (lowercase & trim) ve basit pattern filtre uygular."""
+        email_pattern = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
+        for col in self.data.columns:
+            if 'email' in col.lower() or (self.data[col].dtype == object and self.data[col].astype(str).str.contains('@').mean() > 0.5):
+                try:
+                    series = self.data[col].astype(str).str.strip().str.lower()
+                    # Geçersiz email'leri NaN yap
+                    mask_valid = series.apply(lambda x: bool(email_pattern.match(x)))
+                    series = series.where(mask_valid, other=pd.NA)
+                    self.data[col] = series
+                except Exception:
+                    continue
+
+    # 8. Sayısal sütun normalizasyonu
+    def NormalizeColumnValues(self):
+        """Sayısal sütunları min-max (0-1) ölçeğine çeker (sabit/tekil sütunları atlar)."""
+        numeric_cols = self.data.select_dtypes(include=['number']).columns
+        for col in numeric_cols:
+            try:
+                col_min = self.data[col].min()
+                col_max = self.data[col].max()
+                if pd.isna(col_min) or pd.isna(col_max) or col_min == col_max:
+                    continue
+                self.data[col] = (self.data[col] - col_min) / (col_max - col_min)
+            except Exception:
+                continue
+
+    # 9. String sütunlardan rakamları kaldırma
+    def AutoRemoveDigitsFromStringColumns(self):
+        """Tüm object/string sütunlardan rakam karakterlerini kaldırır."""
+        obj_cols = self.data.select_dtypes(include=['object']).columns
+        for col in obj_cols:
+            try:
+                self.data[col] = self.data[col].astype(str).str.replace(r"\d+", "", regex=True)
+            except Exception:
+                continue
+
+    # 10. Duplicate satırları sil
+    def DeleteDupValues(self):
+        """Tam satır kopyalarını kaldırır (in-place)."""
+        try:
+            before = len(self.data)
+            self.data = self.data.drop_duplicates()
+            after = len(self.data)
+            if before - after > 0:
+                print(f"{before - after} duplicate satır silindi.")
+        except Exception:
+            pass
+
+    # 11. Basit IQR outlier temizliği (Manipulation içindeki ile uyumlu basitleştirilmiş kopya)
+    def detectAndDeleteOutliers(self):
+        import numpy as np
+        for column_name in self.data.select_dtypes(include=[np.number]).columns:
+            try:
+                Q1 = self.data[column_name].quantile(0.25)
+                Q3 = self.data[column_name].quantile(0.75)
+                IQR = Q3 - Q1
+                lower_bound = Q1 - 1.5 * IQR
+                upper_bound = Q3 + 1.5 * IQR
+                mask = (self.data[column_name] >= lower_bound) & (self.data[column_name] <= upper_bound)
+                if not mask.all():
+                    self.data = self.data[mask]
+            except Exception:
+                continue
+
     # Diğer yardımcı fonksiyonlar (gerekirse ekleyebilirsin)
     def DropColumn(self, column_name):
         """Drop a specific column by name."""

@@ -5,9 +5,11 @@ from app.features.websocket.events import *
 from app.features.websocket.extensions import socketio
 from app.features.redis.redis_client import get_redis_client
 
-def create_app(testing=False):
+def create_app(env="production"):
+    from dotenv import load_dotenv
+    load_dotenv()
     app = Flask(__name__)
-    if testing:
+    if env == "development":
         app.config.from_object('config.DevelopmentConfig')
     else:
         app.config.from_object('config.ProductionConfig')
@@ -97,12 +99,10 @@ def register_blueprints(app):
     from app.routes.upload_routes import upload_blueprint
     from app.routes.graph_routes import graph_blueprint
     from app.routes.state_routes import state_blueprint
-    from app.routes.logs_api import logs_blueprint
     from app.routes.download_routes import download_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(upload_blueprint, url_prefix='/upload')
     app.register_blueprint(graph_blueprint, url_prefix='/graph')
     app.register_blueprint(state_blueprint, url_prefix='/state')
-    app.register_blueprint(logs_blueprint, url_prefix='/logs')
     app.register_blueprint(download_blueprint, url_prefix='/download')
