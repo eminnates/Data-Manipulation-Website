@@ -13,3 +13,4 @@ python-engineio==4.7.1
 python-socketio==5.9.0
 eventlet==0.33.3
 redis==5.0.1
+PyJWT==2.8.0

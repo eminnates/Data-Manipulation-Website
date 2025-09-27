@@ -3,6 +3,7 @@ from enum import Enum, auto
 import logging
 from datetime import datetime
 from app.features.redis.redis_client import get_redis_client
+from app.services.status_service import StatusService
 from python_scripts.dataCleaning import Cleanse, Manipulation, Augmentation
 from python_scripts.visualization import GraphGenerator
 from flask import current_app
@@ -137,12 +138,8 @@ class DataStateMachine:
             elif self.state == DataState.COMPLETE:
                 self.logger.info("State machine finished. No further processing.")
                 # Redis flag koy
-                try:
-                    redis_client = get_redis_client()  # Bu hala direkt kullanım: ileride Persistence/StatusService'e taşınacak
-                    redis_client.set("state_machine:complete", "1", ex=60)
-                    self.logger.info("Redis flag set", key="state_machine:complete", value=1)
-                except Exception as e:
-                    self.logger.error("Redis flag error", exc=e)
+                # Flag set via StatusService (legacy key preserved for backward compatibility)
+                StatusService(logger=self.logger, prefix="state_machine").set_flag("complete", value="1", ttl_seconds=60)
                 break
 
             else:

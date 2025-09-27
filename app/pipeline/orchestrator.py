@@ -4,6 +4,7 @@ import pandas as pd
 from app.domain.models import ProjectContext
 from app.infrastructure.logging_sinks import LogSink, StdLoggerSink, RedisSink, CompositeSink
 from app.features.redis.redis_client import get_redis_client
+from app.services.status_service import StatusService
 from app.pipeline.steps import (
     CleaningStep, ManipulationStep, AugmentationStep,
     VisualizationStep, FinalizationStep, StepResult
@@ -84,12 +85,7 @@ class DataPipelineOrchestrator:
                 break
         self.logger.info('Pipeline run finished')
         # Flag koy (eski state machine davranışıyla uyumlu olacak şekilde)
-        try:
-            redis_client = get_redis_client()
-            redis_client.set('pipeline:complete', '1', ex=60)
-            self.logger.info('Redis flag set', key='pipeline:complete')
-        except Exception as e:
-            self.logger.error('Redis flag error', exc=e)
+        StatusService(logger=self.logger, prefix='pipeline').set_flag('complete', value='1', ttl_seconds=60)
         return self.data
 
 __all__ = ['DataPipelineOrchestrator']

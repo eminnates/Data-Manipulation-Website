@@ -12,6 +12,18 @@ state_blueprint = Blueprint('state', __name__)
 # 1. Bağımsız iş mantığı fonksiyonu
 def run_state_machine_logic(config, logger, root_path, file_name, ext, mode, output_type, process_list, project_title, visualization_params, project_context_cls=ProjectContext, data_state_machine_cls=DataStateMachine):
     try:
+        # Deprecation emission (legacy state machine entry)
+        try:
+            from app.infrastructure.deprecation import DeprecationEmitter  # type: ignore
+            DeprecationEmitter.emit(
+                key="state_machine.legacy.entry",
+                sink=logger,
+                message="DataStateMachine direct usage deprecated; use DataPipelineOrchestrator or LegacyStateMachineAdapter",
+                level='warning',
+                extra={"mode": mode, "project": project_title}
+            )
+        except Exception:
+            pass
         project_context = project_context_cls(project_name=project_title, file_name=file_name)
         data_df = project_context.get_data()
         logger.info(f"Dosya başarıyla okundu: {project_context.active_file_path}")

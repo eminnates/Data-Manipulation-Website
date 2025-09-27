@@ -4,6 +4,7 @@ from app.features.websocket.websocket_listener import *
 from app.features.websocket.events import *
 from app.features.websocket.extensions import socketio
 from app.features.redis.redis_client import get_redis_client
+from app.infrastructure.logger_adapter import StructuredLoggerWrapper
 
 def create_app(env="production"):
     from dotenv import load_dotenv
@@ -41,6 +42,12 @@ def create_app(env="production"):
     # Blueprint'leri kaydet
     register_blueprints(app)
 
+    # Wrap logger for structured kwargs support
+    try:
+        app.logger = StructuredLoggerWrapper(app.logger)
+        app.logger.info('logger.adapter.enabled')
+    except Exception:
+        pass
     return app
 
 def configure_logging(app):
@@ -100,9 +107,11 @@ def register_blueprints(app):
     from app.routes.graph_routes import graph_blueprint
     from app.routes.state_routes import state_blueprint
     from app.routes.download_routes import download_blueprint
+    from app.routes.status_routes import status_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(upload_blueprint, url_prefix='/upload')
     app.register_blueprint(graph_blueprint, url_prefix='/graph')
     app.register_blueprint(state_blueprint, url_prefix='/state')
     app.register_blueprint(download_blueprint, url_prefix='/download')
+    app.register_blueprint(status_blueprint, url_prefix='/status')

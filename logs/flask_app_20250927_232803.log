@@ -1,0 +1,7 @@
+Log testi: 2025-09-27T23:28:03.070835
+2025-09-27 23:28:03,071 - INFO - Flask logging başlatıldı
+2025-09-27 23:28:03,072 - INFO - redis.listener.spawned channel=log_channel
+2025-09-27 23:28:03,400 - INFO - logger.adapter.enabled
+2025-09-27 23:28:03,478 - INFO - redis.listener.starting channel=log_channel attempt=1
+2025-09-27 23:28:03,521 - INFO - redis.listener.subscribed channel=log_channel
+2025-09-27 23:28:35,658 - INFO - file.upload.saved project=aa stored_name=processed_data_8_.csv path=C:\Users\mhmtm\Desktop\project\Project\master\uploads\aa\processed_data_8_.csv

@@ -6,6 +6,23 @@ class Config:
 
     # Redis URL for Flask-SocketIO, Celery, or direct usage
     REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    # Unified log channel (Redis pub/sub + websocket forwarding)
+    LOG_CHANNEL_NAME = os.environ.get('LOG_CHANNEL_NAME', 'log_channel')
+    # Feature flags for redis/websocket streaming
+    ENABLE_REDIS_LOG_STREAM = os.environ.get('ENABLE_REDIS_LOG_STREAM', '1') == '1'
+    ENABLE_REDIS_LISTENER = os.environ.get('ENABLE_REDIS_LISTENER', '1') == '1'
+
+    # --- Auth / Security ---
+    # JWT settings
+    JWT_SECRET = os.environ.get('JWT_SECRET', 'change-me-dev-secret')  # In production override via env
+    JWT_ALG = os.environ.get('JWT_ALG', 'HS256')
+    JWT_EXP_SECONDS = int(os.environ.get('JWT_EXP_SECONDS', '3600'))  # Default 1 hour tokens
+    WEBSOCKET_AUTH_ENABLED = os.environ.get('WEBSOCKET_AUTH_ENABLED', '1') == '1'
+
+    # Rate limiting (simple fixed window per identity + scope)
+    RATE_LIMIT_ENABLED = os.environ.get('RATE_LIMIT_ENABLED', '1') == '1'
+    RATE_LIMIT_MAX = int(os.environ.get('RATE_LIMIT_MAX', '60'))  # requests per window
+    RATE_LIMIT_WINDOW = int(os.environ.get('RATE_LIMIT_WINDOW', '60'))  # seconds
 
 class DevelopmentConfig(Config):
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', os.path.join(Config.BASE_DIR, 'uploads'))

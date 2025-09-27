@@ -1,13 +1,11 @@
 from flask import Blueprint, request, jsonify, current_app
-import os
 import pandas as pd
-import numpy as np
-import threading
-from app.utils.file_utils import allowed_file
+from flask_cors import cross_origin
 from python_scripts.getHead import GetHead
 from python_scripts.getColumns import GetColumns
-from flask_cors import cross_origin
-from app.features.websocket.extensions import socketio
+from app.services.file_storage_service import FileStorageService
+from app.services.path_builder import PathBuilder
+from app.infrastructure.config_provider import FlaskConfigProvider
 
 upload_blueprint = Blueprint('upload', __name__)
 
@@ -16,30 +14,27 @@ upload_blueprint = Blueprint('upload', __name__)
 def upload_file(projectName):
     if 'file' not in request.files:
         return jsonify({'status': 'error', 'message': 'No file provided'}), 400
-    file = request.files['file']
-    if file.filename == '':
+    up_file = request.files['file']
+    if not up_file or up_file.filename == '':
         return jsonify({'status': 'error', 'message': 'Filename is empty'}), 400
-    
-    if allowed_file(file.filename):
-        project_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], projectName)
-        os.makedirs(project_folder, exist_ok=True)
 
-        filepath = os.path.join(project_folder, file.filename)
-        file.save(filepath)
+    # Config -> PathBuilder (upload desteği ile)
+    config_provider = FlaskConfigProvider(current_app)
+    path_builder = PathBuilder.from_config(config_provider, ensure=True)
+    service = FileStorageService(logger=current_app.logger, path_builder=path_builder, base_upload_dir=path_builder.base_upload)
+    result = service.save_uploaded(projectName, up_file)
+    if not result.success:
+        return jsonify({'status': 'error', 'message': result.error or 'Upload failed'}), 400
 
-        # Eventlet Green Thread ile analiz başlat
-
-
-        return jsonify({
-            'status': 'success', 
-            'message': 'File uploaded successfully. Data analysis started in background.', 
-            'file_name': file.filename,
-            'project_name': projectName,
-            'file_path': filepath,
-            'analysis_started': True
-        }), 200
-    else:
-        return jsonify({'status': 'error', 'message': 'File type not allowed'}), 400
+    return jsonify({
+        'status': 'success',
+        'message': 'File uploaded successfully. Data analysis can be started.',
+        'file_name': result.original_name,
+        'stored_name': result.stored_name,
+        'project_name': result.project,
+        'file_path': result.path,
+        'analysis_started': False  # Future: async trigger
+    }), 200
 
 
 @upload_blueprint.route('/get-head-api', methods=['POST'])
