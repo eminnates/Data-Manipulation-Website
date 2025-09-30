@@ -1,0 +1,17 @@
+Log testi: 2025-09-30T12:50:37.193107
+2025-09-30 12:50:37,195 - INFO - Flask logging başlatıldı
+2025-09-30 12:50:37,198 - INFO - redis.listener.spawned channel=log_channel
+2025-09-30 12:50:37,760 - INFO - logger.adapter.enabled
+2025-09-30 12:50:37,796 - INFO - redis.listener.starting channel=log_channel attempt=1
+2025-09-30 12:50:38,049 - INFO - redis.listener.subscribed channel=log_channel
+2025-09-30 12:50:39,986 - INFO - Bir istemci WebSocket ile bağlandı.
+2025-09-30 12:50:39,998 - INFO - Starting data analysis for project 'test_project', file 'test_file.csv'
+2025-09-30 12:50:40,000 - INFO - ProjectContext initialized: ./uploads\test_project\test_file.csv
+2025-09-30 12:50:40,939 - INFO - Bir istemci WebSocket ile bağlandı.
+2025-09-30 12:50:43,661 - INFO - Bir istemci WebSocket ile bağlandı.
+2025-09-30 12:50:49,358 - INFO - file.upload.saved project=dada stored_name=processed_data_8_.csv path=C:\Users\mhmtm\Desktop\project\Project\master\uploads\dada\processed_data_8_.csv
+2025-09-30 12:50:50,344 - INFO - Starting data analysis for project 'dada', file 'processed_data_8_.csv'
+2025-09-30 12:50:50,345 - INFO - ProjectContext initialized: ./uploads\dada\processed_data_8_.csv
+2025-09-30 12:50:51,346 - INFO - Column names request for project 'dada', file 'processed_data_8_.csv'
+2025-09-30 12:50:51,347 - INFO - ProjectContext initialized: ./uploads\dada\processed_data_8_.csv
+2025-09-30 12:50:51,796 - INFO - Disk'ten veri okunup önbelleğe alındı: processed_data_8_.csv

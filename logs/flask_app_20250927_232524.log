@@ -1,8 +1,0 @@
-Log testi: 2025-09-27T23:25:24.212823
-2025-09-27 23:25:24,213 - INFO - Flask logging başlatıldı
-2025-09-27 23:25:24,214 - INFO - redis.listener.spawned channel=log_channel
-2025-09-27 23:25:24,270 - INFO - logger.adapter.enabled
-2025-09-27 23:25:24,302 - INFO - redis.listener.spawned channel=log_channel
-2025-09-27 23:25:24,306 - INFO - logger.adapter.enabled
-2025-09-27 23:25:24,313 - INFO - redis.listener.spawned channel=log_channel
-2025-09-27 23:25:24,317 - INFO - logger.adapter.enabled

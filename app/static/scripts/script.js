@@ -32,12 +32,51 @@ navLinks.forEach(link => {
 });
 
 // WebSocket bağlantısı
-const socket = io('http://127.0.0.1:5000');
+const socket = io('http://127.0.0.1:5000', {
+    transports: ['websocket', 'polling'],
+    upgrade: true,
+    rememberUpgrade: true
+});
 let currentAnalysisProject = null;
+
+// --- Ring Buffer (Event Log) -------------------------------------------------
+// Maksimum 500 son WebSocket / UI olayı tutulur; eski olanlar atılır.
+// İleride UI'da gösterim veya hata teşhisi için kullanılabilir.
+const MAX_EVENT_LOG = 500;
+const eventLog = [];
+function logEvent(type, payload) {
+    try {
+        eventLog.push({
+            ts: new Date().toISOString(),
+            type,
+            payload: safeClone(payload)
+        });
+        if (eventLog.length > MAX_EVENT_LOG) {
+            // Fazlalığı tek seferde kırp (performans için shift yerine slice)
+            const overflow = eventLog.length - MAX_EVENT_LOG;
+            eventLog.splice(0, overflow);
+        }
+    } catch (e) {
+        console.warn('logEvent failed', e);
+    }
+}
+// Nesneleri (circular olmayan) kopyalamak için basit güvenli klon
+function safeClone(obj) {
+    if (obj === null || typeof obj !== 'object') return obj;
+    try { return JSON.parse(JSON.stringify(obj)); } catch { return { note: 'unclonable' }; }
+}
+// Dışarıdan inceleme için global referans
+window.__eventLog = eventLog;
 
 // WebSocket event listeners
 socket.on('connect', function() {
     console.log('WebSocket bağlantısı kuruldu');
+    console.log('Transport type:', socket.io.engine.transport.name);
+    console.log('Socket connected:', socket.connected);
+    logEvent('ws_connect', { status: 'connected', transport: socket.io.engine.transport.name });
+    
+    // Bağlantı durumunu bildir
+    showNotification('WebSocket bağlantısı kuruldu', 'success');
     
     // Bağlantı kurulduktan sonra mevcut projenin durumunu kontrol et
     if (currentAnalysisProject) {
@@ -52,13 +91,24 @@ socket.on('connect', function() {
 
 socket.on('disconnect', function() {
     console.log('WebSocket bağlantısı kesildi');
+    logEvent('ws_disconnect', {});
+    
+    // Bildirim göster
+    showNotification('WebSocket bağlantısı kesildi', 'error');
+    
     // Modal varsa kapat
     const modal = document.getElementById('analysis-modal');
     if (modal) modal.remove();
+    
+    // Analiz durumunu güncelle
+    if (currentAnalysisProject) {
+        updateAnalysisStatusInFileDetails('Bağlantı kesildi', 'red');
+    }
 });
 
 socket.on('connect_error', function(error) {
     console.error('WebSocket bağlantı hatası:', error);
+    logEvent('ws_connect_error', { error: error?.message || String(error) });
     // Modal varsa kapat
     const modal = document.getElementById('analysis-modal');
     if (modal) modal.remove();
@@ -67,6 +117,7 @@ socket.on('connect_error', function(error) {
 
 socket.on('error', function(error) {
     console.error('WebSocket hatası:', error);
+    logEvent('ws_error', { error: error?.message || String(error) });
     // Modal varsa kapat
     const modal = document.getElementById('analysis-modal');
     if (modal) modal.remove();
@@ -74,31 +125,47 @@ socket.on('error', function(error) {
 
 socket.on('data_analysis_status', function(data) {
     console.log('Analiz durumu:', data);
+    logEvent('data_analysis_status', data);
     updateAnalysisProgress(data);
 });
 
 socket.on('data_analysis_complete', function(data) {
     console.log('Analiz tamamlandı:', data);
+    logEvent('data_analysis_complete', data);
     handleAnalysisComplete(data);
 });
 
 socket.on('data_analysis_error', function(data) {
     console.error('Analiz hatası:', data);
+    logEvent('data_analysis_error', data);
     handleAnalysisError(data);
 });
 
 socket.on('suitability_result', function(data) {
     console.log('Suitability result:', data);
+    logEvent('suitability_result', data);
     handleSuitabilityResult(data);
 });
 
 socket.on('analysis_status_response', function(data) {
     console.log('Analysis status response:', data);
+    logEvent('analysis_status_response', data);
 });
 
 socket.on('column_names_result', function(data) {
     console.log('Column names result:', data);
+    logEvent('column_names_result', data);
     handleColumnNamesResult(data);
+});
+
+socket.on('connection_confirmed', function(data) {
+    console.log('WebSocket connection confirmed:', data);
+    logEvent('connection_confirmed', data);
+});
+
+socket.on('test_response', function(data) {
+    console.log('Test response received:', data);
+    logEvent('test_response', data);
 });
 
 // Sütun adlarını dinamik olarak yükle
@@ -142,6 +209,12 @@ function handleColumnNamesResult(data) {
 
 // Tüm sütun dropdownlarını güncelle
 function populateColumnDropdowns(columns) {
+    // Columns'un geçerli olduğunu kontrol et
+    if (!columns || !Array.isArray(columns)) {
+        console.warn('populateColumnDropdowns: columns is not a valid array, using empty array');
+        columns = [];
+    }
+    
     const columnDropdownIds = [
         'whitespace-columns',
         'duplicate-columns', 
@@ -166,8 +239,21 @@ function populateColumnDropdowns(columns) {
 
 // Tek bir dropdown'u güncelle
 function updateColumnDropdown(dropdown, columns) {
-    // Mevcut seçimleri sakla
-    const previousSelections = Array.from(dropdown.selectedOptions).map(option => option.value);
+    // Dropdown'un var olduğunu kontrol et
+    if (!dropdown) {
+        console.warn('updateColumnDropdown: dropdown element is null or undefined');
+        return;
+    }
+    
+    // Columns'un var olduğunu kontrol et
+    if (!columns || !Array.isArray(columns)) {
+        console.warn('updateColumnDropdown: columns is not a valid array');
+        return;
+    }
+    
+    // Mevcut seçimleri sakla (güvenli şekilde)
+    const previousSelections = dropdown.selectedOptions ? 
+        Array.from(dropdown.selectedOptions).map(option => option.value) : [];
     
     // Dropdown'u temizle
     dropdown.innerHTML = '';
@@ -175,7 +261,8 @@ function updateColumnDropdown(dropdown, columns) {
     // "Tüm Sütunlar" seçeneğini ekle
     const allOption = document.createElement('option');
     allOption.value = 'all';
-    allOption.textContent = 'Tüm Sütunlar';
+    allOption.textContent = '* Tüm Sütunlar';
+    allOption.style.fontWeight = 'bold';
     dropdown.appendChild(allOption);
     
     // Gerçek sütunları ekle
@@ -183,12 +270,12 @@ function updateColumnDropdown(dropdown, columns) {
         const option = document.createElement('option');
         option.value = column.name;
         
-        // Sütun tipine göre ikon ekle
-        let icon = '📄'; // Varsayılan
+        // Sütun tipine göre ikon ekle (simple text icons)
+        let icon = '•'; // Varsayılan
         if (column.is_numeric) {
-            icon = '📊';
+            icon = '#';
         } else if (column.is_string) {
-            icon = '📄';
+            icon = 'T';
         }
         
         // Sütun bilgilerini göster
@@ -289,39 +376,47 @@ function handleAnalysisComplete(data) {
     const modal = document.getElementById('analysis-modal');
     if (modal) modal.remove();
     
-    // Analiz sonuçlarını göster
-    alert('Veri analizi tamamlandı! Sonuçlar Veri Bilgisi sekmesinde görüntülenebilir.');
+    console.log('Analysis completed successfully:', data);
     
     // Dosya yükleme alanındaki analiz durumunu güncelle
     updateAnalysisStatusInFileDetails('Tamamlandı', 'green');
     
-    // Veri Bilgisi sekmesini aktif et
-    const dataInfoTab = document.querySelector('[onclick*="tab-info"]');
-    if (dataInfoTab) {
-        dataInfoTab.click();
-    }
-    
-    // Analiz sonuçlarını saklayalım
+    // Analiz sonuçlarını sakla
     window.lastAnalysisResults = data.results;
     
     // Veri bilgilerini güncelle
     if (data.results) {
         updateDataInfoFromAnalysis(data.results);
     }
+    
+    // AnalysisUI summary'yi otomatik yükle
+    try {
+        if (window.AnalysisUI && AnalysisUI.loadSummary) {
+            console.log('Auto-loading AnalysisUI summary after completion');
+            AnalysisUI.loadSummary();
+        }
+    } catch (e) {
+        console.warn('Failed to auto-load AnalysisUI summary:', e);
+    }
+    
+    // Bildirim göster
+    showNotification('Veri analizi tamamlandı! Sonuçlar "Analiz" sekmesinde görüntülenebilir.', 'success');
 }
 
 function handleAnalysisError(data) {
     const modal = document.getElementById('analysis-modal');
     if (modal) modal.remove();
     
+    console.error('Analysis error received:', data);
+    
     // Dosya yükleme alanındaki analiz durumunu güncelle
     updateAnalysisStatusInFileDetails('Hata oluştu', 'red');
     
     // WebSocket bağlantı hatalarını da kontrol et
-    const errorMessage = data.message || 'Bilinmeyen hata oluştu';
-    console.error('Analysis error:', errorMessage);
+    const errorMessage = data.message || data.error || 'Bilinmeyen hata oluştu';
     
-    alert('Veri analizi sırasında hata oluştu: ' + errorMessage);
+    // Bildirim göster
+    showNotification(`Veri analizi sırasında hata oluştu: ${errorMessage}`, 'error');
 }
 
 function handleSuitabilityResult(data) {
@@ -759,6 +854,38 @@ function uploadFile() {
                 currentAnalysisProject = projectName;
                 alert(`Dosya başarıyla yüklendi!\nProje: ${data.project_name}\nDosya: ${data.file_name}\n\nVeri analizi arkaplanda başlatıldı...`);
                 
+                // Backend'te saklanan dosya adını kullan (normalize edilmiş)
+                const storedFileName = data.stored_name || data.file_name;
+                console.log('Starting WebSocket analysis for:', data.project_name, data.file_name, '(stored as:', storedFileName + ')');
+                updateAnalysisStatusInFileDetails('Başlatılıyor...', 'orange');
+                
+                // WebSocket ile analiz tetikle
+                if (socket && socket.connected) {
+                    // Proje bilgilerini sakla
+                    currentAnalysisProject = data.project_name;
+                    
+                    // Analiz başlatma isteği gönder (backend'te saklanan dosya adını kullan)
+                    socket.emit('start_data_analysis', {
+                        project_name: data.project_name,
+                        file_name: storedFileName
+                    });
+                    
+                    console.log('WebSocket analysis start request sent');
+                } else {
+                    console.warn('WebSocket not connected, fallback to direct summary');
+                    updateAnalysisStatusInFileDetails('Bağlantı hatası', 'red');
+                }
+                
+                // AnalysisUI entegrasyonu: proje & dosyayı set et ve otomatik summary çek
+                try {
+                    if (window.AnalysisUI && AnalysisUI.state) {
+                        AnalysisUI.state.project = data.project_name;
+                        AnalysisUI.state.file = storedFileName;
+                        // WebSocket analiz tamamlandıktan sonra summary yüklenecek
+                        console.log('AnalysisUI state updated for project:', data.project_name);
+                    }
+                } catch (e) { console.warn('AnalysisUI auto trigger failed', e); }
+                
                 // File info güncelle
                 const fileDetails = document.getElementById('file-details');
                 
@@ -815,8 +942,10 @@ function uploadFile() {
                     fileDetails.innerHTML = basicFileInfo + projectInfo;
                 }
                 
-                // Sütun adlarını yükle
-                loadColumnsAfterUpload(data.project_name, data.file_name);
+                // Sütun adlarını yükle (backend'te saklanan dosya adını kullan)
+                loadColumnsAfterUpload(data.project_name, storedFileName);
+                // UI bildirim (ileride toast component ile değiştirilebilir)
+                console.log('Analysis summary fetch tetiklendi.');
                 
             } else {
                 alert('Hata: ' + data.message);
@@ -1461,6 +1590,43 @@ window.fixCurrentDuplicates = fixCurrentDuplicates;
 
 // ...existing code...
 
+// Bildirim sistemi
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed; top: 20px; right: 20px; z-index: 10001;
+        padding: 1rem 1.5rem; border-radius: 8px; color: white;
+        font-weight: 500; max-width: 400px; word-wrap: break-word;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        animation: slideIn 0.3s ease-out;
+    `;
+    notification.textContent = message;
+    
+    // Animasyon CSS'i ekle
+    if (!document.getElementById('notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    // 5 saniye sonra otomatik kaldır
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.animation = 'slideIn 0.3s ease-out reverse';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     // Setup file input
@@ -1630,25 +1796,23 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Loading columns for current project:', currentAnalysisProject, fileName);
             requestColumnNames(currentAnalysisProject, fileName);
         } else {
-            console.log('No current project found, using default columns');
-            // Varsayılan sütun adlarını göster
-            populateColumnDropdowns([
-                { name: 'Column1', type: 'object', is_numeric: false, is_string: true, null_count: 0, unique_count: 100 },
-                { name: 'Column2', type: 'int64', is_numeric: true, is_string: false, null_count: 5, unique_count: 50 },
-                { name: 'Column3', type: 'float64', is_numeric: true, is_string: false, null_count: 2, unique_count: 80 }
-            ]);
+            console.log('No current project found, skipping column loading');
+            // Varsayılan sütun yükleme kaldırıldı - sadece gerçek proje varsa yükle
         }
     }
 
-    // Sayfa yüklendiğinde sütun adlarını yükle
+    // Sayfa yüklendiğinde sütun adlarını yükle (sadece proje varsa)
     function initializeColumnDropdowns() {
-        // Sayfa yüklendiğinde mevcut proje varsa sütunları yükle
-        setTimeout(() => {
-            loadCurrentProjectColumns();
-        }, 500);
+        // Sadece gerçek proje verisi varsa sütunları yükle
+        if (currentAnalysisProject && window.lastAnalysisResults) {
+            setTimeout(() => {
+                loadCurrentProjectColumns();
+            }, 500);
+        }
+        // Varsayılan sütun yükleme işlemini kaldırdık
     }
 
     
-    // İlk yüklemede sütun adlarını yükle
+    // İlk yüklemede sütun adlarını yükle (sadece proje varsa)
     initializeColumnDropdowns();
 });

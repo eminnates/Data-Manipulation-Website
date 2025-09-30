@@ -3,5 +3,6 @@ import os
 
 socketio = SocketIO(
     async_mode='eventlet',
-    message_queue=os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    logger=True,
+    engineio_logger=True
 )

@@ -1,0 +1,24 @@
+Log testi: 2025-09-30T12:47:18.409494
+2025-09-30 12:47:18,410 - INFO - Flask logging başlatıldı
+2025-09-30 12:47:18,410 - INFO - redis.listener.spawned channel=log_channel
+2025-09-30 12:47:18,762 - INFO - logger.adapter.enabled
+2025-09-30 12:47:18,801 - INFO - redis.listener.starting channel=log_channel attempt=1
+2025-09-30 12:47:18,860 - INFO - redis.listener.subscribed channel=log_channel
+2025-09-30 12:47:20,153 - INFO - Bir istemci WebSocket ile bağlandı.
+2025-09-30 12:47:20,161 - INFO - Starting data analysis for project 'test_project', file 'test_file.csv'
+2025-09-30 12:47:20,180 - INFO - ProjectContext initialized: ./uploads\test_project\test_file.csv
+2025-09-30 12:47:21,991 - INFO - Bir istemci WebSocket ile bağlandı.
+2025-09-30 12:50:10,053 - INFO - Suitability check for project 'dadadad123' with processes: [{'name': 'RemoveWhitespace', 'params': {'type': 'leading', 'columns': ['name']}}]
+2025-09-30 12:50:10,054 - ERROR - Suitability calculation failed: ProjectContext.__init__() missing 1 required positional argument: 'base_upload_dir' exc_info=True
+2025-09-30 12:50:12,203 - INFO - Suitability check for project 'dadadad123' with processes: [{'name': 'RemoveWhitespace', 'params': {'type': 'multiple', 'columns': ['name']}}]
+2025-09-30 12:50:12,203 - ERROR - Suitability calculation failed: ProjectContext.__init__() missing 1 required positional argument: 'base_upload_dir' exc_info=True
+2025-09-30 12:50:13,653 - INFO - Suitability check for project 'dadadad123' with processes: [{'name': 'RemoveWhitespace', 'params': {'type': 'multiple', 'columns': ['name']}}]
+2025-09-30 12:50:13,654 - ERROR - Suitability calculation failed: ProjectContext.__init__() missing 1 required positional argument: 'base_upload_dir' exc_info=True
+2025-09-30 12:50:15,054 - INFO - Suitability check for project 'dadadad123' with processes: [{'name': 'RemoveWhitespace', 'params': {'type': 'all', 'columns': ['name']}}]
+2025-09-30 12:50:15,054 - ERROR - Suitability calculation failed: ProjectContext.__init__() missing 1 required positional argument: 'base_upload_dir' exc_info=True
+2025-09-30 12:50:16,929 - INFO - Suitability check for project 'dadadad123' with processes: [{'name': 'RemoveWhitespace', 'params': {'type': 'trailing', 'columns': ['name']}}]
+2025-09-30 12:50:16,929 - ERROR - Suitability calculation failed: ProjectContext.__init__() missing 1 required positional argument: 'base_upload_dir' exc_info=True
+2025-09-30 12:50:17,551 - INFO - Suitability check for project 'dadadad123' with processes: [{'name': 'RemoveWhitespace', 'params': {'type': 'leading', 'columns': ['name']}}]
+2025-09-30 12:50:17,552 - ERROR - Suitability calculation failed: ProjectContext.__init__() missing 1 required positional argument: 'base_upload_dir' exc_info=True
+2025-09-30 12:50:24,049 - INFO - Suitability check for project 'dadadad123' with processes: [{'name': 'DeleteDupValues', 'params': {'type': 'first', 'columns': ['usd pledged']}}]
+2025-09-30 12:50:24,050 - ERROR - Suitability calculation failed: ProjectContext.__init__() missing 1 required positional argument: 'base_upload_dir' exc_info=True

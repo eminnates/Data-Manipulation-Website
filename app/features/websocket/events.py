@@ -11,22 +11,17 @@ from app.features.websocket import events_data_info  # noqa: F401
 
 @socketio.on('connect')
 def handle_connect():
-    app = current_app
-    if app.config.get('WEBSOCKET_AUTH_ENABLED', True):
-        # Token query=?token= or header Authorization
-        token = request.args.get('token')
-        if not token:
-            auth_header = request.headers.get('Authorization')
-            if auth_header and auth_header.lower().startswith('bearer '):
-                token = auth_header.split(' ',1)[1].strip()
-        if not token:
-            return False  # reject
-        try:
-            claims = decode_token(token)
-            request.environ['ws.identity'] = claims.get('sub')
-        except AuthError:
-            return False
-    print("Bir istemci WebSocket ile bağlandı.")
+    """Handle WebSocket client connections."""
+    current_app.logger.info("Bir istemci WebSocket ile bağlandı.")
+    emit('connection_confirmed', {'message': 'WebSocket connection established'})
+
+@socketio.on('test_event')
+def handle_test_event(data):
+    emit('test_response', {'message': 'Test event received successfully'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print("[DEBUG] Client disconnected from WebSocket")
 
 def send_log_to_clients(log_message):
     """Emit a log event to websocket clients.

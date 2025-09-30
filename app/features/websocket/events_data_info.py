@@ -3,6 +3,8 @@ from flask_socketio import emit
 from flask import current_app
 from app.domain.models import ProjectContext
 
+# WebSocket event handlers for data analysis operations
+
 @socketio.on('get_column_names')
 def handle_get_column_names(data):
     project_name = data.get('project_name')
@@ -12,7 +14,14 @@ def handle_get_column_names(data):
         return
     current_app.logger.info(f"Column names request for project '{project_name}', file '{file_name}'")
     try:
-        context = ProjectContext(project_name=project_name, file_name=file_name)
+        # Flask config'den uploads dizinini al
+        base_upload_dir = current_app.config.get('UPLOAD_FOLDER', './uploads')
+        context = ProjectContext(
+            project_name=project_name, 
+            file_name=file_name,
+            base_upload_dir=base_upload_dir,
+            logger=current_app.logger
+        )
         data_df = context.get_data(use_cache=True)
         columns_info = []
         for col in data_df.columns:
@@ -58,3 +67,58 @@ def handle_get_analysis_status(data):
         'project_name': project_name,
         'status': 'ready_for_query'
     })
+
+@socketio.on('start_data_analysis')
+def handle_start_data_analysis(data):
+    """Handle start_data_analysis event from frontend after file upload."""
+    project_name = data.get('project_name')
+    file_name = data.get('file_name')
+    
+    if not all([project_name, file_name]):
+        emit('data_analysis_error', {
+            'status': 'error',
+            'message': 'Proje veya dosya adı eksik.',
+            'error_type': 'missing_params'
+        })
+        return
+    
+    current_app.logger.info(f"Starting data analysis for project '{project_name}', file '{file_name}'")
+    
+    try:
+        # ProjectContext ile dosya yolunu bul
+        from app.domain.models import ProjectContext
+        
+        # Flask config'den uploads dizinini al
+        base_upload_dir = current_app.config.get('UPLOAD_FOLDER', './uploads')
+        
+        context = ProjectContext(
+            project_name=project_name, 
+            file_name=file_name,
+            base_upload_dir=base_upload_dir,
+            logger=current_app.logger
+        )
+        filepath = context.get_data_path()
+        
+        # Import analiz fonksiyonu
+        from app.features.analysis.analyze_helpers import analyze_data_background_main
+        
+        # Emit başlangıç mesajı
+        emit('data_analysis_status', {
+            'status': 'started',
+            'message': 'Veri analizi başlatıldı...',
+            'project_name': project_name,
+            'file_name': file_name
+        })
+        
+        # Analiz fonksiyonunu çağır (bu zaten emit'leri kendi içinde yapacak)
+        analyze_data_background_main(filepath, project_name, file_name, current_app)
+        
+    except Exception as e:
+        current_app.logger.error(f"Analysis start failed: {e}", exc_info=True)
+        emit('data_analysis_error', {
+            'status': 'error',
+            'message': f'Analiz başlatılırken hata oluştu: {str(e)}',
+            'error_type': 'start_failed',
+            'project_name': project_name,
+            'file_name': file_name
+        })

@@ -1,7 +1,6 @@
 from flask import Flask
 import os
 from app.features.websocket.websocket_listener import *
-from app.features.websocket.events import *
 from app.features.websocket.extensions import socketio
 from app.features.redis.redis_client import get_redis_client
 from app.infrastructure.logger_adapter import StructuredLoggerWrapper
@@ -33,7 +32,10 @@ def create_app(env="production"):
     start_redis_listener(app)
 
     # WebSocket olaylarını başlat
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
+    
+    # Handler'ları init'ten SONRA import et
+    from app.features.websocket import events
     
     # Hata işleyicilerini kaydet
     from app.errors.handlers import register_error_handlers

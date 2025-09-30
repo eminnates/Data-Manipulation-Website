@@ -653,6 +653,17 @@ a {
   background: hsl(221, 35%, 20%);
   color: white;
   padding: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.column-selector option:hover {
+  background: hsl(221, 35%, 25%);
+}
+
+.column-selector option:checked {
+  background: rgba(0, 195, 255, 0.3);
+  color: white;
 }
 
 .checkbox-group {

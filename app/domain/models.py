@@ -34,6 +34,10 @@ class ProjectContext:
         """Returns the file extension without the dot."""
         _, ext = os.path.splitext(self.file_name)
         return ext.lstrip('.')
+    
+    def get_data_path(self) -> str:
+        """Returns the full path to the data file."""
+        return self.active_file_path
 
     # DÜZELTME: Metodun 'use_cache' parametresini kabul etmesini sağla
     def get_data(self, use_cache: bool = True) -> pd.DataFrame:
